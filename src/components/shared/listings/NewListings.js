@@ -2,6 +2,7 @@
 import SectionTitle from "@/components/shared/sectiontitle/SectionTitle";
 import PostList from "@/components/shared/postitem/PostList";
 import { MOCK_PRODUCTS } from "@/utils/constants";
+import { Banner } from "../advertisement";
 
 const NewListings = () => {
   return (
@@ -17,6 +18,16 @@ const NewListings = () => {
       <div className="main_container">
         <div className="wrapper">
           <PostList posts={MOCK_PRODUCTS.newListings} />
+          {/* Sticky Advertisement Banner */}
+          <div>
+            <Banner
+              href=""
+              image="/img/example/banner3.png"
+              mobileImage="/img/example/banner-mob.png"
+              altText="Advertisement"
+              isSticky={false}
+            />
+          </div>
         </div>
       </div>
     </section>
