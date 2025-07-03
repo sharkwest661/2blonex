@@ -1,6 +1,7 @@
 // src/components/shared/advertisement/Banner.js
 import Link from "next/link";
 import Image from "next/image";
+import styles from "./Advertisement.module.css";
 
 const Banner = ({
   href = "#",
@@ -14,7 +15,7 @@ const Banner = ({
 }) => {
   return (
     <div
-      className={`sticky-top reklam ${className}`}
+      className={`sticky-top reklam ${className} ${styles.banner}`}
       style={{ top: isSticky ? "0" : "auto" }}
     >
       <Link href={href} className="d-md-block d-none">
