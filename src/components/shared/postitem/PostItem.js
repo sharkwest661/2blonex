@@ -91,7 +91,9 @@ const PostItem = ({
                 data-toggle="tooltip"
                 data-placement="top"
                 title="Barter mümkündür"
-              ></span>
+              >
+                <img src="img/barter.svg" alt="" />
+              </span>
             )}
             {hasCredit && (
               <span
@@ -100,7 +102,7 @@ const PostItem = ({
                 data-placement="top"
                 title="Kredit mümkündür"
               >
-                <img src="assets/img/percent.svg" alt="" />
+                <img src="img/percent.svg" alt="" />
               </span>
             )}
           </div>
