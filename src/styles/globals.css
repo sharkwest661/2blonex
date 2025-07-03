@@ -1,0 +1,47 @@
+/* 
+File: src/styles/globals.css
+Master CSS file that imports everything
+*/
+
+/* Import the original main.css (untouched) */
+@import "./main.css";
+
+/* Import new component-specific styles */
+@import "./components.css";
+
+/* Import loading screen styles */
+@import "./loading.css";
+
+/* Global overrides and Next.js specific styles can go here if needed */
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family:
+    "Arimo",
+    -apple-system,
+    BlinkMacSystemFont,
+    Segoe UI,
+    Roboto,
+    Oxygen,
+    Ubuntu,
+    Cantarell,
+    Fira Sans,
+    Droid Sans,
+    Helvetica Neue,
+    sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Next.js specific optimizations */
+#__next {
+  min-height: 100vh;
+}
