@@ -1,6 +1,6 @@
 // src/app/layout.js (Root Layout for Next.js 14 App Router)
-import "../styles/main.css";
-import "../styles/loading.css";
+
+import "./globals.css";
 
 export const metadata = {
   title: {

@@ -49,59 +49,6 @@ New component-specific styles (separate from main.css)
   height: 100vh;
 }
 
-/* Contact section styles */
-.contact {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.contact__network {
-  width: 24px;
-  height: 24px;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  transition: opacity 0.3s ease;
-}
-
-.contact__network:hover {
-  opacity: 0.8;
-}
-
-.contact__network.facebook {
-  background-image: url("/img/facebook-icon.svg");
-}
-
-.contact__network.instagram {
-  background-image: url("/img/instagram-icon.svg");
-}
-
-.contact__network.whatsapp {
-  background-image: url("/img/whatsapp-icon.svg");
-}
-
-.contact__network.telegram {
-  background-image: url("/img/telegram-icon.svg");
-}
-
-.contact__tel {
-  font-size: 14px;
-  color: #013f44;
-}
-
-.contact__tel a {
-  color: #013f44;
-  text-decoration: none;
-  font-weight: 600;
-  transition: color 0.3s ease;
-}
-
-.contact__tel a:hover {
-  text-decoration: underline;
-  color: #014c52;
-}
-
 /* Mobile specific adjustments */
 @media screen and (max-width: 767px) {
   .navbar-brand {
