@@ -5,6 +5,7 @@ import Image from "next/image";
 const PostItem = ({
   id,
   title,
+  secondaryTitle = "", // Always present, can be empty
   price,
   location,
   date,
@@ -14,13 +15,19 @@ const PostItem = ({
   isPremium = false,
   hasBarter = false,
   hasCredit = false,
-  hasPercent = false,
   className = "",
 }) => {
   return (
-    <div className={`post__item ${className}`}>
+    <div
+      className={`post__item ${className}`}
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
+      }}
+    >
       <div className="post__img">
-        <Image src={image} alt={title} width={280} height={200} />
+        <Image src={image} alt="" width={280} height={200} />
         <div className="post__attributes">
           {isVip && (
             <span
@@ -30,15 +37,48 @@ const PostItem = ({
               title="VIP elan"
             ></span>
           )}
-          <Link href="" className="post__favorites"></Link>
+          {isPremium && (
+            <span
+              className="post__premium"
+              data-toggle="tooltip"
+              data-placement="top"
+              title="Premium elan"
+            ></span>
+          )}
+          <a href="" className="post__favorites"></a>
         </div>
       </div>
-      <div className="post__info">
-        <div className="px-5">
-          <Link href={href} className="post__title other_post_title">
+      <div
+        className="post__info"
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          flexGrow: 1,
+        }}
+      >
+        <div className="px-5" style={{ flexGrow: 1 }}>
+          <a
+            href={href}
+            className="post__title"
+            style={{
+              display: "block",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+            }}
+          >
             {title}
-          </Link>
-          <p>
+          </a>
+          <a
+            href={href}
+            className="post__title2"
+            style={{
+              display: "block",
+            }}
+          >
+            {secondaryTitle || "\u00A0"}
+          </a>
+          <p style={{ height: "25px" }}>
             {location}, {date}
           </p>
         </div>
@@ -51,9 +91,7 @@ const PostItem = ({
                 data-toggle="tooltip"
                 data-placement="top"
                 title="Barter mümkündür"
-              >
-                <Image src="/img/barter.svg" alt="" width={16} height={16} />
-              </span>
+              ></span>
             )}
             {hasCredit && (
               <span
@@ -62,17 +100,7 @@ const PostItem = ({
                 data-placement="top"
                 title="Kredit mümkündür"
               >
-                <Image src="/img/credit.svg" alt="" width={16} height={16} />
-              </span>
-            )}
-            {hasPercent && (
-              <span
-                className="post__feature"
-                data-toggle="tooltip"
-                data-placement="top"
-                title="Endirim mövcuddur"
-              >
-                <Image src="/img/percent.svg" alt="" width={16} height={16} />
+                <img src="assets/img/percent.svg" alt="" />
               </span>
             )}
           </div>

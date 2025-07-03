@@ -15,9 +15,10 @@ const FullWidthBanner = ({
         <Image
           src={image}
           alt={altText}
-          className="w-100"
+          className="w-100 h-auto"
           width={width}
           height={height}
+          style={{ objectFit: "cover" }}
         />
       </Link>
     </section>

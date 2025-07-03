@@ -7,7 +7,7 @@ import clsx from "clsx";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false); // This will come from Zustand store later
+  const [isAuthenticated, setIsAuthenticated] = useState(true); // This will come from Zustand store later
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
