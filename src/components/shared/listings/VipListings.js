@@ -21,7 +21,7 @@ const VipListings = () => {
           <div>
             <Banner
               href=""
-              image="/img/example/banner3.png"
+              image="/img/example/banner1.png"
               mobileImage="/img/example/banner-mob.png"
               altText="Advertisement"
               isSticky={false}

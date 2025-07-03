@@ -4,7 +4,7 @@ import CategoriesGrid from "./CategoriesGrid";
 import VipListings from "@/components/shared/listings/VipListings";
 import NewListings from "@/components/shared/listings/NewListings";
 import PremiumListings from "@/components/shared/listings/PremiumListings";
-import { Banner } from "@/components/shared/advertisement";
+import { FullWidthBanner } from "@/components/shared/advertisement";
 
 const HomePage = () => {
   return (
@@ -25,15 +25,14 @@ const HomePage = () => {
       {/* VIP Listings Section - Outside main_container */}
       <VipListings />
 
-      {/* Banner Advertisement - Outside main_container */}
-      <Banner
-        href=""
-        image="/img/example/banner2.png"
-        altText="Advertisement Banner"
-      />
+      {/* Full-Width Banner Advertisement - banner2.png */}
+      <FullWidthBanner href="" image="/img/example/banner2.png" altText="" />
 
       {/* New Listings Section - Outside main_container */}
       <NewListings />
+
+      {/* Full-Width Banner Advertisement - banner2.png */}
+      <FullWidthBanner href="" image="/img/example/banner2.png" altText="" />
 
       {/* Premium Listings Section - Outside main_container */}
       <PremiumListings />
