@@ -49,41 +49,6 @@ New component-specific styles (separate from main.css)
   height: 100vh;
 }
 
-/* Mobile specific adjustments */
-@media screen and (max-width: 767px) {
-  .navbar-brand {
-    display: block;
-  }
-
-  .navbar-collapse.show .navbar-brand {
-    display: none;
-  }
-
-  .header__topbar--mob {
-    margin-top: 20px;
-    padding-top: 20px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-  }
-
-  .header__topbar--mob .contact {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-  }
-
-  .header__topbar--mob .contact__tel {
-    color: #ffffff;
-  }
-
-  .header__topbar--mob .contact__tel a {
-    color: #ffffff;
-  }
-
-  .header__topbar--mob .contact__tel a:hover {
-    color: #ffe600;
-  }
-}
-
 /* ===================================
    LOADING SCREEN COMPONENT
    =================================== */
