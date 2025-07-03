@@ -1,35 +1,17 @@
-import { useState, useEffect } from "react";
-import Image from "next/image";
+"use client";
+// src/components/layout/Header.js
+import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import clsx from "clsx";
-// import { useStore } from "../../store/useStore"; // Uncomment when store is ready
 
-export default function Header() {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  // const { isAuthenticated, user } = useStore((state) => ({
-  //   isAuthenticated: state.isAuthenticated,
-  //   user: state.user
-  // })); // Use this when Zustand store is implemented
-  const [isAuthenticated, setIsAuthenticated] = useState(false); // Temporary - replace with Zustand
+const Header = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false); // This will come from Zustand store later
 
-  // Toggle mobile menu
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
   };
-
-  // Add/remove body scroll lock when mobile menu is open
-  useEffect(() => {
-    if (isMobileMenuOpen) {
-      document.body.classList.add("noscroll");
-    } else {
-      document.body.classList.remove("noscroll");
-    }
-
-    // Cleanup on unmount
-    return () => {
-      document.body.classList.remove("noscroll");
-    };
-  }, [isMobileMenuOpen]);
 
   return (
     <header className="header">
@@ -37,26 +19,24 @@ export default function Header() {
       <div className="main_container">
         <div className="header__topbar" id="standardTopBar">
           <div className="contact">
-            <Link href="#" className="contact__network facebook"></Link>
-            <Link href="#" className="contact__network instagram"></Link>
+            <a href="" className="contact__network facebook"></a>
+            <a href="" className="contact__network instagram"></a>
             <span className="contact__tel">
               Dəstək:
-              <Link href="tel:012555650055262650">
-                012 555 65 00 | 055 262 65 00
-              </Link>
+              <a href="tel:012555650055262650">012 555 65 00 | 055 262 65 00</a>
             </span>
-            <Link href="#" className="contact__network whatsapp"></Link>
-            <Link href="#" className="contact__network telegram"></Link>
+            <a href="" className="contact__network whatsapp"></a>
+            <a href="" className="contact__network telegram"></a>
           </div>
           {isAuthenticated && (
             <div className="d-md-flex align-items-center">
               <Image
                 src="/img/logout-icon.svg"
                 alt="Logout"
-                width={24}
-                height={24}
+                width={16}
+                height={16}
               />
-              <Link href="/auth/logout/">Çıxış</Link>
+              <a href="/auth/logout/">Çıxış</a>
             </div>
           )}
         </div>
@@ -66,34 +46,30 @@ export default function Header() {
       <div className="navbar_bg">
         <div className="main_container">
           <nav className="navbar navbar-expand-md" id="standardNavbar">
-            {/* Mobile Menu Toggle */}
             <button
-              className={clsx("navbar-toggler", { active: isMobileMenuOpen })}
+              className={clsx("navbar-toggler", { active: isMenuOpen })}
               type="button"
-              onClick={toggleMobileMenu}
+              onClick={toggleMenu}
               aria-controls="navbarToggler"
-              aria-expanded={isMobileMenuOpen}
+              aria-expanded={isMenuOpen}
               aria-label="Toggle navigation"
-            >
-              <span className="navbar-toggler-icon"></span>
-            </button>
+            ></button>
 
-            {/* Logo */}
-            <Link href="/" className="navbar-brand">
+            <Link
+              href="/"
+              className={clsx("navbar-brand", { "d-none": isMenuOpen })}
+            >
               <Image
                 src="/img/logo.svg"
-                alt="Bolbol"
+                alt="Bolbol.az"
                 width={120}
                 height={40}
                 priority
               />
             </Link>
 
-            {/* Navigation Links */}
             <div
-              className={clsx("collapse navbar-collapse", {
-                show: isMobileMenuOpen,
-              })}
+              className={clsx("collapse navbar-collapse", { show: isMenuOpen })}
               id="navbarToggler"
             >
               <div className="header__links">
@@ -112,53 +88,39 @@ export default function Header() {
                     Şəxsi kabinet
                   </Link>
                 ) : (
-                  <button
+                  <a
+                    href="#"
                     className="header__link header__link--login"
                     data-toggle="modal"
                     data-target="#loginModal"
                   >
                     Şəxsi kabinet
-                  </button>
+                  </a>
                 )}
               </div>
 
-              {/* Mobile Top Bar - Mobile Only */}
-              {isMobileMenuOpen && (
+              {/* Mobile Top Bar */}
+              {isMenuOpen && (
                 <div className="header__topbar header__topbar--mob">
                   <div className="contact">
-                    <Link href="#" className="contact__network facebook"></Link>
-                    <Link
-                      href="#"
-                      className="contact__network instagram"
-                    ></Link>
+                    <a href="" className="contact__network facebook"></a>
+                    <a href="" className="contact__network instagram"></a>
                     <span className="contact__tel">
                       Dəstək:
-                      <Link href="tel:012555650055262650">
+                      <a href="tel:012555650055262650">
                         012 555 65 00 | 055 262 65 00
-                      </Link>
+                      </a>
                     </span>
-                    <Link href="#" className="contact__network whatsapp"></Link>
-                    <Link href="#" className="contact__network telegram"></Link>
+                    <a href="" className="contact__network whatsapp"></a>
+                    <a href="" className="contact__network telegram"></a>
                   </div>
-                  {isAuthenticated && (
-                    <div className="d-md-flex align-items-center">
-                      <Image
-                        src="/img/logout-icon.svg"
-                        alt="Logout"
-                        width={24}
-                        height={24}
-                      />
-                      <Link href="/auth/logout/">Çıxış</Link>
-                    </div>
-                  )}
                 </div>
               )}
             </div>
 
-            {/* New Ad Button */}
             <Link
               href="/post/create"
-              className={clsx("btn header__btn", { show: isMobileMenuOpen })}
+              className={clsx("btn header__btn", { show: isMenuOpen })}
             >
               <span>Yeni elan</span>
             </Link>
@@ -167,4 +129,6 @@ export default function Header() {
       </div>
     </header>
   );
-}
+};
+
+export default Header;
