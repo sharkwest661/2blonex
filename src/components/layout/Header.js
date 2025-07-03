@@ -36,7 +36,7 @@ const Header = () => {
                 width={16}
                 height={16}
               />
-              <a href="/auth/logout/">Çıxış</a>
+              <Link href="/auth/logout/">Çıxış</Link>
             </div>
           )}
         </div>

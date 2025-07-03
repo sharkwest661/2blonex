@@ -78,7 +78,7 @@ function SearchContent() {
       <div className="wrapper">
         {/* Search Header */}
         <div className="search-header" style={{ marginBottom: "20px" }}>
-          <h1>"{query}" üçün axtarış nəticələri</h1>
+          <h1>&quot;{query}&quot; üçün axtarış nəticələri</h1>
           <p>{products.length} elan tapıldı</p>
         </div>
 
@@ -146,8 +146,8 @@ function SearchContent() {
           >
             <h3>Heç bir nəticə tapılmadı</h3>
             <p>
-              "{query}" üçün heç bir elan tapılmadı. Başqa açar sözlərlə cəhd
-              edin.
+              &quot;{query}&quot; üçün heç bir elan tapılmadı. Başqa açar
+              sözlərlə cəhd edin.
             </p>
             <p>
               <strong>Məsləhətlər:</strong>
