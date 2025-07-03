@@ -12,36 +12,12 @@ const Banner = ({
   height = 150,
   isSticky = false,
 }) => {
-  if (isSticky) {
-    return (
-      <div className={`sticky-top reklam ${className}`}>
-        <Link href={href} className="d-md-block d-none">
-          <Image
-            src={image}
-            alt={altText}
-            className="w-100"
-            width={width}
-            height={height}
-          />
-        </Link>
-        {mobileImage && (
-          <Link href={href} className="d-md-none">
-            <Image
-              src={mobileImage}
-              alt={altText}
-              className="w-100"
-              width={width}
-              height={height}
-            />
-          </Link>
-        )}
-      </div>
-    );
-  }
-
   return (
-    <section className={className}>
-      <Link href={href}>
+    <div
+      className={`sticky-top reklam ${className}`}
+      style={{ top: isSticky ? "0" : "auto" }}
+    >
+      <Link href={href} className="d-md-block d-none">
         <Image
           src={image}
           alt={altText}
@@ -50,7 +26,18 @@ const Banner = ({
           height={height}
         />
       </Link>
-    </section>
+      {mobileImage && (
+        <Link href={href} className="d-md-none">
+          <Image
+            src={mobileImage}
+            alt={altText}
+            className="w-100"
+            width={width}
+            height={height}
+          />
+        </Link>
+      )}
+    </div>
   );
 };
 
