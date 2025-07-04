@@ -106,6 +106,63 @@ New component-specific styles (separate from main.css)
     opacity: 0.7;
   }
 }
+/* ===================================
+  MODAL SIMPLE FADE ANIMATION
+  =================================== */
+
+/* Modal backdrop fade */
+.modal {
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.modal.show {
+  opacity: 1;
+}
+
+/* Modal dialog fade */
+.modal-dialog {
+  opacity: 0;
+  transform: none;
+  transition: opacity 0.25s ease;
+}
+
+.modal.show .modal-dialog {
+  opacity: 1;
+}
+
+/* Remove all extra animations for modal content */
+.modal-header,
+.modal-body,
+.modal .form-group,
+.modal .btn {
+  animation: none !important;
+  transition: none !important;
+  opacity: 1;
+  transform: none;
+}
+
+/* Close button hover */
+.modal .close {
+  transition: opacity 0.2s;
+}
+
+.modal .close:hover {
+  opacity: 0.7;
+}
+
+/* Accessibility: reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .modal,
+  .modal-dialog,
+  .modal-header,
+  .modal-body,
+  .modal .form-group,
+  .modal .btn {
+    animation: none !important;
+    transition: none !important;
+  }
+}
 
 /* ===================================
    FUTURE COMPONENT STYLES

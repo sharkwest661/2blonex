@@ -1,16 +1,38 @@
 "use client";
 // src/components/layout/Header.js
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import clsx from "clsx";
+import { useAuthStore } from "../../store/useAuthStore";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(true); // This will come from Zustand store later
+
+  // Get auth state and actions from Zustand store
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const user = useAuthStore((state) => state.user);
+  const openLoginModal = useAuthStore((state) => state.openLoginModal);
+  const logout = useAuthStore((state) => state.logout);
+  const checkAuthStatus = useAuthStore((state) => state.checkAuthStatus);
+
+  // Check auth status on mount
+  useEffect(() => {
+    checkAuthStatus();
+  }, [checkAuthStatus]);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  const handleLoginClick = (e) => {
+    e.preventDefault();
+    openLoginModal();
+  };
+
+  const handleLogout = (e) => {
+    e.preventDefault();
+    logout();
   };
 
   return (
@@ -36,7 +58,9 @@ const Header = () => {
                 width={16}
                 height={16}
               />
-              <Link href="/auth/logout/">Çıxış</Link>
+              <a href="#" onClick={handleLogout}>
+                Çıxış
+              </a>
             </div>
           )}
         </div>
@@ -92,8 +116,7 @@ const Header = () => {
                   <a
                     href="#"
                     className="header__link header__link--login"
-                    data-toggle="modal"
-                    data-target="#loginModal"
+                    onClick={handleLoginClick}
                   >
                     Şəxsi kabinet
                   </a>

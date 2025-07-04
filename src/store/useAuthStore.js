@@ -2,6 +2,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import toast from "react-hot-toast";
+import { authAPI, formatPhoneNumber } from "../utils/authAPI";
 
 export const useAuthStore = create(
   persist(
@@ -57,25 +58,15 @@ export const useAuthStore = create(
 
       // Actions - Phone Submission
       submitPhoneNumber: async (phone) => {
-        set({ isSubmittingPhone: true, phoneNumber: phone });
+        const formattedPhone = formatPhoneNumber(phone);
+        set({ isSubmittingPhone: true, phoneNumber: formattedPhone });
 
         try {
-          // TODO: Replace with actual API call
-          // const response = await authAPI.sendOTP(phone);
+          const response = await authAPI.sendOTP(formattedPhone);
 
-          // Simulate API call
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-
-          // Mock success response
-          const mockResponse = {
-            success: true,
-            tempUserId: "temp_" + Date.now(),
-            message: "SMS göndərildi",
-          };
-
-          if (mockResponse.success) {
+          if (response.success) {
             set({
-              tempUserId: mockResponse.tempUserId,
+              tempUserId: response.tempUserId,
               isSubmittingPhone: false,
             });
 
@@ -88,7 +79,9 @@ export const useAuthStore = create(
           }
         } catch (error) {
           set({ isSubmittingPhone: false });
-          toast.error("Xəta baş verdi. Yenidən cəhd edin", {
+          const errorMessage =
+            error.message || "Xəta baş verdi. Yenidən cəhd edin";
+          toast.error(errorMessage, {
             duration: 4000,
           });
         }
@@ -96,57 +89,66 @@ export const useAuthStore = create(
 
       // Actions - OTP Verification
       verifyOTP: async (otpCode) => {
-        const { phoneNumber, tempUserId } = get();
-
-        if (!phoneNumber || !tempUserId) {
-          toast.error("Zəhmət olmasa yenidən cəhd edin");
-          return;
-        }
-
+        const { tempUserId } = get();
         set({ isSubmittingOTP: true });
 
         try {
-          // TODO: Replace with actual API call
-          // const response = await authAPI.verifyOTP(tempUserId, otpCode);
+          const response = await authAPI.verifyOTP(tempUserId, otpCode);
 
-          // Simulate API call
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-
-          // Mock success response
-          const mockResponse = {
-            success: true,
-            user: {
-              id: "user_" + Date.now(),
-              phone: phoneNumber,
-              name: "İstifadəçi",
-              avatar: null,
-              createdAt: new Date().toISOString(),
-            },
-            token: "mock_jwt_token_" + Date.now(),
-          };
-
-          if (mockResponse.success) {
-            // Store auth token in localStorage
-            localStorage.setItem("authToken", mockResponse.token);
+          if (response.success) {
+            // Store auth token
+            localStorage.setItem("authToken", response.token);
 
             set({
-              user: mockResponse.user,
+              user: response.user,
               isAuthenticated: true,
               isSubmittingOTP: false,
-              phoneNumber: "",
-              tempUserId: null,
             });
 
             get().closeAllModals();
 
-            toast.success("Uğurla daxil oldunuz!", {
+            // Show different message for new vs returning users
+            const welcomeMessage = response.user.isNewUser
+              ? "Xoş gəldiniz! Hesabınız yaradıldı"
+              : "Uğurla daxil oldunuz";
+
+            toast.success(welcomeMessage, {
               duration: 4000,
               icon: "🎉",
             });
           }
         } catch (error) {
           set({ isSubmittingOTP: false });
-          toast.error("Şifrə yanlışdır. Yenidən cəhd edin", {
+          const errorMessage =
+            error.message || "Şifrə yanlışdır. Yenidən cəhd edin";
+          toast.error(errorMessage, {
+            duration: 4000,
+          });
+        }
+      },
+
+      // Actions - Resend OTP
+      resendOTP: async () => {
+        const { phoneNumber } = get();
+
+        if (!phoneNumber) {
+          toast.error("Telefon nömrəsi tapılmadı", { duration: 3000 });
+          return;
+        }
+
+        try {
+          const response = await authAPI.resendOTP(phoneNumber);
+
+          if (response.success) {
+            toast.success("SMS yenidən göndərildi", {
+              duration: 4000,
+              icon: "📱",
+            });
+          }
+        } catch (error) {
+          const errorMessage =
+            error.message || "SMS göndərilmədi. Yenidən cəhd edin";
+          toast.error(errorMessage, {
             duration: 4000,
           });
         }
@@ -183,30 +185,28 @@ export const useAuthStore = create(
         set({ isLoading: true });
 
         try {
-          // TODO: Replace with actual API call to validate token
-          // const response = await authAPI.validateToken(token);
+          const response = await authAPI.validateToken(token);
 
-          // Simulate API call
-          await new Promise((resolve) => setTimeout(resolve, 500));
-
-          // Mock validation - in real app, this would verify the token
-          const mockUser = {
-            id: "user_123",
-            phone: "+994501234567",
-            name: "İstifadəçi",
-            avatar: null,
-            createdAt: "2024-01-01T00:00:00.000Z",
-          };
-
-          set({
-            user: mockUser,
-            isAuthenticated: true,
-            isLoading: false,
-          });
+          if (response.success) {
+            set({
+              user: response.user,
+              isAuthenticated: true,
+              isLoading: false,
+            });
+          }
         } catch (error) {
           // Token is invalid, remove it
           localStorage.removeItem("authToken");
-          set({ isLoading: false });
+          set({
+            isLoading: false,
+            user: null,
+            isAuthenticated: false,
+          });
+
+          // Only show error if it's not just an expired token
+          if (!error.message?.includes("expired")) {
+            console.log("Auth validation failed:", error.message);
+          }
         }
       },
 
