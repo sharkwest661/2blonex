@@ -1,3 +1,87 @@
 .title--left {
   padding: 0 !important;
 }
+
+/* Mobile Sort Filter Styles - Add to main.css */
+
+/* Desktop Sort - Hidden on mobile */
+@media screen and (max-width: 767px) {
+  .sort__select.desktop-sort {
+    display: none !important;
+  }
+}
+
+/* Mobile Sort Filter Container - Hidden on desktop */
+.mobile-sort-filter {
+  display: none;
+}
+
+@media screen and (max-width: 767px) {
+  .mobile-sort-filter {
+    display: block;
+    background-color: #f8f9fa;
+    padding: 15px 0;
+    border-bottom: 1px solid #e9ecef;
+  }
+}
+
+/* Desktop: Hide mobile sort */
+@media screen and (min-width: 768px) {
+  .mobile-sort-filter {
+    display: none !important;
+  }
+}
+
+/* Mobile Sort Wrapper Styles */
+@media screen and (max-width: 767px) {
+  .mobile-sort-wrapper {
+    padding: 0 15px;
+  }
+
+  .mobile-sort-wrapper form {
+    margin: 0;
+  }
+
+  .mobile-sort-wrapper .form-group {
+    margin: 0;
+  }
+
+  .mobile-sort-wrapper .sort__select {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff;
+  }
+
+  .mobile-sort-wrapper
+    .sort__select
+    .dropdown.bootstrap-select
+    .btn.dropdown-toggle {
+    padding: 12px 16px;
+    font-size: 16px;
+    border: none;
+    background-color: transparent;
+    width: 100%;
+    text-align: left;
+  }
+
+  /* Ensure the mobile sort has proper spacing from title */
+  .title_bg + .mobile-sort-filter {
+    margin-top: 0;
+  }
+
+  /* Adjust spacing between mobile filter and content */
+  .mobile-sort-filter + .main_container {
+    margin-top: 20px;
+  }
+}
+
+/* Prevent layout shift during hydration */
+.mobile-sort-filter {
+  min-height: 0;
+}
+
+@media screen and (max-width: 767px) {
+  .mobile-sort-filter {
+    min-height: 65px; /* Prevent layout shift */
+  }
+}

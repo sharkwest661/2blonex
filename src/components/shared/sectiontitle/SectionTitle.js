@@ -54,7 +54,7 @@ const SectionTitle = ({
 
           {showSortSelect && (
             <form>
-              <div className="form-group sort__select">
+              <div className="form-group sort__select desktop-sort">
                 <Select
                   options={sortOptions}
                   value={sortValue}

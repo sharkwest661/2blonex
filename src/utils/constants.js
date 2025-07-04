@@ -21,14 +21,19 @@ export const MOCK_PRODUCTS = {
   services: generateServicesProducts(),
   free: generateFreeProducts(),
 
-  // Mixed products for homepage sections
-  vipListings: generateMixedProducts(15).map((product) => ({
+  // Mixed products for homepage sections - now deterministic
+  vipListings: generateMixedProducts(15).map((product, index) => ({
     ...product,
+    id: `vip-${index}`, // Consistent IDs
     isVip: true,
   })),
-  newListings: generateMixedProducts(15),
-  premiumListings: generateMixedProducts(15).map((product) => ({
+  newListings: generateMixedProducts(15).map((product, index) => ({
     ...product,
+    id: `new-${index}`, // Consistent IDs
+  })),
+  premiumListings: generateMixedProducts(15).map((product, index) => ({
+    ...product,
+    id: `premium-${index}`, // Consistent IDs
     isPremium: true,
   })),
 
@@ -163,200 +168,122 @@ export const CATEGORIES = [
     id: "cosmetics",
     name: "Kosmetika və sağlamlıq",
     slug: "kosmetika",
-    icon: "https://bolbol.az/media/2021/08/04/categories/Group_9638_2.svg",
-    href: "/kosmetika",
-    count: 1987,
-    products: generateMixedProducts(15),
-    subcategories: [
-      "Gözəllik məhsulları",
-      "Dərman",
-      "Vitamin və əlavələr",
-      "Tibbi avadanlıq",
-      "Dietik məhsullar",
-      "Aromaterapi",
-    ],
-  },
-  {
-    id: "home",
-    name: "Ev və bağ üçün",
-    slug: "ev-bag",
-    icon: "https://bolbol.az/media/2021/08/04/categories/Group_9639_1.svg",
-    href: "/ev-bag",
-    count: 5643,
-    products: generateMixedProducts(15),
-    subcategories: [
-      "Mebel",
-      "Məişət texnikası",
-      "Dekor",
-      "Bağ avadanlığı",
-      "Inşaat materialları",
-      "Mətbəx ləvazimatları",
-    ],
-  },
-  {
-    id: "food",
-    name: "Ərzaq",
-    slug: "erzaq",
-    icon: "https://bolbol.az/media/2021/08/04/categories/Group_9640_2.svg",
-    href: "/erzaq",
-    count: 987,
-    products: generateMixedProducts(15),
-    subcategories: [
-      "Təzə məhsullar",
-      "Konservlər",
-      "İçkilər",
-      "Şirniyyat",
-      "Ədviyyat",
-      "Orqanik məhsullar",
-    ],
-  },
-  {
-    id: "animals",
-    name: "Heyvan, Bitki",
-    slug: "heyvan-bitki",
     icon: "https://bolbol.az/media/2021/08/04/categories/Group_9638_5.svg",
-    href: "/heyvan-bitki",
-    count: 1234,
+    href: "/kosmetika",
+    count: 1897,
     products: generateMixedProducts(15),
     subcategories: [
-      "Ev heyvanları",
-      "Heyvan yemlər",
-      "Bitki və toxum",
-      "Akvarium",
-      "Heyvan aksesuarları",
-      "Veterinar xidmətləri",
+      "Dəriyə qulluq",
+      "Dekorativ kosmetika",
+      "Ətriyyat",
+      "Saça qulluq",
+      "Sağlamlıq məhsulları",
+      "Dərman vasitələri",
     ],
   },
   {
-    id: "sports",
-    name: "İdman, musiqi, hobbi",
-    slug: "idman-musiqi",
-    icon: "https://bolbol.az/media/2021/08/04/categories/Group_9638_8.svg",
-    href: "/idman-musiqi",
-    count: 2543,
-    products: generateMixedProducts(15),
-    subcategories: [
-      "İdman avadanlığı",
-      "Musiqi alətləri",
-      "Hobbi məhsulları",
-      "Kitablar",
-      "Oyunlar",
-      "Kolleksiya əşyaları",
-    ],
-  },
-  {
-    id: "other",
-    name: "Digər",
-    slug: "diger",
+    id: "hobbies",
+    name: "Hobiler və İstirahət",
+    slug: "hobiler",
     icon: "https://bolbol.az/media/2021/08/04/categories/Group_9638_7.svg",
-    href: "/diger",
-    count: 876,
+    href: "/hobiler",
+    count: 5634,
     products: generateMixedProducts(15),
     subcategories: [
-      "Antikvar",
-      "Hədiyyələr",
-      "Sənətkarlıq",
-      "Məktub və sənədlər",
-      "Çeşidli",
-      "Nadir tapıntılar",
+      "Kitablar",
+      "İdman inventarı",
+      "Musiqi alətləri",
+      "Kolleksiya əşyaları",
+      "Səyahət",
+      "Bağçılıq",
     ],
   },
   {
     id: "free",
-    name: "Pulsuz",
+    name: "Pulsuz Elanlar",
     slug: "pulsuz",
-    icon: "https://bolbol.az/media/2021/08/04/categories/Group_9638_9.svg",
+    icon: "https://bolbol.az/media/2021/08/04/categories/Group_9638_2.svg",
     href: "/pulsuz",
-    count: 543,
+    count: 892,
     products: MOCK_PRODUCTS.free,
     subcategories: [
       "Pulsuz verilir",
-      "Pulsuz xidmətlər",
-      "Pulsuz təlim",
-      "Pulsuz məshvərət",
-      "Pulsuz tədbirlər",
-      "Könüllü işlər",
+      "Dəyişmə",
+      "Hədiyyə",
+      "Könüllü xidmət",
+      "Təcrübə paylaşımı",
     ],
   },
 ];
 
-// Featured brands for vehicles
-export const VEHICLE_BRANDS = [
-  "Mercedes-Benz",
-  "BMW",
-  "Toyota",
-  "Hyundai",
-  "Kia",
-  "Nissan",
-  "Volkswagen",
-  "Audi",
-  "Honda",
-  "Mazda",
-  "Ford",
-  "Chevrolet",
-];
-
-// Popular locations with product counts
-export const LOCATIONS = [
-  { name: "Bakı", count: 45623 },
-  { name: "Gəncə", count: 8934 },
-  { name: "Sumqayıt", count: 6543 },
-  { name: "Mingəçevir", count: 3421 },
-  { name: "Qəbələ", count: 2876 },
-  { name: "Şəki", count: 2543 },
-  { name: "Yevlax", count: 1987 },
-  { name: "Naxçıvan", count: 1876 },
-];
-
-// Price ranges for filtering
-export const PRICE_RANGES = [
-  { label: "0 - 100 ₼", min: 0, max: 100 },
-  { label: "100 - 500 ₼", min: 100, max: 500 },
-  { label: "500 - 1000 ₼", min: 500, max: 1000 },
-  { label: "1000 - 5000 ₼", min: 1000, max: 5000 },
-  { label: "5000 - 20000 ₼", min: 5000, max: 20000 },
-  { label: "20000+ ₼", min: 20000, max: null },
-];
-
 // Helper functions
 export const getCategoryBySlug = (slug) => {
-  return CATEGORIES.find((cat) => cat.slug === slug);
+  return CATEGORIES.find((category) => category.slug === slug);
 };
 
 export const getCategoryById = (id) => {
-  return CATEGORIES.find((cat) => cat.id === id);
+  return CATEGORIES.find((category) => category.id === id);
 };
 
-export const getCategoryProducts = (categoryId, limit = null) => {
+export const getCategoryProducts = (categoryId, count = 15) => {
   const category = getCategoryById(categoryId);
   if (!category) return [];
-
-  return limit ? category.products.slice(0, limit) : category.products;
-};
-
-export const getPopularCategories = (limit = 6) => {
-  return CATEGORIES.sort((a, b) => b.count - a.count).slice(0, limit);
+  return category.products.slice(0, count);
 };
 
 export const searchProducts = (query, categoryId = null) => {
-  let products = [];
+  const searchTerm = query.toLowerCase();
+  let allProducts = [];
 
   if (categoryId) {
     const category = getCategoryById(categoryId);
-    products = category ? category.products : [];
+    allProducts = category ? category.products : [];
   } else {
     // Search across all categories
-    products = CATEGORIES.flatMap((cat) => cat.products);
+    CATEGORIES.forEach((category) => {
+      allProducts.push(...category.products);
+    });
   }
 
-  if (!query) return products;
-
-  const searchTerm = query.toLowerCase();
-  return products.filter(
+  return allProducts.filter(
     (product) =>
       product.title.toLowerCase().includes(searchTerm) ||
       product.location.toLowerCase().includes(searchTerm)
   );
+};
+
+// Search suggestions for autocomplete
+export const getSearchSuggestions = (query) => {
+  if (!query || query.length < 2) return [];
+
+  const suggestions = [];
+  const searchTerm = query.toLowerCase();
+
+  // Add matching product titles
+  Object.values(MOCK_PRODUCTS).forEach((productList) => {
+    if (Array.isArray(productList)) {
+      productList.forEach((product) => {
+        if (
+          product.title.toLowerCase().includes(searchTerm) &&
+          !suggestions.includes(product.title)
+        ) {
+          suggestions.push(product.title);
+        }
+      });
+    }
+  });
+
+  // Add matching category names
+  CATEGORIES.forEach((category) => {
+    if (
+      category.name.toLowerCase().includes(searchTerm) &&
+      !suggestions.includes(category.name)
+    ) {
+      suggestions.push(category.name);
+    }
+  });
+
+  return suggestions.slice(0, 10); // Limit to 10 suggestions
 };
 
 // Get category-specific phrases for search typing animation
