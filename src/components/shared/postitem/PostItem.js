@@ -74,6 +74,7 @@ const PostItem = ({
             className="post__title2"
             style={{
               display: "block",
+              fontSize: "14px",
             }}
           >
             {secondaryTitle || "\u00A0"}
