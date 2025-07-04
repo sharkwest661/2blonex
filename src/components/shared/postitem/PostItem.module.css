@@ -1,5 +1,4 @@
-/* Add this to your CSS file if the button still looks ugly */
-/* This ensures the button inherits the original post__favorites styling */
+/* src/components/shared/postitem/PostItem.module.css */
 
 .postItemReset {
   z-index: 1 !important;
@@ -14,7 +13,7 @@
   right: 5px;
   width: 32px;
   height: 32px;
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(255, 255, 255, 0.8);
   border: none;
   border-radius: 6px;
   cursor: pointer;
