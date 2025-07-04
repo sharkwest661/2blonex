@@ -8,6 +8,7 @@ const SectionTitle = ({
   title,
   icon = null,
   iconSize = 32,
+  iconMarginClass = "mr-10",
   buttonText = null,
   buttonHref = "#",
   alignment = "left", // "left", "center", "right"
@@ -43,7 +44,7 @@ const SectionTitle = ({
               <Image
                 src={icon}
                 alt=""
-                className="mr-10"
+                className={iconMarginClass}
                 width={iconSize}
                 height={iconSize}
               />

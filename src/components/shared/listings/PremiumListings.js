@@ -10,9 +10,9 @@ const PremiumListings = () => {
       <SectionTitle
         title="Premium elanlar"
         icon="/img/premium-icon.svg"
-        buttonText="Bütün premium elanlar"
+        iconMarginClass=""
         buttonHref="/premium-elanlar"
-        alignment="left"
+        alignment="center"
       />
 
       <div className="main_container">
