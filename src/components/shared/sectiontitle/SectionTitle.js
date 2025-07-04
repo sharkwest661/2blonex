@@ -7,6 +7,7 @@ import Select from "@/components/ui/forms/Select";
 const SectionTitle = ({
   title,
   icon = null,
+  iconSize = 32,
   buttonText = null,
   buttonHref = "#",
   alignment = "left", // "left", "center", "right"
@@ -43,8 +44,8 @@ const SectionTitle = ({
                 src={icon}
                 alt=""
                 className="mr-10"
-                width={24}
-                height={24}
+                width={iconSize}
+                height={iconSize}
               />
             )}
             {title}

@@ -9,6 +9,7 @@ const PremiumListings = () => {
     <section>
       <SectionTitle
         title="Premium elanlar"
+        icon="/img/premium-icon.svg"
         buttonText="Bütün premium elanlar"
         buttonHref="/premium-elanlar"
         alignment="left"
