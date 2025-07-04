@@ -1,6 +1,10 @@
+"use client";
 // src/components/shared/postitem/PostItem.js
 import Link from "next/link";
 import Image from "next/image";
+import { Heart } from "lucide-react";
+import { useFavoritesStore } from "@/store/useFavoritesStore";
+import styles from "./PostItem.module.css"; // Assuming you have a CSS module for styles
 
 const PostItem = ({
   id,
@@ -17,15 +21,25 @@ const PostItem = ({
   hasCredit = false,
   className = "",
 }) => {
+  // Favorites store hooks - using selective state picking
+  const isFavorited = useFavoritesStore((state) => state.isFavorited(id));
+  const toggleFavorite = useFavoritesStore((state) => state.toggleFavorite);
+
+  // Handle favorite button click
+  const handleFavoriteClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log(
+      "Heart clicked! Product ID:",
+      id,
+      "Currently favorited:",
+      isFavorited
+    );
+    toggleFavorite(id);
+  };
+
   return (
-    <div
-      className={`post__item ${className}`}
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        height: "100%",
-      }}
-    >
+    <div className={`post__item ${className} ${styles.postItemReset}`}>
       <div className="post__img">
         <Image src={image} alt="" width={280} height={200} />
         <div className="post__attributes">
@@ -45,7 +59,23 @@ const PostItem = ({
               title="Premium elan"
             ></span>
           )}
-          <a href="" className="post__favorites"></a>
+          {/* New heart button using lucide-react */}
+          <button
+            onClick={handleFavoriteClick}
+            className={styles.favoriteBtn}
+            type="button"
+            aria-label={
+              isFavorited ? "Seçilmişlərdən sil" : "Seçilmişlərə əlavə et"
+            }
+            title={isFavorited ? "Seçilmişlərdən sil" : "Seçilmişlərə əlavə et"}
+          >
+            <Heart
+              size={18}
+              fill={isFavorited ? "#e84c53" : "none"}
+              stroke={isFavorited ? "#e84c53" : "#666"}
+              strokeWidth={2}
+            />
+          </button>
         </div>
       </div>
       <div

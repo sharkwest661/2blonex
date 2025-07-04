@@ -1,0 +1,32 @@
+/* Add this to your CSS file if the button still looks ugly */
+/* This ensures the button inherits the original post__favorites styling */
+
+.postItemReset {
+  z-index: 1 !important;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.favoriteBtn {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 32px;
+  height: 32px;
+  background-color: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  z-index: 10;
+  transform: scale(1);
+}
+
+.favoriteBtn:hover {
+  background-color: rgba(255, 255, 255, 1);
+  transform: scale(1.1);
+}
