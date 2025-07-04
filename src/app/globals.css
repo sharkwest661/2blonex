@@ -7,8 +7,11 @@ Master CSS file that imports everything
 /* Import the original main.css (untouched) */
 @import "../styles/main.css";
 
-/* Import new component-specific styles */
+/* Import component-specific styles */
 @import "../styles/components.css";
 
 /* Import loading screen styles */
 @import "../styles/loading.css";
+
+/* Import modern mobile menu styles */
+@import "../styles/mobile-menu.css";
