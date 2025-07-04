@@ -12,9 +12,7 @@ export const metadata = {
 export default function Home() {
   return (
     <Layout>
-      <main>
-        <HomePage />
-      </main>
+      <HomePage />
     </Layout>
   );
 }

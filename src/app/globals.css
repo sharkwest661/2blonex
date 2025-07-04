@@ -15,3 +15,5 @@ Master CSS file that imports everything
 
 /* Import modern mobile menu styles */
 @import "../styles/mobile-menu.css";
+
+@import "../styles/main-reset.css";
