@@ -439,3 +439,18 @@
   position: relative !important;
   z-index: 1 !important;
 }
+
+.post__info p {
+  margin-bottom: 5px !important;
+
+  /* Ellipsis styling for location field */
+  overflow: hidden !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+
+  /* Optional: Set max-width to control truncation point */
+  max-width: 100% !important;
+
+  /* Ensure it's a block element for ellipsis to work */
+  display: block !important;
+}
