@@ -75,15 +75,13 @@ const PostItem = ({
           </Link>
         )}
         <div className="px-5">
-          <Link href={href} className="post__title">
+          <Link href={href} className="post__title" title={title}>
             {title}
           </Link>
-          {secondaryTitle && (
-            <Link href={href} className="post__title2">
-              {secondaryTitle}
-            </Link>
-          )}
-          <p>
+          <Link href={href} className="post__title2" title={secondaryTitle}>
+            {secondaryTitle}
+          </Link>
+          <p title={(location, date)}>
             {location}, {date}
           </p>
         </div>
