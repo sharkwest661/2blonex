@@ -72,8 +72,7 @@ const Footer = () => {
             <a href="" className="contact__network facebook"></a>
             <a href="" className="contact__network instagram"></a>
             <span className="contact__tel">
-              Dəstək:
-              <a href="tel:051123456">051 123 45 67</a>
+              Dəstək: <a href="tel:051123456">051 123 45 67</a>
             </span>
             <a href="" className="contact__network whatsapp"></a>
             <a href="" className="contact__network telegram"></a>

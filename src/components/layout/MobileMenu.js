@@ -195,7 +195,7 @@ const MobileMenu = ({
           <div className="footer-contact">
             <div className="contact-item">
               <span className="contact-label">Dəstək xətti:</span>
-              <a href="tel:012555650055262650" className="contact-link">
+              <a href="tel:012555650" className="contact-link">
                 012 555 65 00
               </a>
             </div>

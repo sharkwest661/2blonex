@@ -1,45 +1,52 @@
-"use client";
 // src/components/shared/postitem/PostItem.js
+"use client";
 import Link from "next/link";
-import Image from "next/image";
 import { useFavoritesStore } from "@/store/useFavoritesStore";
 
 const PostItem = ({
+  // Original props
   id,
   title,
-  secondaryTitle = "", // e.g., "2020, 4.0 L, 23 000 km"
+  secondaryTitle,
   price,
   location,
   date,
   image,
   href = "#",
-  isVip = false,
-  isPremium = false,
-  hasBarter = false,
-  hasCredit = false,
-  className = "",
-}) => {
-  // Favorites store hooks - using selective state picking
-  const isFavorited = useFavoritesStore((state) => state.isFavorited(id));
-  const toggleFavorite = useFavoritesStore((state) => state.toggleFavorite);
+  isVip,
+  isPremium,
+  hasBarter,
+  hasCredit,
+  category = "other",
 
-  // Handle favorite button click
-  const handleFavoriteClick = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    toggleFavorite(id);
+  // Store-related props
+  storeName,
+  storeImage,
+  storeHref,
+
+  // NEW: Variant prop for different layouts
+  variant = "default", // "default" | "standalone"
+}) => {
+  const { favorites, addToFavorites, removeFromFavorites } =
+    useFavoritesStore();
+  const isFavorited = favorites.includes(id);
+
+  const handleFavoriteClick = () => {
+    if (isFavorited) {
+      removeFromFavorites(id);
+    } else {
+      addToFavorites(id);
+    }
   };
 
+  // Choose CSS class based on variant
+  const itemClass =
+    variant === "standalone" ? "post__item--standalone" : "post__item";
+
   return (
-    <div className={`post__item ${className}`}>
+    <div className={itemClass}>
       <div className="post__img">
-        <Image
-          src={image}
-          alt=""
-          width={280}
-          height={200}
-          style={{ width: "100%", height: "100%", objectFit: "cover" }}
-        />
+        <img src={image} alt="" />
         <div className="post__attributes">
           {isVip && (
             <span
@@ -49,17 +56,9 @@ const PostItem = ({
               title="VIP elan"
             ></span>
           )}
-          {isPremium && (
-            <span
-              className="post__premium"
-              data-toggle="tooltip"
-              data-placement="top"
-              title="Premium elan"
-            ></span>
-          )}
           <button
             onClick={handleFavoriteClick}
-            className={`post__favorites ${isFavorited ? "active" : ""}`}
+            className={`post__favorites${isFavorited ? " active" : ""}`}
             type="button"
             aria-label={
               isFavorited ? "Seçilmişlərdən sil" : "Seçilmişlərə əlavə et"
@@ -69,13 +68,21 @@ const PostItem = ({
         </div>
       </div>
       <div className="post__info">
+        {storeName && (
+          <Link href={storeHref || "#"} className="post__store">
+            <img src={storeImage || "/img/example/seller.svg"} alt="" />
+            <span>{storeName}</span>
+          </Link>
+        )}
         <div className="px-5">
           <Link href={href} className="post__title">
             {title}
           </Link>
-          <Link href={href} className="post__title2">
-            {secondaryTitle}
-          </Link>
+          {secondaryTitle && (
+            <Link href={href} className="post__title2">
+              {secondaryTitle}
+            </Link>
+          )}
           <p>
             {location}, {date}
           </p>
