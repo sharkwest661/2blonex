@@ -51,7 +51,7 @@ export default function FavoritesPage() {
   return (
     <Layout>
       <section className="pb-0 d-md-none">
-        <div className="container-fluid">
+        <div className="main_container">
           <div className="search">
             <form action="">
               <div className="input-group search__group">
@@ -70,7 +70,7 @@ export default function FavoritesPage() {
       </section>
 
       <section>
-        <div className="container-fluid">
+        <div className="main_container">
           <h1
             style={{
               fontSize: "2.4rem",
