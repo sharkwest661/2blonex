@@ -2,7 +2,7 @@
 import Link from "next/link";
 
 const Footer = () => {
-  const cities = [
+  const mainCities = [
     "Bakı",
     "Sumqayıt",
     "Xırdalan",
@@ -14,55 +14,74 @@ const Footer = () => {
     "Mingəçevir",
     "Şəki",
     "Qusar",
-    "Şirvan",
-    "Ağcabədi",
-    "Ağdam",
-    "Ağdaş",
-    "Ağstafa",
-    "Astara",
-    "Balakən",
-    "Bərdə",
-    "Beyləqan",
-    "Biləsuvar",
-    "Cəbrayıl",
-    "Cəlilabad",
-    "Culfa",
-    "Daşkəsən",
-    "Dəvəçi",
-    "Fizuli",
-    "Gədəbəy",
-    "Goranboy",
-    "Göyçay",
-    "Hacıqabul",
-    "İmişli",
-    "İsmayıllı",
-    "Kəlbəcər",
-    "Kürdəmir",
-    "Laçın",
-    "Lerik",
-    "Masallı",
-    "Neftçala",
-    "Oğuz",
-    "Qax",
-    "Qazax",
-    "Qobustan",
-    "Qubadlı",
-    "Saatlı",
-    "Sabirabad",
-    "Şabran",
-    "Şəmkir",
-    "Şuşa",
-    "Tərtər",
-    "Tovuz",
-    "Ucar",
-    "Xocalı",
-    "Xocavənd",
-    "Yardımlı",
-    "Yevlax",
-    "Zəngilan",
-    "Zərdab",
-    "Zaqatala",
+    "Şirvan"
   ];
+const cities = [
+  "Ağcabədi",
+  "Ağdam",
+  "Ağdaş",
+  "Ağdərə",
+  "Ağstafa",
+  "Ağsu",
+  "Astara",
+  "Balakən",
+  "Beyləqan",
+  "Bərdə",
+  "Biləsuvar",
+  "Cəbrayıl",
+  "Cəlilabad",
+  "Culfa",
+  "Daşkəsən",
+  "Füzuli",
+  "Gədəbəy",
+  "Goranboy",
+  "Göyçay",
+  "Göygöl",
+  "Göytəpə",
+  "Hacıqabul",
+  "Horadiz",
+  "İmişli",
+  "İsmayıllı",
+  "Kəlbəcər",
+  "Kürdəmir",
+  "Laçın",
+  "Lerik",
+  "Masallı",
+  "Nabran",
+  "Naftalan",
+  "Naxçıvan",
+  "Neftçala",
+  "Oğuz",
+  "Ordubad",
+  "Qax",
+  "Qazax",
+  "Qobustan",
+  "Qubadlı",
+  "Saatlı",
+  "Sabirabad",
+  "Şabran",
+  "Şahbuz",
+  "Salyan",
+  "Şamaxı",
+  "Samux",
+  "Şəmkir",
+  "Şərur",
+  "Siyəzən",
+  "Şuşa",
+  "Tərtər",
+  "Tovuz",
+  "Ucar",
+  "Xankəndi",
+  "Xızı",
+  "Xocalı",
+  "Xocavənd",
+  "Xudat",
+  "Yardımlı",
+  "Yevlax",
+  "Zaqatala",
+  "Zəngilan",
+  "Zərdab"
+];
 
   return (
     <footer className="footer">
@@ -98,6 +117,13 @@ const Footer = () => {
 
         {/* Cities List - Desktop Only */}
         <div className="d-none d-md-block">
+          <ul className="footer__cities">
+            {mainCities.map((city, index) => (
+              <li key={index}>
+                <Link href={`/city/${city.toLowerCase()}`}>{city}</Link>
+              </li>
+            ))}
+          </ul>
           <ul className="footer__cities">
             {cities.map((city, index) => (
               <li key={index}>
