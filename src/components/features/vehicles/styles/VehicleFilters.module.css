@@ -1,0 +1,280 @@
+/* features/vehicles/styles/VehicleFilters.module.css */
+
+.filtersSection {
+  margin-bottom: 32px;
+}
+
+.filtersContainer {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.titleCategory {
+  font-size: 24px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.desctopFilters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 24px;
+  align-items: flex-start;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* Width Classes */
+.forWidth20 {
+  flex: 0 0 calc(20% - 12px);
+  min-width: 180px;
+}
+
+.forWidthSmall {
+  flex: 0 0 calc(15% - 12px);
+  min-width: 140px;
+}
+
+.forWidthBig {
+  flex: 0 0 calc(25% - 12px);
+  min-width: 220px;
+}
+
+.grow1 {
+  flex-grow: 1;
+}
+
+/* Order Classes */
+.order1 {
+  order: 1;
+}
+.order2 {
+  order: 2;
+}
+.order3 {
+  order: 3;
+}
+.order4 {
+  order: 4;
+}
+.order5 {
+  order: 5;
+}
+.order6 {
+  order: 6;
+}
+.order7 {
+  order: 7;
+}
+.order8 {
+  order: 8;
+}
+.order9 {
+  order: 9;
+}
+.order10 {
+  order: 10;
+}
+.order11 {
+  order: 11;
+}
+.order12 {
+  order: 12;
+}
+.order13 {
+  order: 13;
+}
+.order14 {
+  order: 14;
+}
+.order15 {
+  order: 15;
+}
+.order16 {
+  order: 16;
+}
+.order17 {
+  order: 17;
+}
+
+/* Special Groups */
+.litrGroup {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+}
+
+.litrGroup .formGroup {
+  flex: 1;
+}
+
+.yearGroup {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+}
+
+.yearGroup .formGroup {
+  flex: 1;
+}
+
+.forCredit {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  padding-top: 20px;
+}
+
+.additionalChekingsHero {
+  width: 100%;
+  margin-top: 16px;
+}
+
+.additionalChekingsTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 12px;
+}
+
+.additionalChekings {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Hide/Show Classes */
+.dnone {
+  display: none !important;
+}
+
+.dFlex {
+  display: flex !important;
+}
+
+/* Filter Buttons */
+.descFiltersBtns {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding-top: 20px;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* Results Layout */
+.resultsSection {
+  margin-top: 32px;
+}
+
+.resultsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.resultsHeader h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.resultsCount {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .forWidth20 {
+    flex: 0 0 calc(25% - 12px);
+  }
+
+  .forWidthBig {
+    flex: 0 0 calc(33.333% - 12px);
+  }
+}
+
+@media (max-width: 992px) {
+  .forWidth20,
+  .forWidthSmall,
+  .forWidthBig {
+    flex: 0 0 calc(33.333% - 12px);
+    min-width: 160px;
+  }
+}
+
+@media (max-width: 768px) {
+  .desctopFilters {
+    gap: 12px;
+  }
+
+  .forWidth20,
+  .forWidthSmall,
+  .forWidthBig {
+    flex: 0 0 calc(50% - 6px);
+    min-width: 140px;
+  }
+
+  .titleCategory {
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+
+  .litrGroup,
+  .yearGroup {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .additionalChekings {
+    gap: 6px;
+  }
+}
+
+@media (max-width: 576px) {
+  .forWidth20,
+  .forWidthSmall,
+  .forWidthBig {
+    flex: 0 0 100%;
+    min-width: auto;
+  }
+
+  .descFiltersBtns {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .resultsHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}
+
+/* Container Layout */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.filtersLayout {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}

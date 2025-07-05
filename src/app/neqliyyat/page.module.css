@@ -1,0 +1,171 @@
+/* app/neqliyyat/page.module.css */
+
+.vehiclesPage {
+  background: #f5f6fc;
+  min-height: 100vh;
+  padding: 20px 0 40px;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.vehiclesContent {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.vehiclesResults {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.resultsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e5e7eb;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.resultsTitle {
+  font-size: 20px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.resultsCount {
+  font-size: 14px;
+  color: #6b7280;
+  padding: 8px 16px;
+  background: #f8fafc;
+  border-radius: 8px;
+}
+
+.resultsSort {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.resultsSort label {
+  font-size: 14px;
+  color: #374151;
+  font-weight: 500;
+}
+
+.sortSelect {
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #374151;
+  background: white;
+  min-width: 180px;
+}
+
+.sortSelect:focus {
+  outline: none;
+  border-color: #013f44;
+  box-shadow: 0 0 0 3px rgba(1, 63, 68, 0.1);
+}
+
+.loadMoreSection {
+  display: flex;
+  justify-content: center;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.loadMoreBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: #013f44;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.loadMoreBtn:hover {
+  background: #20b038;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(1, 63, 68, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .vehiclesPage {
+    padding: 16px 0 24px;
+  }
+
+  .container {
+    padding: 0 8px;
+  }
+
+  .vehiclesContent {
+    gap: 20px;
+  }
+
+  .vehiclesResults {
+    padding: 16px;
+    border-radius: 12px;
+  }
+
+  .resultsHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .resultsTitle {
+    font-size: 18px;
+  }
+
+  .resultsSort {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .sortSelect {
+    min-width: 160px;
+  }
+
+  .loadMoreBtn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 576px) {
+  .resultsCount {
+    width: 100%;
+    text-align: center;
+  }
+
+  .resultsSort {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .sortSelect {
+    width: 100%;
+    min-width: auto;
+  }
+}
