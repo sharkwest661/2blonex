@@ -8,7 +8,7 @@ const VipListings = () => {
   return (
     <section>
       <SectionTitle
-        title="VIP elanlar"
+        title="VIP Elanlar"
         icon="/img/vip-large.svg"
         iconSize={40}
         buttonText="Bütün VIP elanlar"

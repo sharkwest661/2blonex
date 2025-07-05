@@ -67,7 +67,7 @@ const Header = () => {
               <a href="" className="contact__network facebook"></a>
               <a href="" className="contact__network instagram"></a>
               <span className="contact__tel">
-                Dəstək:
+                Dəstək:{" "}
                 <a href="tel:012555650055262650">
                   012 555 65 00 | 055 262 65 00
                 </a>

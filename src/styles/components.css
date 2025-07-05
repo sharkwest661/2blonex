@@ -164,6 +164,10 @@ New component-specific styles (separate from main.css)
   }
 }
 
+.react-select-container {
+  font-family: "Arimo-Regular";
+}
+
 .datefiltersort_form {
   /* margin-right: 100px !important; */
 }
