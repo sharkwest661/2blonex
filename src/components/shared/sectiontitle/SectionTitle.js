@@ -53,7 +53,7 @@ const SectionTitle = ({
           </span>
 
           {showSortSelect && (
-            <form>
+            <form className="datefiltersort_form">
               <div className="form-group sort__select desktop-sort">
                 <Select
                   options={sortOptions}
