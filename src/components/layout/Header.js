@@ -129,7 +129,7 @@ const Header = () => {
               <div className="collapse navbar-collapse d-none d-md-block">
                 <div className="header__links">
                   <Link
-                    href="/favorites"
+                    href="/secilmislerim"
                     className="header__link header__link--favorites"
                   >
                     Seçdiklərim

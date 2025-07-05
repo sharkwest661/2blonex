@@ -34,7 +34,7 @@ const MobileMenu = ({
     {
       icon: <Heart size={24} />,
       label: "Seçdiklərim",
-      href: "/favorites",
+      href: "/secilmislerim",
       badge: "5",
     },
     {
