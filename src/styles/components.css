@@ -253,9 +253,9 @@ New component-specific styles (separate from main.css)
 
 /* Container styling */
 .favorites__container {
-  background-color: #fff;
+  /* background-color: #fff; */
   border-radius: 10px;
-  padding: 20px;
+  /* padding: 20px; */
   margin-top: 20px;
   box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.05);
 }
