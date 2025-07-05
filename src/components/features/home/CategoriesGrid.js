@@ -12,82 +12,82 @@ const CategoriesGrid = () => {
   const categories = [
     {
       href: "neqliyyat.html",
-      icon: "https://bolbol.az/media/2021/08/04/categories/Group_9638.svg",
+      icon: "img/category-icons/bolbol_icons_nəqliyyat.svg",
       name: "Nəqliyyat",
     },
     {
       href: "dashinmaz_emlak_checks.html",
-      icon: "https://bolbol.az/media/2021/08/04/categories/Group_9640.svg",
+      icon: "img/category-icons/bolbol_icons_daşınmaz_əmlak.svg",
       name: "Daşınmaz Əmlak",
     },
     {
       href: "",
-      icon: "https://bolbol.az/media/2021/08/04/categories/Group_9639.svg",
+      icon: "img/category-icons/bolbol_icons_geyim.svg",
       name: "Geyim",
     },
     {
       href: "",
-      icon: "https://bolbol.az/media/2021/08/04/categories/Group_9638_1.svg",
+      icon: "img/category-icons/bolbol_icons_uşaq aləmi.svg",
       name: "Uşaq aləmi",
     },
     {
       href: "",
-      icon: "https://bolbol.az/media/2021/08/04/categories/Group_9638_2.svg",
+      icon: "img/category-icons/bolbol_icons_kosmetika.svg",
       name: "Kosmetika və sağlamlıq",
     },
     {
       href: "ish_elanlari.html",
-      icon: "https://bolbol.az/media/2021/08/04/categories/Group_9638_3.svg",
+      icon: "img/category-icons/bolbol_icons_iş elanları.svg",
       name: "İş Elanları",
     },
     {
       href: "kategoriya.html",
-      icon: "https://bolbol.az/media/2021/08/04/categories/Group_9638_4.svg",
+      icon: "img/category-icons/bolbol_icons_elektronika.svg",
       name: "Elektronika",
     },
     {
       href: "",
-      icon: "https://bolbol.az/media/2021/08/04/categories/Group_9639_1.svg",
+      icon: "img/category-icons/bolbol_icons_ev_bağ.svg",
       name: "Ev və bağ üçün",
     },
     {
       href: "",
-      icon: "https://bolbol.az/media/2021/08/04/categories/Group_9640_2.svg",
+      icon: "img/category-icons/bolbol_icons_ərzaq.svg",
       name: "Ərzaq",
     },
     {
       href: "",
-      icon: "https://bolbol.az/media/2021/08/04/categories/Group_9638_5.svg",
+      icon: "img/category-icons/bolbol_icons_heyvan_bitki.svg",
       name: "Heyvan, Bitki",
     },
     {
       href: "",
-      icon: "https://bolbol.az/media/2021/08/04/categories/Group_9638_8.svg",
+      icon: "img/category-icons/bolbol_icons_idman_musiqi_hobbi.svg",
       name: "İdman, musiqi, hobbi",
     },
     {
       href: "",
-      icon: "https://bolbol.az/media/2021/08/04/categories/Group_9638_7.svg",
+      icon: "img/category-icons/bolbol_icons_digər.svg",
       name: "Digər",
     },
     {
       href: "",
-      icon: "https://bolbol.az/media/2021/08/04/categories/Group_9638_6.svg",
+      icon: "img/category-icons/bolbol_icons_xidmətlər.svg",
       name: "Xidmətlər",
     },
     {
       href: "",
-      icon: "https://bolbol.az/media/2021/08/04/categories/Group_9638_9.svg",
+      icon: "img/category-icons/bolbol_icons_pulsuz.svg",
       name: "Pulsuz",
     },
     {
       href: "",
-      icon: "https://bolbol.az/media/2021/08/04/categories/Group_9638_10.svg",
+      icon: "img/category-icons/bolbol_icons_super fürsət.svg",
       name: "Super Fürsət",
     },
     {
       href: "",
-      icon: "https://bolbol.az/media/2021/08/04/categories/Group_9638_11.svg",
+      icon: "img/category-icons/bolbol_icons_mağaza və şirkətlər.svg",
       name: "Mağaza və şirkətlər",
     },
   ];
