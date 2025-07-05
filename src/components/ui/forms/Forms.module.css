@@ -1,0 +1,714 @@
+/* components/ui/forms/Forms.module.css */
+
+/* ========== DROPDOWN COMPONENT ========== */
+.dropdownWrapper {
+  position: relative;
+  width: 100%;
+}
+
+.dropdownTrigger {
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 16px;
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.dropdownTrigger:hover:not(.disabled) {
+  border-color: #013f44;
+  box-shadow: 0 0 0 3px rgba(1, 63, 68, 0.1);
+}
+
+.dropdownTrigger.open {
+  border-color: #013f44;
+  box-shadow: 0 0 0 3px rgba(1, 63, 68, 0.1);
+}
+
+.dropdownTrigger.disabled {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.dropdownTrigger.hasValue {
+  color: #111827;
+}
+
+.dropdownValue {
+  flex: 1;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dropdownArrow {
+  transition: transform 0.2s ease;
+  color: #6b7280;
+  flex-shrink: 0;
+}
+
+.dropdownArrow.rotated {
+  transform: rotate(180deg);
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  margin-top: 4px;
+  box-shadow:
+    0 10px 25px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  max-height: 300px;
+  overflow: hidden;
+  animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdownSearch {
+  padding: 12px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.dropdownSearchInput {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.dropdownSearchInput:focus {
+  border-color: #013f44;
+}
+
+.dropdownOptions {
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.dropdownOption {
+  width: 100%;
+  padding: 12px 16px;
+  text-align: left;
+  border: none;
+  background: white;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  font-size: 14px;
+  color: #374151;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dropdownOption:hover {
+  background: #f8fafc;
+}
+
+.dropdownOption.selected {
+  background: #e8ffea;
+  color: #013f44;
+  font-weight: 500;
+}
+
+.dropdownNoOptions {
+  padding: 16px;
+  text-align: center;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.dropdownOptions::-webkit-scrollbar {
+  width: 6px;
+}
+
+.dropdownOptions::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+.dropdownOptions::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+.dropdownOptions::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* ========== RANGE INPUT COMPONENT ========== */
+.rangeInputWrapper {
+  width: 100%;
+}
+
+.rangeInputs {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.rangeField {
+  flex: 1;
+  position: relative;
+}
+
+.rangeLabel {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: #6b7280;
+  margin-bottom: 6px;
+  transition: color 0.2s ease;
+}
+
+.rangeField.focused .rangeLabel {
+  color: #013f44;
+}
+
+.inputContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.rangeInput {
+  width: 100%;
+  height: 48px;
+  padding: 12px 16px;
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.rangeInput.withSuffix {
+  padding-right: 40px;
+}
+
+.rangeInput::placeholder {
+  color: #9ca3af;
+  font-weight: 400;
+}
+
+.rangeInput:hover:not(:disabled) {
+  border-color: #013f44;
+}
+
+.rangeInput:focus {
+  border-color: #013f44;
+  box-shadow: 0 0 0 3px rgba(1, 63, 68, 0.1);
+}
+
+.rangeInput:disabled {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.inputSuffix {
+  position: absolute;
+  right: 16px;
+  color: #6b7280;
+  font-size: 14px;
+  font-weight: 500;
+  pointer-events: none;
+}
+
+.rangeSeparator {
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+  flex-shrink: 0;
+}
+
+.rangeField.hasValue .rangeInput {
+  color: #111827;
+}
+
+.rangeField.disabled .rangeLabel {
+  opacity: 0.6;
+}
+
+.rangeInput[type="number"]::-webkit-outer-spin-button,
+.rangeInput[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.rangeInput[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* ========== RADIO GROUP COMPONENT ========== */
+.radioGroup {
+  display: flex;
+  gap: 12px;
+}
+
+.radioGroup.horizontal {
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.radioGroup.vertical {
+  flex-direction: column;
+}
+
+.radioGroup.disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.radioOption {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.radioOption.disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.radioInput {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.radioContent {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.radioLabel {
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.radioDescription {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.radioIcon {
+  margin-left: auto;
+  color: #9ca3af;
+}
+
+/* Default variant */
+.radioGroup.default .radioOption {
+  gap: 8px;
+  padding: 4px;
+}
+
+.radioGroup.default .radioIndicator {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #d1d5db;
+  border-radius: 50%;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.radioGroup.default .radioOption:hover:not(.disabled) .radioIndicator {
+  border-color: #013f44;
+}
+
+.radioGroup.default .radioOption.selected .radioIndicator {
+  border-color: #013f44;
+  background: #013f44;
+}
+
+.radioOption.selected .radioLabel {
+  color: #fff;
+}
+
+.radioOption:hover:not(.disabled) .radioLabel {
+  color: #013f44;
+}
+
+.radioGroup.default .radioDot {
+  width: 8px;
+  height: 8px;
+  background: white;
+  border-radius: 50%;
+}
+
+/* Card variant */
+.radioGroup.card .radioOption {
+  padding: 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  background: white;
+  gap: 12px;
+  min-width: 120px;
+}
+
+.radioGroup.card .radioOption:hover:not(.disabled) {
+  border-color: #013f44;
+  box-shadow: 0 0 0 3px rgba(1, 63, 68, 0.1);
+}
+
+.radioGroup.card .radioOption.selected {
+  border-color: #013f44;
+  background: #e8ffea;
+  box-shadow: 0 0 0 3px rgba(1, 63, 68, 0.1);
+}
+
+.radioGroup.card .radioIndicator {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #d1d5db;
+  border-radius: 50%;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.radioGroup.card .radioOption.selected .radioIndicator {
+  border-color: #013f44;
+  background: #013f44;
+}
+
+.radioGroup.card .radioDot {
+  width: 6px;
+  height: 6px;
+  background: white;
+  border-radius: 50%;
+}
+
+/* Button variant */
+.radioGroup.button .radioOption {
+  padding: 12px 20px;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  background: white;
+  font-weight: 500;
+  justify-content: center;
+  min-width: 80px;
+}
+
+.radioGroup.button .radioOption:hover:not(.disabled) {
+  border-color: #013f44;
+  background: #f8fafc;
+}
+
+.radioGroup.button .radioOption.selected {
+  border-color: #013f44;
+  background: #013f44;
+  color: white;
+}
+
+.radioGroup.button .radioIndicator {
+  display: none;
+}
+
+/* ========== CHECKBOX GROUP COMPONENT ========== */
+.checkboxGroup {
+  display: flex;
+  gap: 12px;
+}
+
+.checkboxGroup.horizontal {
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.checkboxGroup.vertical {
+  flex-direction: column;
+}
+
+.checkboxGroup.disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.checkboxOption {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.checkboxOption.disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.checkboxInput {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.checkboxContent {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.checkboxLabel {
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.checkboxDescription {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* Default variant */
+.checkboxGroup.default .checkboxOption {
+  gap: 8px;
+  padding: 4px;
+}
+
+.checkboxGroup.default .checkboxIndicator {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #d1d5db;
+  border-radius: 4px;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.checkboxGroup.default .checkboxOption:hover:not(.disabled) .checkboxIndicator {
+  border-color: #013f44;
+}
+
+.checkboxGroup.default .checkboxOption.checked .checkboxIndicator {
+  border-color: #013f44;
+  background: #013f44;
+}
+
+.checkboxGroup.default .checkIcon {
+  color: white;
+  width: 12px;
+  height: 12px;
+}
+
+/* Card variant */
+.checkboxGroup.card .checkboxOption {
+  padding: 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  background: white;
+  gap: 12px;
+  min-width: 120px;
+}
+
+.checkboxGroup.card .checkboxOption:hover:not(.disabled) {
+  border-color: #013f44;
+  box-shadow: 0 0 0 3px rgba(1, 63, 68, 0.1);
+}
+
+.checkboxGroup.card .checkboxOption.checked {
+  border-color: #013f44;
+  background: #e8ffea;
+  box-shadow: 0 0 0 3px rgba(1, 63, 68, 0.1);
+}
+
+.checkboxGroup.card .checkboxIndicator {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #d1d5db;
+  border-radius: 4px;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.checkboxGroup.card .checkboxOption.checked .checkboxIndicator {
+  border-color: #013f44;
+  background: #013f44;
+}
+
+.checkboxGroup.card .checkIcon {
+  color: white;
+  width: 10px;
+  height: 10px;
+}
+
+/* ========== FILTER BUTTONS COMPONENT ========== */
+.filterButtons {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.filterButton {
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  outline: none;
+}
+
+.filterButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.resetButton {
+  background: #f8fafc;
+  color: #64748b;
+  border: 2px solid #e2e8f0;
+}
+
+.resetButton:hover:not(:disabled) {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.moreFiltersButton {
+  background: white;
+  color: #374151;
+  border: 2px solid #e2e8f0;
+}
+
+.moreFiltersButton:hover:not(:disabled) {
+  background: #f8fafc;
+  border-color: #013f44;
+  color: #013f44;
+}
+
+.moreFiltersButton.expanded {
+  background: #e8ffea;
+  border-color: #013f44;
+  color: #013f44;
+}
+
+.showResultsButton {
+  background: #013f44;
+  color: white;
+  border: 2px solid #013f44;
+  font-weight: 600;
+}
+
+.showResultsButton:hover:not(:disabled) {
+  background: #20b038;
+  border-color: #20b038;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(1, 63, 68, 0.3);
+}
+
+.buttonIcon {
+  transition: transform 0.2s ease;
+}
+
+.moreFiltersButton.expanded .buttonIcon {
+  transform: rotate(180deg);
+}
+
+/* ========== RESPONSIVE DESIGN ========== */
+@media (max-width: 640px) {
+  .rangeInputs {
+    gap: 8px;
+  }
+
+  .rangeInput {
+    height: 44px;
+    padding: 10px 14px;
+    font-size: 14px;
+  }
+
+  .rangeInput.withSuffix {
+    padding-right: 36px;
+  }
+
+  .rangeLabel {
+    font-size: 11px;
+    margin-bottom: 4px;
+  }
+
+  .inputSuffix {
+    right: 14px;
+    font-size: 13px;
+  }
+
+  .dropdownTrigger,
+  .rangeInput {
+    min-height: 44px;
+  }
+
+  .filterButtons {
+    gap: 8px;
+  }
+
+  .filterButton {
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+
+  .radioGroup.horizontal,
+  .checkboxGroup.horizontal {
+    gap: 8px;
+  }
+
+  .radioGroup.card .radioOption,
+  .checkboxGroup.card .checkboxOption {
+    padding: 12px;
+    min-width: 100px;
+  }
+}

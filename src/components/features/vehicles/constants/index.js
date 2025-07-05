@@ -1,0 +1,78 @@
+// features/vehicles/constants/index.js - Vehicle data constants
+export const VEHICLE_CONSTANTS = {
+  CAR_BRANDS: [
+    { value: "bmw", label: "BMW" },
+    { value: "mercedes", label: "Mercedes-Benz" },
+    { value: "audi", label: "Audi" },
+    { value: "toyota", label: "Toyota" },
+    { value: "hyundai", label: "Hyundai" },
+    { value: "kia", label: "KIA" },
+    { value: "volkswagen", label: "Volkswagen" },
+    { value: "nissan", label: "Nissan" },
+    { value: "honda", label: "Honda" },
+    { value: "ford", label: "Ford" },
+    { value: "chevrolet", label: "Chevrolet" },
+    { value: "lada", label: "LADA" },
+    { value: "mazda", label: "Mazda" },
+    { value: "mitsubishi", label: "Mitsubishi" },
+    { value: "skoda", label: "Škoda" },
+    { value: "renault", label: "Renault" },
+    { value: "peugeot", label: "Peugeot" },
+    { value: "citroen", label: "Citroën" },
+    { value: "opel", label: "Opel" },
+    { value: "seat", label: "SEAT" },
+  ],
+
+  FUEL_TYPES: [
+    { value: "petrol", label: "Benzin" },
+    { value: "diesel", label: "Dizel" },
+    { value: "gas", label: "Qaz" },
+    { value: "hybrid", label: "Hibrid" },
+    { value: "electric", label: "Elektrik" },
+  ],
+
+  BODY_TYPES: [
+    { value: "sedan", label: "Sedan" },
+    { value: "hatchback", label: "Hetçbek" },
+    { value: "suv", label: "SUV" },
+    { value: "coupe", label: "Kupe" },
+    { value: "convertible", label: "Kabriolet" },
+    { value: "wagon", label: "Universal" },
+    { value: "pickup", label: "Pikap" },
+    { value: "minivan", label: "Mikroavtobus" },
+  ],
+
+  TRANSMISSIONS: [
+    { value: "manual", label: "Mexaniki" },
+    { value: "automatic", label: "Avtomat" },
+    { value: "robot", label: "Robot" },
+    { value: "variator", label: "Variator" },
+  ],
+
+  DRIVETRAIN_TYPES: [
+    { value: "front", label: "Ön ötürücü" },
+    { value: "rear", label: "Arxa ötürücü" },
+    { value: "awd", label: "Tam ötürücü" },
+  ],
+
+  VEHICLE_EQUIPMENT: [
+    { value: "abs", label: "ABS" },
+    { value: "airbags", label: "Təhlükəsizlik yastığı" },
+    { value: "climate", label: "Kondisioner" },
+    { value: "leather", label: "Dəri salon" },
+    { value: "sunroof", label: "Lyuk" },
+    { value: "navigation", label: "Naviqasiya" },
+    { value: "parking_sensors", label: "Park sensoru" },
+    { value: "rear_camera", label: "Arxa kamera" },
+    { value: "xenon", label: "Ksenon" },
+    { value: "led", label: "LED" },
+    { value: "heated_seats", label: "Oturacaq isitmesi" },
+    { value: "rain_sensor", label: "Yağış sensoru" },
+    { value: "cruise_control", label: "Kruiz kontrol" },
+    { value: "bluetooth", label: "Bluetooth" },
+    { value: "usb", label: "USB" },
+    { value: "auxiliary", label: "AUX" },
+    { value: "electric_windows", label: "Elektrik pəncərələr" },
+    { value: "central_lock", label: "Mərkəzi qapanma" },
+  ],
+};
