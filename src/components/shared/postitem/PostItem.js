@@ -2,19 +2,17 @@
 // src/components/shared/postitem/PostItem.js
 import Link from "next/link";
 import Image from "next/image";
-import { Heart } from "lucide-react";
 import { useFavoritesStore } from "@/store/useFavoritesStore";
-import styles from "./PostItem.module.css"; // Assuming you have a CSS module for styles
 
 const PostItem = ({
   id,
   title,
-  secondaryTitle = "", // Always present, can be empty
+  secondaryTitle = "", // e.g., "2020, 4.0 L, 23 000 km"
   price,
   location,
   date,
   image,
-  href,
+  href = "#",
   isVip = false,
   isPremium = false,
   hasBarter = false,
@@ -29,19 +27,19 @@ const PostItem = ({
   const handleFavoriteClick = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log(
-      "Heart clicked! Product ID:",
-      id,
-      "Currently favorited:",
-      isFavorited
-    );
     toggleFavorite(id);
   };
 
   return (
-    <div className={`post__item ${className} ${styles.postItemReset}`}>
+    <div className={`post__item ${className}`}>
       <div className="post__img">
-        <Image src={image} alt="" width={280} height={200} />
+        <Image
+          src={image}
+          alt=""
+          width={280}
+          height={200}
+          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+        />
         <div className="post__attributes">
           {isVip && (
             <span
@@ -59,57 +57,26 @@ const PostItem = ({
               title="Premium elan"
             ></span>
           )}
-          {/* New heart button using lucide-react */}
           <button
             onClick={handleFavoriteClick}
-            className={styles.favoriteBtn}
+            className={`post__favorites ${isFavorited ? "active" : ""}`}
             type="button"
             aria-label={
               isFavorited ? "Seçilmişlərdən sil" : "Seçilmişlərə əlavə et"
             }
             title={isFavorited ? "Seçilmişlərdən sil" : "Seçilmişlərə əlavə et"}
-          >
-            <Heart
-              size={18}
-              fill={isFavorited ? "#e84c53" : "none"}
-              stroke={isFavorited ? "#e84c53" : "#666"}
-              strokeWidth={2}
-            />
-          </button>
+          />
         </div>
       </div>
-      <div
-        className="post__info"
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          flexGrow: 1,
-        }}
-      >
-        <div className="px-5" style={{ flexGrow: 1 }}>
-          <a
-            href={href}
-            className="post__title"
-            style={{
-              display: "block",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-            }}
-          >
+      <div className="post__info">
+        <div className="px-5">
+          <Link href={href} className="post__title">
             {title}
-          </a>
-          <a
-            href={href}
-            className="post__title2"
-            style={{
-              display: "block",
-              fontSize: "14px",
-            }}
-          >
-            {secondaryTitle || "\u00A0"}
-          </a>
-          <p style={{ height: "25px" }}>
+          </Link>
+          <Link href={href} className="post__title2">
+            {secondaryTitle}
+          </Link>
+          <p>
             {location}, {date}
           </p>
         </div>
@@ -123,7 +90,7 @@ const PostItem = ({
                 data-placement="top"
                 title="Barter mümkündür"
               >
-                <img src="img/barter.svg" alt="" />
+                <img src="/img/barter.svg" alt="" />
               </span>
             )}
             {hasCredit && (
@@ -133,7 +100,7 @@ const PostItem = ({
                 data-placement="top"
                 title="Kredit mümkündür"
               >
-                <img src="img/percent.svg" alt="" />
+                <img src="/img/percent.svg" alt="" />
               </span>
             )}
           </div>

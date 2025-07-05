@@ -29,3 +29,100 @@
   background-color: rgba(255, 255, 255, 1);
   transform: scale(1.1);
 }
+
+/* Add these styles to your main.css - CRITICAL Z-INDEX FIXES */
+
+/* 🚨 CRITICAL: Fix the z-index hierarchy from root to child elements */
+.post__item {
+  position: relative;
+  z-index: 1 !important; /* Override the original -1 z-index that makes entire card unclickable */
+}
+
+.post__img {
+  position: relative;
+  z-index: 1 !important; /* Override the original 0 z-index */
+}
+
+.post__attributes {
+  position: absolute;
+  z-index: 10 !important; /* Override the original 0 z-index - needs to be above image */
+}
+
+.post__favorites {
+  z-index: 15 !important; /* Override the original 0 z-index - highest priority for clicking */
+}
+
+/* Reset favorite button to remove default button styling */
+.post__favorites {
+  /* Reset all button defaults */
+  border: none !important;
+  outline: none !important;
+  padding: 0 !important;
+  background: none !important;
+  cursor: pointer !important;
+
+  /* Apply original design styles */
+  position: relative;
+  width: 28px;
+  height: 28px;
+  margin-left: auto;
+  background-color: rgba(255, 255, 255, 0.6) !important;
+  border-radius: 5px !important;
+  z-index: 15 !important; /* Highest priority for clicking */
+
+  /* Transitions */
+  transition: all 0.3s ease;
+}
+
+.post__favorites:hover {
+  background-color: rgba(255, 255, 255, 1) !important;
+}
+
+.post__favorites:focus {
+  outline: none !important;
+  box-shadow: 0 0 0 2px rgba(1, 63, 68, 0.3) !important;
+}
+
+/* Ensure the pseudo-elements work properly for heart icons */
+.post__favorites:before,
+.post__favorites:after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: block;
+  transition: 0.3s;
+  z-index: 1;
+  pointer-events: none; /* Let clicks pass through to button */
+}
+
+.post__favorites:before {
+  width: 22px;
+  height: 20px;
+  margin-top: 1px;
+  background: url("/img/favorite-icon.svg") no-repeat center/cover;
+}
+
+.post__favorites:after {
+  width: 16px;
+  height: 14px;
+  background: url("/img/favorite_full-icon.svg") no-repeat center/cover;
+  opacity: 0;
+}
+
+.post__favorites.active {
+  background-color: white !important;
+}
+
+.post__favorites.active:before {
+  opacity: 0;
+}
+
+.post__favorites.active:after {
+  opacity: 1;
+}
+
+.post__favorites:hover:before {
+  background: url("/img/favorite_hover-icon.svg") no-repeat center/cover;
+}

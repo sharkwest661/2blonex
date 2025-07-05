@@ -85,3 +85,177 @@
     min-height: 65px; /* Prevent layout shift */
   }
 }
+
+/* ========================================
+   CRITICAL CSS FIXES - Add to END of main.css
+   ======================================== */
+
+/* 🚨 OVERRIDE ALL Z-INDEX ISSUES - These must come AFTER the original CSS */
+
+/* Fix post item z-index hierarchy */
+.post__item,
+.post__item--pulsed,
+.post__item--checked {
+  z-index: 1 !important;
+}
+
+/* Fix media query z-index override */
+@media screen and (max-width: 767px) {
+  .post__item,
+  .post__item--pulsed,
+  .post__item--checked {
+    z-index: 1 !important;
+  }
+}
+
+/* Fix image container z-index */
+.post__img {
+  z-index: 1 !important;
+}
+
+/* Fix attributes container z-index */
+.post__attributes {
+  z-index: 10 !important;
+}
+
+/* Fix store element z-index */
+.post__store {
+  z-index: 5 !important;
+}
+
+/* ========================================
+   FAVORITE BUTTON COMPLETE RESET & STYLING
+   ======================================== */
+
+/* Complete button reset - override ALL default button styles */
+.post__favorites {
+  /* Remove ALL default button styling */
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  border: none !important;
+  outline: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: none !important;
+  font: inherit !important;
+  color: inherit !important;
+  text-decoration: none !important;
+  cursor: pointer !important;
+
+  /* Apply original post__favorites styling */
+  position: relative !important;
+  width: 28px !important;
+  height: 28px !important;
+  margin-left: auto !important;
+  background-color: rgba(255, 255, 255, 0.6) !important;
+  -webkit-border-radius: 5px !important;
+  -moz-border-radius: 5px !important;
+  border-radius: 5px !important;
+  z-index: 15 !important;
+
+  /* Transitions */
+  -webkit-transition: all 0.3s ease !important;
+  -o-transition: all 0.3s ease !important;
+  -moz-transition: all 0.3s ease !important;
+  transition: all 0.3s ease !important;
+}
+
+/* Force button reset on all states */
+.post__favorites:hover,
+.post__favorites:focus,
+.post__favorites:active {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  text-decoration: none !important;
+}
+
+/* Hover state */
+.post__favorites:hover {
+  background-color: rgba(255, 255, 255, 1) !important;
+}
+
+/* Focus state for accessibility */
+.post__favorites:focus {
+  outline: none !important;
+  box-shadow: 0 0 0 2px rgba(1, 63, 68, 0.3) !important;
+}
+
+/* Active (favorited) state */
+.post__favorites.active {
+  background-color: white !important;
+}
+
+/* Heart icon pseudo-elements */
+.post__favorites:before,
+.post__favorites:after {
+  content: "" !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  -webkit-transform: translate(-50%, -50%) !important;
+  -moz-transform: translate(-50%, -50%) !important;
+  -ms-transform: translate(-50%, -50%) !important;
+  -o-transform: translate(-50%, -50%) !important;
+  transform: translate(-50%, -50%) !important;
+  display: block !important;
+  -webkit-transition: 0.3s !important;
+  -o-transition: 0.3s !important;
+  -moz-transition: 0.3s !important;
+  transition: 0.3s !important;
+  z-index: 1 !important;
+  pointer-events: none !important; /* Allow clicks to pass through */
+}
+
+/* Empty heart icon */
+.post__favorites:before {
+  width: 22px !important;
+  height: 20px !important;
+  margin-top: 1px !important;
+  background: url("/img/favorite-icon.svg") no-repeat center/cover !important;
+}
+
+/* Filled heart icon */
+.post__favorites:after {
+  width: 16px !important;
+  height: 14px !important;
+  background: url("/img/favorite_full-icon.svg") no-repeat center/cover !important;
+  opacity: 0 !important;
+}
+
+/* Active state - show filled heart */
+.post__favorites.active:before {
+  opacity: 0 !important;
+}
+
+.post__favorites.active:after {
+  opacity: 1 !important;
+}
+
+/* Hover state - show hover heart */
+.post__favorites:hover:before {
+  background: url("/img/favorite_hover-icon.svg") no-repeat center/cover !important;
+}
+
+/* ========================================
+   PREVENT CONFLICTS WITH OTHER ELEMENTS
+   ======================================== */
+
+/* Ensure image doesn't interfere */
+.post__img > img {
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+/* Ensure Next.js Image component works */
+.post__img > span {
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+/* Fix any potential interference from Next.js Image wrapper */
+.post__img > span > img {
+  position: relative !important;
+  z-index: 1 !important;
+}
