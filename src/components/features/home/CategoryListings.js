@@ -1,49 +1,39 @@
-"use client";
 // src/components/features/home/CategoryListings.js
 import { useState } from "react";
-import SectionTitle from "@/components/shared/sectiontitle/SectionTitle";
 import PostList from "@/components/shared/postitem/PostList";
-import { getCategoryProducts, CATEGORIES } from "@/utils/constants";
+import { CATEGORIES, MOCK_PRODUCTS } from "@/utils/constants";
 
 const CategoryListings = () => {
   const [selectedCategory, setSelectedCategory] = useState("vehicles");
-  const [displayCount, setDisplayCount] = useState(8);
+  const [displayCount, setDisplayCount] = useState(10);
 
-  const currentProducts = getCategoryProducts(selectedCategory, displayCount);
+  // 🔑 Helper function to determine category type
+  const getCategoryType = (categoryId) => {
+    const vehicleCategories = ["vehicles", "neqliyyat"];
+    return vehicleCategories.includes(categoryId) ? "vehicles" : "other";
+  };
+
   const currentCategory = CATEGORIES.find((cat) => cat.id === selectedCategory);
+  const currentProducts = currentCategory
+    ? currentCategory.products.slice(0, displayCount)
+    : [];
 
   const handleCategoryChange = (categoryId) => {
     setSelectedCategory(categoryId);
-    setDisplayCount(8); // Reset display count when switching categories
+    setDisplayCount(10); // Reset display count
   };
 
   const handleShowMore = () => {
-    setDisplayCount((prev) => prev + 8);
+    setDisplayCount((prev) => prev + 10);
   };
-
-  const popularCategories = CATEGORIES.slice(0, 6); // Show first 6 categories
 
   return (
     <section>
-      <SectionTitle
-        title="Kateqoriyalar üzrə elanlar"
-        alignment="left"
-        showSortSelect={false}
-      />
-
       <div className="main_container">
         <div className="wrapper">
-          {/* Category Tabs */}
-          <div
-            className="category-tabs"
-            style={{
-              marginBottom: "20px",
-              display: "flex",
-              flexWrap: "wrap",
-              gap: "10px",
-            }}
-          >
-            {popularCategories.map((category) => (
+          {/* Category Filter Buttons */}
+          <div className="category-filter" style={{ marginBottom: "20px" }}>
+            {CATEGORIES.slice(0, 5).map((category) => (
               <button
                 key={category.id}
                 onClick={() => handleCategoryChange(category.id)}
@@ -62,6 +52,7 @@ const CategoryListings = () => {
                   borderRadius: "5px",
                   cursor: "pointer",
                   fontSize: "14px",
+                  marginRight: "10px",
                 }}
               >
                 {category.name} ({category.count})
@@ -69,8 +60,11 @@ const CategoryListings = () => {
             ))}
           </div>
 
-          {/* Products Grid */}
-          <PostList posts={currentProducts} />
+          {/* Products Grid with Dynamic Category Type */}
+          <PostList
+            posts={currentProducts}
+            category={getCategoryType(selectedCategory)} // 🔑 Auto-detect category type
+          />
 
           {/* Show More Button */}
           {currentCategory &&

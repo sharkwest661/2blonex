@@ -1,21 +1,24 @@
-// src/app/[category]/page.js - Dynamic Category Pages (App Router)
 "use client";
+// src/app/[category]/page.js (or wherever your category page is)
 import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
-import Layout from "@/components/layout/Layout";
 import PostList from "@/components/shared/postitem/PostList";
 import { getCategoryBySlug, searchProducts } from "@/utils/constants";
 
-export default function CategoryPage() {
-  const params = useParams();
-  const categorySlug = params.category;
-
+const CategoryPage = ({ categorySlug }) => {
   const [products, setProducts] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("newest");
   const [loading, setLoading] = useState(true);
 
   const category = getCategoryBySlug(categorySlug);
+
+  // 🔑 Determine category type for layout
+  const getCategoryType = (slug) => {
+    const vehicleSlugs = ["neqliyyat", "vehicles", "avtomobil", "motosiklet"];
+    return vehicleSlugs.includes(slug) ? "vehicles" : "other";
+  };
+
+  const categoryType = getCategoryType(categorySlug);
 
   useEffect(() => {
     if (category) {
@@ -51,105 +54,63 @@ export default function CategoryPage() {
   }, [category, searchQuery, sortBy]);
 
   if (!category) {
-    return (
-      <Layout>
-        <div className="main_container">
-          <div className="wrapper">
-            <h1>Kateqoriya tapılmadı</h1>
-            <p>Axtardığınız kateqoriya mövcud deyil.</p>
-          </div>
-        </div>
-      </Layout>
-    );
+    return <div>Kateqoriya tapılmadı</div>;
   }
 
   return (
-    <Layout>
-      <div className="main_container">
-        <div className="wrapper">
-          {/* Category Header */}
-          <div className="category-header" style={{ marginBottom: "20px" }}>
-            <h1>{category.name}</h1>
-            <p>{category.count} elan tapıldı</p>
-          </div>
+    <div className="main_container">
+      <div className="wrapper">
+        {/* Category Header */}
+        <div className="category-header" style={{ marginBottom: "20px" }}>
+          <h1>{category.name}</h1>
+          <p>{category.count} elan tapıldı</p>
+        </div>
 
-          {/* Search and Sort Controls */}
-          <div
-            className="controls"
+        {/* Search and Sort Controls */}
+        <div
+          className="controls"
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            marginBottom: "20px",
+          }}
+        >
+          <input
+            type="text"
+            placeholder="Axtar..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
             style={{
-              display: "flex",
-              justifyContent: "space-between",
-              marginBottom: "20px",
-              flexWrap: "wrap",
-              gap: "10px",
+              padding: "8px 12px",
+              borderRadius: "4px",
+              border: "1px solid #ccc",
+              flex: 1,
+              marginRight: "10px",
+            }}
+          />
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            style={{
+              padding: "8px 12px",
+              borderRadius: "4px",
+              border: "1px solid #ccc",
             }}
           >
-            <input
-              type="text"
-              placeholder={`${category.name} içində axtarın...`}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              style={{
-                padding: "8px 12px",
-                border: "1px solid #ccc",
-                borderRadius: "5px",
-                fontSize: "14px",
-                minWidth: "250px",
-              }}
-            />
-
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              style={{
-                padding: "8px 12px",
-                border: "1px solid #ccc",
-                borderRadius: "5px",
-                fontSize: "14px",
-              }}
-            >
-              <option value="newest">Ən yenilər</option>
-              <option value="price-low">Qiymət: Aşağıdan yuxarıya</option>
-              <option value="price-high">Qiymət: Yuxarıdan aşağıya</option>
-            </select>
-          </div>
-
-          {/* Products */}
-          {loading ? <div>Yüklənir...</div> : <PostList posts={products} />}
-
-          {/* Subcategories */}
-          {category.subcategories && (
-            <div className="subcategories" style={{ marginTop: "40px" }}>
-              <h3>Alt kateqoriyalar</h3>
-              <div
-                style={{
-                  display: "flex",
-                  flexWrap: "wrap",
-                  gap: "10px",
-                  marginTop: "10px",
-                }}
-              >
-                {category.subcategories.map((subcat, index) => (
-                  <a
-                    key={index}
-                    href={`${category.href}/${subcat.toLowerCase().replace(/\s+/g, "-")}`}
-                    style={{
-                      padding: "8px 16px",
-                      border: "1px solid #ccc",
-                      borderRadius: "5px",
-                      textDecoration: "none",
-                      color: "#013f44",
-                      backgroundColor: "#f8f9fa",
-                    }}
-                  >
-                    {subcat}
-                  </a>
-                ))}
-              </div>
-            </div>
-          )}
+            <option value="newest">Ən yeni</option>
+            <option value="price-low">Qiymət: Aşağıdan yuxarıya</option>
+            <option value="price-high">Qiymət: Yuxarıdan aşağıya</option>
+          </select>
         </div>
+
+        {/* Products List with Dynamic Category Type */}
+        <PostList
+          posts={products}
+          category={categoryType} // 🔑 Use detected category type
+        />
       </div>
-    </Layout>
+    </div>
   );
-}
+};
+
+export default CategoryPage;

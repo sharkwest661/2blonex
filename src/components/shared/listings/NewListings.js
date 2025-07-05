@@ -57,7 +57,10 @@ const NewListings = () => {
 
       <div className="main_container">
         <div className="wrapper">
-          <PostList posts={MOCK_PRODUCTS.newListings} />
+          <PostList
+            posts={MOCK_PRODUCTS.newListings}
+            category="other" // 🔑 ONLY ADDITION: category prop
+          />
           {/* Sticky Advertisement Banner */}
           <div>
             <Banner

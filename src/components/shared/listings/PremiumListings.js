@@ -1,4 +1,4 @@
-// src/components/features/home/PremiumListings.js
+// src/components/shared/listings/PremiumListings.js
 import SectionTitle from "@/components/shared/sectiontitle/SectionTitle";
 import PostList from "@/components/shared/postitem/PostList";
 import { MOCK_PRODUCTS } from "@/utils/constants";
@@ -17,8 +17,10 @@ const PremiumListings = () => {
 
       <div className="main_container">
         <div className="wrapper">
-          <PostList posts={MOCK_PRODUCTS.premiumListings} />
-          {/* Sticky Advertisement Banner */}
+          <PostList
+            posts={MOCK_PRODUCTS.premiumListings}
+            category="other" // 🔑 Mixed products use flexible layout
+          />
           <div>
             <Banner
               href=""

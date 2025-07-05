@@ -1,7 +1,7 @@
 // src/components/shared/postitem/PostList.js
 import PostItem from "./PostItem";
 
-const PostList = ({ posts = [], className = "" }) => {
+const PostList = ({ posts = [], category = "other", className = "" }) => {
   if (!posts || posts.length === 0) {
     return (
       <div className="post">
@@ -20,6 +20,7 @@ const PostList = ({ posts = [], className = "" }) => {
             key={post.id || index}
             id={post.id}
             title={post.title}
+            secondaryTitle={post.secondaryTitle} // For vehicles
             price={post.price}
             location={post.location}
             date={post.date}
@@ -29,7 +30,7 @@ const PostList = ({ posts = [], className = "" }) => {
             isPremium={post.isPremium}
             hasBarter={post.hasBarter}
             hasCredit={post.hasCredit}
-            hasPercent={post.hasPercent}
+            category={category} // 🔑 Pass category to each PostItem
           />
         ))}
       </div>
