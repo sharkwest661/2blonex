@@ -1,11 +1,11 @@
 "use client";
-// features/vehicles/components/VehicleFilters.js (Final Version)
+// features/vehicles/components/VehicleFilters.js (Updated with reusable components)
 import { useState } from "react";
 import {
   Dropdown,
-  RadioGroup,
-  CheckboxGroup,
   FilterButtons,
+  RadioGroup2,
+  CheckboxGroup2,
 } from "@/components/ui/forms";
 import {
   PriceRangeFilter,
@@ -13,6 +13,7 @@ import {
   YearRangeFilter,
   MileageRangeFilter,
   PowerRangeFilter,
+  EngineVolumeRangeFilter,
 } from "@/components/shared/filters";
 import { VEHICLE_CONSTANTS } from "../constants";
 import styles from "../styles/VehicleFilters.module.css";
@@ -26,7 +27,7 @@ const {
   VEHICLE_EQUIPMENT,
 } = VEHICLE_CONSTANTS;
 
-// Car Models Data (you can move this to constants later)
+// Car Models Data
 const CAR_MODELS = {
   bmw: [
     { value: "3_series", label: "3 Series" },
@@ -74,19 +75,6 @@ const COLORS = [
   { value: "orange", label: "Narıncı" },
 ];
 
-const ENGINE_VOLUMES = [
-  { value: "1000", label: "1.0" },
-  { value: "1200", label: "1.2" },
-  { value: "1400", label: "1.4" },
-  { value: "1600", label: "1.6" },
-  { value: "1800", label: "1.8" },
-  { value: "2000", label: "2.0" },
-  { value: "2500", label: "2.5" },
-  { value: "3000", label: "3.0" },
-  { value: "3500", label: "3.5" },
-  { value: "4000", label: "4.0" },
-];
-
 const SEAT_COUNTS = [
   { value: "2", label: "2" },
   { value: "4", label: "4" },
@@ -112,23 +100,23 @@ const VehicleFilters = () => {
     model: "",
     priceMin: "",
     priceMax: "",
+    yearMin: "",
+    yearMax: "",
+    mileageMin: "",
+    mileageMax: "",
     color: "",
     fuelType: "",
     bodyType: "",
-    engineVolumeMin: "",
-    engineVolumeMax: "",
-    yearMin: "",
-    yearMax: "",
     transmission: "",
     city: "",
     condition: "all",
-    mileageMin: "",
-    mileageMax: "",
-    drivetrainType: "",
-    seatCount: "",
+    engineVolumeMin: "",
+    engineVolumeMax: "",
     powerMin: "",
     powerMax: "",
-    paymentOptions: [],
+    drivetrainType: "",
+    seatCount: "",
+    paymentOptions: [], // Changed to array
     equipment: [],
     showMoreFilters: false,
   });
@@ -137,8 +125,6 @@ const VehicleFilters = () => {
     setFilters((prev) => ({
       ...prev,
       [key]: value,
-      // Reset model when brand changes
-      ...(key === "brand" && { model: "" }),
     }));
   };
 
@@ -148,22 +134,22 @@ const VehicleFilters = () => {
       model: "",
       priceMin: "",
       priceMax: "",
+      yearMin: "",
+      yearMax: "",
+      mileageMin: "",
+      mileageMax: "",
       color: "",
       fuelType: "",
       bodyType: "",
-      engineVolumeMin: "",
-      engineVolumeMax: "",
-      yearMin: "",
-      yearMax: "",
       transmission: "",
       city: "",
       condition: "all",
-      mileageMin: "",
-      mileageMax: "",
-      drivetrainType: "",
-      seatCount: "",
+      engineVolumeMin: "",
+      engineVolumeMax: "",
       powerMin: "",
       powerMax: "",
+      drivetrainType: "",
+      seatCount: "",
       paymentOptions: [],
       equipment: [],
       showMoreFilters: false,
@@ -172,47 +158,38 @@ const VehicleFilters = () => {
 
   const handleShowResults = () => {
     console.log("Showing results with filters:", filters);
-    // Here you would typically trigger a search or navigate to results
   };
-
-  const availableModels = filters.brand ? CAR_MODELS[filters.brand] || [] : [];
 
   return (
     <div className={styles.filtersSection}>
       <div className={styles.filtersContainer}>
-        <h1 className={styles.titleCategory}>Nəqliyyat</h1>
+        <h3 className={styles.titleCategory}>Nəqliyyat</h3>
 
-        <div className={styles.desctopFilters}>
-          {/* Brand - Order 1 */}
-          <div
-            className={`${styles.formGroup} ${styles.forWidth20} ${styles.grow1} ${styles.order1}`}
-          >
+        <div className={styles.filtersGrid}>
+          {/* Row 1: Brand, Model, Price Range, Color */}
+          <div className={styles.filterField}>
             <Dropdown
               placeholder="Marka"
               options={CAR_BRANDS}
               value={filters.brand}
-              onChange={(value) => handleFilterChange("brand", value)}
-              searchable
+              onChange={(value) => {
+                handleFilterChange("brand", value);
+                handleFilterChange("model", "");
+              }}
             />
           </div>
 
-          {/* Model - Order 2 */}
-          <div
-            className={`${styles.formGroup} ${styles.forWidth20} ${styles.grow1} ${styles.order2}`}
-          >
+          <div className={styles.filterField}>
             <Dropdown
               placeholder="Model"
-              options={availableModels}
+              options={filters.brand ? CAR_MODELS[filters.brand] || [] : []}
               value={filters.model}
               onChange={(value) => handleFilterChange("model", value)}
               disabled={!filters.brand}
             />
           </div>
 
-          {/* Price Range - Order 3 */}
-          <div
-            className={`${styles.formGroup} ${styles.forWidthBig} ${styles.grow1} ${styles.order3}`}
-          >
+          <div className={styles.filterField}>
             <PriceRangeFilter
               minValue={filters.priceMin}
               maxValue={filters.priceMax}
@@ -221,10 +198,7 @@ const VehicleFilters = () => {
             />
           </div>
 
-          {/* Color - Order 4 */}
-          <div
-            className={`${styles.formGroup} ${styles.forWidthSmall} ${styles.grow1} ${styles.order4}`}
-          >
+          <div className={styles.filterField}>
             <Dropdown
               placeholder="Rəng"
               options={COLORS}
@@ -233,10 +207,8 @@ const VehicleFilters = () => {
             />
           </div>
 
-          {/* Fuel Type - Order 5 */}
-          <div
-            className={`${styles.formGroup} ${styles.forWidth20} ${styles.grow1} ${styles.order5}`}
-          >
+          {/* Row 2: Fuel Type, Body Type, Engine Volume, Year */}
+          <div className={styles.filterField}>
             <Dropdown
               placeholder="Yanacaq növü"
               options={FUEL_TYPES}
@@ -245,53 +217,29 @@ const VehicleFilters = () => {
             />
           </div>
 
-          {/* Body Type - Order 6 */}
-          <div
-            className={`${styles.formGroup} ${styles.forWidth20} ${styles.grow1} ${styles.order6}`}
-          >
+          <div className={styles.filterField}>
             <Dropdown
-              placeholder="Ban Növü"
+              placeholder="Ban növü"
               options={BODY_TYPES}
               value={filters.bodyType}
               onChange={(value) => handleFilterChange("bodyType", value)}
             />
           </div>
 
-          {/* Engine Volume Range - Order 7 */}
-          <div
-            className={`${styles.litrGroup} ${styles.forWidthBig} ${styles.grow1} ${styles.order7}`}
-          >
-            <div className={styles.formGroup}>
-              <Dropdown
-                placeholder="Həcm (sm³), min"
-                options={ENGINE_VOLUMES}
-                value={filters.engineVolumeMin}
-                onChange={(value) =>
-                  handleFilterChange("engineVolumeMin", value)
-                }
-              />
-            </div>
-            <div className={styles.formGroup}>
-              <Dropdown
-                placeholder="maks"
-                options={ENGINE_VOLUMES.filter(
-                  (vol) =>
-                    !filters.engineVolumeMin ||
-                    parseInt(vol.value) >= parseInt(filters.engineVolumeMin)
-                )}
-                value={filters.engineVolumeMax}
-                onChange={(value) =>
-                  handleFilterChange("engineVolumeMax", value)
-                }
-                disabled={!filters.engineVolumeMin}
-              />
-            </div>
+          <div className={styles.filterField}>
+            <EngineVolumeRangeFilter
+              minValue={filters.engineVolumeMin}
+              maxValue={filters.engineVolumeMax}
+              onMinChange={(value) =>
+                handleFilterChange("engineVolumeMin", value)
+              }
+              onMaxChange={(value) =>
+                handleFilterChange("engineVolumeMax", value)
+              }
+            />
           </div>
 
-          {/* Year Range - Order 8 */}
-          <div
-            className={`${styles.yearGroup} ${styles.forWidthSmall} ${styles.grow1} ${styles.order8}`}
-          >
+          <div className={styles.filterField}>
             <YearRangeFilter
               minValue={filters.yearMin}
               maxValue={filters.yearMax}
@@ -300,10 +248,8 @@ const VehicleFilters = () => {
             />
           </div>
 
-          {/* Transmission - Order 9 */}
-          <div
-            className={`${styles.formGroup} ${styles.forWidth20} ${styles.grow1} ${styles.order9}`}
-          >
+          {/* Row 3: Transmission, City, Condition, Mileage */}
+          <div className={styles.filterField}>
             <Dropdown
               placeholder="Sürətlər qutusu"
               options={TRANSMISSIONS}
@@ -312,34 +258,23 @@ const VehicleFilters = () => {
             />
           </div>
 
-          {/* City - Order 10 */}
-          <div
-            className={`${styles.formGroup} ${styles.forWidth20} ${styles.grow1} ${styles.order10}`}
-          >
+          <div className={styles.filterField}>
             <LocationFilter
               value={filters.city}
               onChange={(value) => handleFilterChange("city", value)}
             />
           </div>
 
-          {/* Condition Radio - Order 11 */}
-          <div
-            className={`${styles.formGroup} ${styles.forWidthBig} ${styles.grow1} ${styles.order11}`}
-          >
-            <RadioGroup
+          <div className={styles.filterField}>
+            <RadioGroup2
               options={CONDITION_OPTIONS}
               value={filters.condition}
               onChange={(value) => handleFilterChange("condition", value)}
               name="car-condition"
-              variant="button"
-              layout="horizontal"
             />
           </div>
 
-          {/* Mileage Range - Order 12 (conditionally hidden) */}
-          <div
-            className={`${styles.formGroup} ${styles.forWidthSmall} ${styles.grow1} ${styles.order12} ${!filters.showMoreFilters ? styles.dnone : ""}`}
-          >
+          <div className={styles.filterField}>
             <MileageRangeFilter
               minValue={filters.mileageMin}
               maxValue={filters.mileageMax}
@@ -348,13 +283,10 @@ const VehicleFilters = () => {
             />
           </div>
 
-          {/* Additional Hidden Filters */}
+          {/* Additional Filters */}
           {filters.showMoreFilters && (
             <>
-              {/* Drivetrain Type - Order 13 */}
-              <div
-                className={`${styles.formGroup} ${styles.forWidth20} ${styles.grow1} ${styles.order13}`}
-              >
+              <div className={styles.filterField}>
                 <Dropdown
                   placeholder="Ötürücü"
                   options={DRIVETRAIN_TYPES}
@@ -365,10 +297,7 @@ const VehicleFilters = () => {
                 />
               </div>
 
-              {/* Seat Count - Order 14 */}
-              <div
-                className={`${styles.formGroup} ${styles.forWidth20} ${styles.grow1} ${styles.order14}`}
-              >
+              <div className={styles.filterField}>
                 <Dropdown
                   placeholder="Yerlərin sayı"
                   options={SEAT_COUNTS}
@@ -377,10 +306,7 @@ const VehicleFilters = () => {
                 />
               </div>
 
-              {/* Power Range - Order 15 */}
-              <div
-                className={`${styles.formGroup} ${styles.forWidthBig} ${styles.grow1} ${styles.order15}`}
-              >
+              <div className={styles.filterField}>
                 <PowerRangeFilter
                   minValue={filters.powerMin}
                   maxValue={filters.powerMax}
@@ -389,47 +315,22 @@ const VehicleFilters = () => {
                 />
               </div>
 
-              {/* Payment Options - Order 16 */}
-              <div
-                className={`${styles.formGroup} ${styles.forWidthSmall} ${styles.grow1} ${styles.dFlex} ${styles.order16} ${styles.forCredit}`}
-              >
-                <CheckboxGroup
+              <div className={styles.filterField}>
+                <CheckboxGroup2
                   options={PAYMENT_OPTIONS}
                   values={filters.paymentOptions}
                   onChange={(values) =>
                     handleFilterChange("paymentOptions", values)
                   }
                   name="payment-options"
-                  layout="horizontal"
                 />
-              </div>
-
-              {/* Vehicle Equipment - Order 17 */}
-              <div
-                className={`${styles.additionalChekingsHero} ${styles.order17}`}
-              >
-                <p className={styles.additionalChekingsTitle}>
-                  Avtomobilin təchizatı
-                </p>
-                <div className={styles.additionalChekings}>
-                  <CheckboxGroup
-                    options={VEHICLE_EQUIPMENT}
-                    values={filters.equipment}
-                    onChange={(values) =>
-                      handleFilterChange("equipment", values)
-                    }
-                    name="vehicle-equipment"
-                    layout="horizontal"
-                    variant="default"
-                  />
-                </div>
               </div>
             </>
           )}
         </div>
 
         {/* Filter Buttons */}
-        <div className={styles.descFiltersBtns}>
+        <div className={styles.filterActions}>
           <FilterButtons
             onReset={handleReset}
             onToggleMoreFilters={() =>
@@ -437,7 +338,7 @@ const VehicleFilters = () => {
             }
             onShowResults={handleShowResults}
             moreFiltersExpanded={filters.showMoreFilters}
-            resultsCount={0} // This would come from your search results
+            resultsCount={0}
             resetText="Sıfırla"
             moreFiltersText="Daha çox filtr"
             showResultsText="Elanları göstər"

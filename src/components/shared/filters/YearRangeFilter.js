@@ -1,19 +1,6 @@
 "use client";
-// components/shared/filters/YearRangeFilter.js
-import { useState } from "react";
-import { Dropdown } from "@/components/ui/forms";
-
-// Generate years from 1990 to current year + 1
-const generateYears = () => {
-  const currentYear = new Date().getFullYear();
-  const years = [];
-  for (let year = currentYear + 1; year >= 1990; year--) {
-    years.push({ value: year.toString(), label: year.toString() });
-  }
-  return years;
-};
-
-const YEARS = generateYears();
+// components/shared/filters/YearRangeFilter.js (Updated with simple design)
+import styles from "./PriceRangeFilter.module.css"; // Reuse the same styles
 
 export const YearRangeFilter = ({
   minValue,
@@ -23,27 +10,57 @@ export const YearRangeFilter = ({
   disabled = false,
   className = "",
 }) => {
+  const handleMinChange = (e) => {
+    let value = e.target.value ? parseInt(e.target.value) : "";
+    const currentYear = new Date().getFullYear();
+
+    if (value && (value < 1900 || value > currentYear)) {
+      value = value < 1900 ? 1900 : currentYear;
+    }
+
+    onMinChange(value);
+  };
+
+  const handleMaxChange = (e) => {
+    let value = e.target.value ? parseInt(e.target.value) : "";
+    const currentYear = new Date().getFullYear();
+
+    if (value && (value < 1900 || value > currentYear)) {
+      value = value < 1900 ? 1900 : currentYear;
+    }
+
+    onMaxChange(value);
+  };
+
+  const currentYear = new Date().getFullYear();
+
   return (
-    <div className={`year_group for_width_small grow-1 ${className}`}>
-      <div className="form-group">
-        <Dropdown
-          placeholder="İl, min"
-          options={YEARS}
-          value={minValue}
-          onChange={onMinChange}
-          disabled={disabled}
-        />
-      </div>
-      <div className="form-group">
-        <Dropdown
-          placeholder="maks"
-          options={YEARS.filter(
-            (year) => !minValue || parseInt(year.value) >= parseInt(minValue)
-          )}
-          value={maxValue}
-          onChange={onMaxChange}
-          disabled={disabled || !minValue}
-        />
+    <div className={`${styles.priceRangeFilter} ${className}`}>
+      <div className={styles.rangeInputs}>
+        <div className={styles.inputGroup}>
+          <input
+            type="number"
+            value={minValue || ""}
+            onChange={handleMinChange}
+            placeholder="Min"
+            min="1900"
+            max={currentYear}
+            disabled={disabled}
+          />
+          <label>İl, min</label>
+        </div>
+        <div className={styles.inputGroup}>
+          <input
+            type="number"
+            value={maxValue || ""}
+            onChange={handleMaxChange}
+            placeholder="Max"
+            min="1900"
+            max={currentYear}
+            disabled={disabled}
+          />
+          <label>maks</label>
+        </div>
       </div>
     </div>
   );

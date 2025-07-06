@@ -1,0 +1,125 @@
+/* components/shared/filters/PriceRangeFilter.module.css */
+
+.priceRangeFilter {
+  width: 100%;
+}
+
+.rangeInputs {
+  display: flex;
+  gap: 8px;
+}
+
+.inputGroup {
+  flex: 1;
+  position: relative;
+}
+
+.inputGroup input {
+  width: 100%;
+  height: 44px;
+  border: 1px solid rgba(1, 63, 68, 0.2);
+  border-radius: 8px;
+  padding: 12px 12px 24px 12px;
+  font-size: 14px;
+  color: #013f44;
+  background-color: white;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.inputGroup input::placeholder {
+  color: #808080;
+  font-size: 13px;
+}
+
+.inputGroup input:focus {
+  outline: none;
+  border-color: #013f44;
+  box-shadow: 0 0 0 2px rgba(1, 63, 68, 0.1);
+}
+
+.inputGroup input:disabled {
+  background-color: #f8f9fa;
+  border-color: #e5e7eb;
+  color: #6b7280;
+  cursor: not-allowed;
+}
+
+.inputGroup input::-webkit-outer-spin-button,
+.inputGroup input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.inputGroup input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.inputGroup label {
+  position: absolute;
+  bottom: 5px;
+  left: 12px;
+  font-size: 11px;
+  color: #808080;
+  font-weight: 400;
+  margin: 0;
+  pointer-events: none;
+}
+
+.inputGroup input:disabled + label {
+  color: #9ca3af;
+}
+
+/* Responsive Design */
+@media (min-width: 1200px) {
+  .inputGroup input {
+    height: 48px;
+    padding: 14px 12px 26px 12px;
+    font-size: 15px;
+  }
+
+  .inputGroup label {
+    font-size: 12px;
+    bottom: 6px;
+  }
+}
+
+@media (max-width: 1199px) and (min-width: 992px) {
+  .inputGroup input {
+    height: 46px;
+    padding: 13px 12px 25px 12px;
+  }
+}
+
+@media (max-width: 767px) {
+  .rangeInputs {
+    gap: 6px;
+  }
+
+  .inputGroup input {
+    height: 40px;
+    padding: 10px 8px 22px 8px;
+    font-size: 13px;
+  }
+
+  .inputGroup label {
+    font-size: 10px;
+    left: 8px;
+    bottom: 4px;
+  }
+}
+
+@media (max-width: 575px) {
+  .inputGroup input {
+    height: 38px;
+    padding: 8px 6px 20px 6px;
+    font-size: 12px;
+  }
+
+  .inputGroup label {
+    font-size: 9px;
+    left: 6px;
+    bottom: 3px;
+  }
+}

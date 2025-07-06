@@ -1,6 +1,6 @@
 "use client";
-// components/shared/filters/PriceRangeFilter.js
-import { RangeInput } from "@/components/ui/forms";
+// components/shared/filters/PriceRangeFilter.js (Updated with simple design)
+import styles from "./PriceRangeFilter.module.css";
 
 export const PriceRangeFilter = ({
   minValue,
@@ -11,20 +11,44 @@ export const PriceRangeFilter = ({
   disabled = false,
   className = "",
 }) => {
+  const handleMinChange = (e) => {
+    let value = e.target.value ? parseInt(e.target.value) : "";
+    if (value && value <= 0) value = "";
+    onMinChange(value);
+  };
+
+  const handleMaxChange = (e) => {
+    let value = e.target.value ? parseInt(e.target.value) : "";
+    if (value && value <= 0) value = "";
+    onMaxChange(value);
+  };
+
   return (
-    <RangeInput
-      minLabel="Qiymət, min"
-      maxLabel="maks"
-      minPlaceholder="0"
-      maxPlaceholder="∞"
-      minValue={minValue}
-      maxValue={maxValue}
-      onMinChange={onMinChange}
-      onMaxChange={onMaxChange}
-      suffix={currency}
-      type="number"
-      disabled={disabled}
-      className={className}
-    />
+    <div className={`${styles.priceRangeFilter} ${className}`}>
+      <div className={styles.rangeInputs}>
+        <div className={styles.inputGroup}>
+          <input
+            type="number"
+            value={minValue || ""}
+            onChange={handleMinChange}
+            placeholder="Min"
+            min="0"
+            disabled={disabled}
+          />
+          <label>Qiymət, min</label>
+        </div>
+        <div className={styles.inputGroup}>
+          <input
+            type="number"
+            value={maxValue || ""}
+            onChange={handleMaxChange}
+            placeholder="Max"
+            min="0"
+            disabled={disabled}
+          />
+          <label>maks</label>
+        </div>
+      </div>
+    </div>
   );
 };
