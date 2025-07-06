@@ -457,8 +457,9 @@
 
 /* simmetriya */
 .footer {
-  min-height: calc(100vh + 10px);
+  /* min-height: calc(100vh + 10px); */
 }
+
 .footer__navlink {
-    margin-right: 28px;
-  }
+  margin-right: 28px;
+}
