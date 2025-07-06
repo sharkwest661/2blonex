@@ -463,3 +463,11 @@
 .footer__navlink {
   margin-right: 28px;
 }
+
+.post__list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(169px, 1fr));
+}
+.post__item {
+  width: 100%;
+}
