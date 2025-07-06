@@ -1,8 +1,20 @@
 "use client";
-// features/vehicles/components/VehicleFilters.js (Simple organized layout)
+// features/vehicles/components/VehicleFilters.js (Updated with reusable components)
 import { useState } from "react";
-import { Dropdown, FilterButtons } from "@/components/ui/forms";
-import { LocationFilter } from "@/components/shared/filters";
+import {
+  Dropdown,
+  FilterButtons,
+  RadioGroup2,
+  CheckboxGroup2,
+} from "@/components/ui/forms";
+import {
+  PriceRangeFilter,
+  LocationFilter,
+  YearRangeFilter,
+  MileageRangeFilter,
+  PowerRangeFilter,
+  EngineVolumeRangeFilter,
+} from "@/components/shared/filters";
 import { VEHICLE_CONSTANTS } from "../constants";
 import styles from "../styles/VehicleFilters.module.css";
 
@@ -71,6 +83,17 @@ const SEAT_COUNTS = [
   { value: "8", label: "8+" },
 ];
 
+const CONDITION_OPTIONS = [
+  { value: "all", label: "Hamısı" },
+  { value: "new", label: "Yeni" },
+  { value: "used", label: "Sürülmüş" },
+];
+
+const PAYMENT_OPTIONS = [
+  { value: "credit", label: "Kredit" },
+  { value: "barter", label: "Barter" },
+];
+
 const VehicleFilters = () => {
   const [filters, setFilters] = useState({
     brand: "",
@@ -93,8 +116,7 @@ const VehicleFilters = () => {
     powerMax: "",
     drivetrainType: "",
     seatCount: "",
-    hasCredit: false,
-    hasBarter: false,
+    paymentOptions: [], // Changed to array
     equipment: [],
     showMoreFilters: false,
   });
@@ -104,65 +126,6 @@ const VehicleFilters = () => {
       ...prev,
       [key]: value,
     }));
-  };
-
-  const handlePriceChange = (e, type) => {
-    let value = e.target.value ? parseInt(e.target.value) : "";
-    if (value && value <= 0) value = "";
-
-    if (type === "min") {
-      handleFilterChange("priceMin", value);
-    } else {
-      handleFilterChange("priceMax", value);
-    }
-  };
-
-  const handleYearChange = (e, type) => {
-    let value = e.target.value ? parseInt(e.target.value) : "";
-    const currentYear = new Date().getFullYear();
-
-    if (value && (value < 1900 || value > currentYear)) {
-      value = type === "min" ? 1900 : currentYear;
-    }
-
-    if (type === "min") {
-      handleFilterChange("yearMin", value);
-    } else {
-      handleFilterChange("yearMax", value);
-    }
-  };
-
-  const handleMileageChange = (e, type) => {
-    let value = e.target.value ? parseInt(e.target.value) : "";
-    if (value && value < 0) value = "";
-
-    if (type === "min") {
-      handleFilterChange("mileageMin", value);
-    } else {
-      handleFilterChange("mileageMax", value);
-    }
-  };
-
-  const handleEngineVolumeChange = (e, type) => {
-    let value = e.target.value ? parseInt(e.target.value) : "";
-    if (value && value < 0) value = "";
-
-    if (type === "min") {
-      handleFilterChange("engineVolumeMin", value);
-    } else {
-      handleFilterChange("engineVolumeMax", value);
-    }
-  };
-
-  const handlePowerChange = (e, type) => {
-    let value = e.target.value ? parseInt(e.target.value) : "";
-    if (value && value < 0) value = "";
-
-    if (type === "min") {
-      handleFilterChange("powerMin", value);
-    } else {
-      handleFilterChange("powerMax", value);
-    }
   };
 
   const handleReset = () => {
@@ -187,8 +150,7 @@ const VehicleFilters = () => {
       powerMax: "",
       drivetrainType: "",
       seatCount: "",
-      hasCredit: false,
-      hasBarter: false,
+      paymentOptions: [],
       equipment: [],
       showMoreFilters: false,
     });
@@ -228,28 +190,12 @@ const VehicleFilters = () => {
           </div>
 
           <div className={styles.filterField}>
-            <div className={styles.rangeInputs}>
-              <div className={styles.inputGroup}>
-                <input
-                  type="number"
-                  value={filters.priceMin}
-                  onChange={(e) => handlePriceChange(e, "min")}
-                  placeholder="Min"
-                  min="0"
-                />
-                <label>Qiymət, min</label>
-              </div>
-              <div className={styles.inputGroup}>
-                <input
-                  type="number"
-                  value={filters.priceMax}
-                  onChange={(e) => handlePriceChange(e, "max")}
-                  placeholder="Max"
-                  min="0"
-                />
-                <label>maks</label>
-              </div>
-            </div>
+            <PriceRangeFilter
+              minValue={filters.priceMin}
+              maxValue={filters.priceMax}
+              onMinChange={(value) => handleFilterChange("priceMin", value)}
+              onMaxChange={(value) => handleFilterChange("priceMax", value)}
+            />
           </div>
 
           <div className={styles.filterField}>
@@ -281,55 +227,25 @@ const VehicleFilters = () => {
           </div>
 
           <div className={styles.filterField}>
-            <div className={styles.rangeInputs}>
-              <div className={styles.inputGroup}>
-                <input
-                  type="number"
-                  value={filters.engineVolumeMin}
-                  onChange={(e) => handleEngineVolumeChange(e, "min")}
-                  placeholder="Min"
-                  min="0"
-                />
-                <label>Həcm (sm³), min</label>
-              </div>
-              <div className={styles.inputGroup}>
-                <input
-                  type="number"
-                  value={filters.engineVolumeMax}
-                  onChange={(e) => handleEngineVolumeChange(e, "max")}
-                  placeholder="Max"
-                  min="0"
-                />
-                <label>maks</label>
-              </div>
-            </div>
+            <EngineVolumeRangeFilter
+              minValue={filters.engineVolumeMin}
+              maxValue={filters.engineVolumeMax}
+              onMinChange={(value) =>
+                handleFilterChange("engineVolumeMin", value)
+              }
+              onMaxChange={(value) =>
+                handleFilterChange("engineVolumeMax", value)
+              }
+            />
           </div>
 
           <div className={styles.filterField}>
-            <div className={styles.rangeInputs}>
-              <div className={styles.inputGroup}>
-                <input
-                  type="number"
-                  value={filters.yearMin}
-                  onChange={(e) => handleYearChange(e, "min")}
-                  placeholder="Min"
-                  min="1900"
-                  max={new Date().getFullYear()}
-                />
-                <label>İl, min</label>
-              </div>
-              <div className={styles.inputGroup}>
-                <input
-                  type="number"
-                  value={filters.yearMax}
-                  onChange={(e) => handleYearChange(e, "max")}
-                  placeholder="Max"
-                  min="1900"
-                  max={new Date().getFullYear()}
-                />
-                <label>maks</label>
-              </div>
-            </div>
+            <YearRangeFilter
+              minValue={filters.yearMin}
+              maxValue={filters.yearMax}
+              onMinChange={(value) => handleFilterChange("yearMin", value)}
+              onMaxChange={(value) => handleFilterChange("yearMax", value)}
+            />
           </div>
 
           {/* Row 3: Transmission, City, Condition, Mileage */}
@@ -350,72 +266,21 @@ const VehicleFilters = () => {
           </div>
 
           <div className={styles.filterField}>
-            <div className={styles.conditionGroup}>
-              <div className={styles.radioOption}>
-                <input
-                  type="radio"
-                  name="condition"
-                  id="condition_all"
-                  value="all"
-                  checked={filters.condition === "all"}
-                  onChange={(e) =>
-                    handleFilterChange("condition", e.target.value)
-                  }
-                />
-                <label htmlFor="condition_all">Hamısı</label>
-              </div>
-              <div className={styles.radioOption}>
-                <input
-                  type="radio"
-                  name="condition"
-                  id="condition_new"
-                  value="new"
-                  checked={filters.condition === "new"}
-                  onChange={(e) =>
-                    handleFilterChange("condition", e.target.value)
-                  }
-                />
-                <label htmlFor="condition_new">Yeni</label>
-              </div>
-              <div className={styles.radioOption}>
-                <input
-                  type="radio"
-                  name="condition"
-                  id="condition_used"
-                  value="used"
-                  checked={filters.condition === "used"}
-                  onChange={(e) =>
-                    handleFilterChange("condition", e.target.value)
-                  }
-                />
-                <label htmlFor="condition_used">Sürülmüş</label>
-              </div>
-            </div>
+            <RadioGroup2
+              options={CONDITION_OPTIONS}
+              value={filters.condition}
+              onChange={(value) => handleFilterChange("condition", value)}
+              name="car-condition"
+            />
           </div>
 
           <div className={styles.filterField}>
-            <div className={styles.rangeInputs}>
-              <div className={styles.inputGroup}>
-                <input
-                  type="number"
-                  value={filters.mileageMin}
-                  onChange={(e) => handleMileageChange(e, "min")}
-                  placeholder="Min"
-                  min="0"
-                />
-                <label>Yürüş, min</label>
-              </div>
-              <div className={styles.inputGroup}>
-                <input
-                  type="number"
-                  value={filters.mileageMax}
-                  onChange={(e) => handleMileageChange(e, "max")}
-                  placeholder="Max"
-                  min="0"
-                />
-                <label>maks</label>
-              </div>
-            </div>
+            <MileageRangeFilter
+              minValue={filters.mileageMin}
+              maxValue={filters.mileageMax}
+              onMinChange={(value) => handleFilterChange("mileageMin", value)}
+              onMaxChange={(value) => handleFilterChange("mileageMax", value)}
+            />
           </div>
 
           {/* Additional Filters */}
@@ -442,55 +307,23 @@ const VehicleFilters = () => {
               </div>
 
               <div className={styles.filterField}>
-                <div className={styles.rangeInputs}>
-                  <div className={styles.inputGroup}>
-                    <input
-                      type="number"
-                      value={filters.powerMin}
-                      onChange={(e) => handlePowerChange(e, "min")}
-                      placeholder="Min"
-                      min="0"
-                    />
-                    <label>Güc, min</label>
-                  </div>
-                  <div className={styles.inputGroup}>
-                    <input
-                      type="number"
-                      value={filters.powerMax}
-                      onChange={(e) => handlePowerChange(e, "max")}
-                      placeholder="Max"
-                      min="0"
-                    />
-                    <label>maks</label>
-                  </div>
-                </div>
+                <PowerRangeFilter
+                  minValue={filters.powerMin}
+                  maxValue={filters.powerMax}
+                  onMinChange={(value) => handleFilterChange("powerMin", value)}
+                  onMaxChange={(value) => handleFilterChange("powerMax", value)}
+                />
               </div>
 
               <div className={styles.filterField}>
-                <div className={styles.paymentGroup}>
-                  <div className={styles.checkboxOption}>
-                    <input
-                      type="checkbox"
-                      id="kredit"
-                      checked={filters.hasCredit}
-                      onChange={(e) =>
-                        handleFilterChange("hasCredit", e.target.checked)
-                      }
-                    />
-                    <label htmlFor="kredit">Kredit</label>
-                  </div>
-                  <div className={styles.checkboxOption}>
-                    <input
-                      type="checkbox"
-                      id="barter"
-                      checked={filters.hasBarter}
-                      onChange={(e) =>
-                        handleFilterChange("hasBarter", e.target.checked)
-                      }
-                    />
-                    <label htmlFor="barter">Barter</label>
-                  </div>
-                </div>
+                <CheckboxGroup2
+                  options={PAYMENT_OPTIONS}
+                  values={filters.paymentOptions}
+                  onChange={(values) =>
+                    handleFilterChange("paymentOptions", values)
+                  }
+                  name="payment-options"
+                />
               </div>
             </>
           )}

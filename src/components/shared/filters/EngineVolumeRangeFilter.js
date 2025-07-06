@@ -1,8 +1,8 @@
 "use client";
-// components/shared/filters/MileageRangeFilter.js (Updated with simple design)
+// components/shared/filters/EngineVolumeRangeFilter.js (New component with simple design)
 import styles from "./PriceRangeFilter.module.css"; // Reuse the same styles
 
-export const MileageRangeFilter = ({
+export const EngineVolumeRangeFilter = ({
   minValue,
   maxValue,
   onMinChange,
@@ -34,7 +34,7 @@ export const MileageRangeFilter = ({
             min="0"
             disabled={disabled}
           />
-          <label>Yürüş, min</label>
+          <label>Həcm (sm³), min</label>
         </div>
         <div className={styles.inputGroup}>
           <input
