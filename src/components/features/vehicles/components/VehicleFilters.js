@@ -163,7 +163,7 @@ const VehicleFilters = () => {
   return (
     <div className={styles.filtersSection}>
       <div className={styles.filtersContainer}>
-        <h3 className={styles.titleCategory}>Maşın axtarışı</h3>
+        <h3 className={styles.titleCategory}>Nəqliyyat</h3>
 
         <div className={styles.filtersGrid}>
           {/* Row 1: Brand, Model, Price Range, Color */}
