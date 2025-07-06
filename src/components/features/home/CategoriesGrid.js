@@ -11,7 +11,7 @@ const CategoriesGrid = () => {
   // Complete categories data from the original homepage (all 16 categories)
   const categories = [
     {
-      href: "neqliyyat.html",
+      href: "neqliyyat",
       icon: "img/category-icons/bolbol_icons_nəqliyyat.svg",
       name: "Nəqliyyat",
     },

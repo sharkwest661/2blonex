@@ -1,0 +1,136 @@
+/* components/ui/forms/RadioGroup2.module.css */
+
+.radioGroup {
+  display: flex;
+  align-items: center;
+  height: 44px;
+  padding: 0 12px;
+  border: 1px solid rgba(1, 63, 68, 0.2);
+  border-radius: 8px;
+  background-color: white;
+  gap: 20px;
+}
+
+.radioGroup.disabled {
+  opacity: 0.6;
+  pointer-events: none;
+  background-color: #f8f9fa;
+  border-color: #e5e7eb;
+}
+
+.radioOption {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.radioOption input[type="radio"] {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(1, 63, 68, 0.3);
+  border-radius: 50%;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+  background-color: white;
+  margin: 0;
+}
+
+.radioOption input[type="radio"]:hover:not(:disabled) {
+  border-color: rgba(1, 63, 68, 0.6);
+}
+
+.radioOption input[type="radio"]:checked {
+  border-color: #013f44;
+  background-color: white;
+}
+
+.radioOption input[type="radio"]:checked::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #013f44;
+  transform: translate(-50%, -50%);
+}
+
+.radioOption input[type="radio"]:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.radioOption label {
+  font-size: 14px;
+  color: #000000;
+  cursor: pointer;
+  user-select: none;
+  margin: 0;
+}
+
+.radioOption input[type="radio"]:disabled + label {
+  cursor: not-allowed;
+  color: #6b7280;
+}
+
+/* Responsive Design */
+@media (min-width: 1200px) {
+  .radioGroup {
+    height: 48px;
+  }
+}
+
+@media (max-width: 1199px) and (min-width: 992px) {
+  .radioGroup {
+    height: 46px;
+    gap: 16px;
+  }
+}
+
+@media (max-width: 991px) and (min-width: 768px) {
+  .radioGroup {
+    gap: 14px;
+  }
+}
+
+@media (max-width: 767px) {
+  .radioGroup {
+    height: 40px;
+    padding: 0 8px;
+    gap: 12px;
+  }
+
+  .radioOption {
+    gap: 4px;
+  }
+
+  .radioOption label {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 575px) {
+  .radioGroup {
+    height: 38px;
+    padding: 0 6px;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .radioOption input[type="radio"] {
+    width: 14px;
+    height: 14px;
+  }
+
+  .radioOption input[type="radio"]:checked::after {
+    width: 5px;
+    height: 5px;
+  }
+
+  .radioOption label {
+    font-size: 12px;
+  }
+}
