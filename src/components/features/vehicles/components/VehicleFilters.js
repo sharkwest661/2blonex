@@ -128,8 +128,6 @@ const VehicleFilters = () => {
 
   return (
     <>
-      <h1 className="title_category">Nəqliyyat</h1>
-
       {/* Mobile Filter Button - Only visible on mobile */}
       <div className="mobile-filter-trigger">
         <button
