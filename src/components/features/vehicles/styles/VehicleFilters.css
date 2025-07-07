@@ -7,7 +7,6 @@
   padding: 20px;
   background: #f8fafc;
   border-radius: 12px;
-  border: 1px solid #e2e8f0;
   display: block;
 }
 
@@ -17,12 +16,12 @@
   color: #374151;
   margin-bottom: 16px;
   padding-bottom: 8px;
-  border-bottom: 1px solid #e2e8f0;
 }
 
 .additional_chekings {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   gap: 20px;
 }
 
@@ -71,7 +70,7 @@
 /* Original styles compatibility */
 .desctop_filters .additional_chekings_hero {
   flex-basis: 100%;
-  margin-top: 16px;
+  margin-top: 16px !important;
 }
 
 @media (max-width: 1024px) {
