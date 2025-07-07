@@ -16,4 +16,8 @@ Master CSS file that imports everything
 /* Import modern mobile menu styles */
 @import "../styles/mobile-menu.css";
 
+/* Add these new imports for bottom drawer functionality */
+@import "../styles/bottom-drawer.css";
+@import "../styles/mobile-filter.css";
+
 @import "../styles/main-reset.css";
