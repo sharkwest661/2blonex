@@ -1,11 +1,12 @@
 "use client";
-// features/vehicles/components/VehicleFilters.js (Updated with reusable components)
-import { useState } from "react";
+// src/components/features/vehicles/VehicleFilters.js
+import React, { useState } from "react";
 import {
   Dropdown,
   FilterButtons,
   RadioGroup2,
   CheckboxGroup2,
+  CheckboxGroup,
 } from "@/components/ui/forms";
 import {
   PriceRangeFilter,
@@ -15,84 +16,21 @@ import {
   PowerRangeFilter,
   EngineVolumeRangeFilter,
 } from "@/components/shared/filters";
-import { VEHICLE_CONSTANTS } from "../constants";
-import styles from "../styles/VehicleFilters.module.css";
-
-const {
+import {
   CAR_BRANDS,
+  CAR_MODELS,
   FUEL_TYPES,
   BODY_TYPES,
   TRANSMISSIONS,
   DRIVETRAIN_TYPES,
+  COLORS,
+  SEAT_COUNTS,
+  CONDITION_OPTIONS,
+  PAYMENT_OPTIONS,
   VEHICLE_EQUIPMENT,
-} = VEHICLE_CONSTANTS;
-
-// Car Models Data
-const CAR_MODELS = {
-  bmw: [
-    { value: "3_series", label: "3 Series" },
-    { value: "5_series", label: "5 Series" },
-    { value: "x5", label: "X5" },
-    { value: "x3", label: "X3" },
-    { value: "x1", label: "X1" },
-    { value: "1_series", label: "1 Series" },
-  ],
-  mercedes: [
-    { value: "c_class", label: "C-Class" },
-    { value: "e_class", label: "E-Class" },
-    { value: "glc", label: "GLC" },
-    { value: "gla", label: "GLA" },
-    { value: "a_class", label: "A-Class" },
-    { value: "s_class", label: "S-Class" },
-  ],
-  toyota: [
-    { value: "camry", label: "Camry" },
-    { value: "corolla", label: "Corolla" },
-    { value: "rav4", label: "RAV4" },
-    { value: "prius", label: "Prius" },
-    { value: "highlander", label: "Highlander" },
-    { value: "land_cruiser", label: "Land Cruiser" },
-  ],
-  hyundai: [
-    { value: "elantra", label: "Elantra" },
-    { value: "sonata", label: "Sonata" },
-    { value: "tucson", label: "Tucson" },
-    { value: "santa_fe", label: "Santa Fe" },
-    { value: "accent", label: "Accent" },
-  ],
-};
-
-const COLORS = [
-  { value: "white", label: "Ağ" },
-  { value: "black", label: "Qara" },
-  { value: "silver", label: "Gümüşü" },
-  { value: "gray", label: "Boz" },
-  { value: "red", label: "Qırmızı" },
-  { value: "blue", label: "Göy" },
-  { value: "green", label: "Yaşıl" },
-  { value: "brown", label: "Qəhvəyi" },
-  { value: "yellow", label: "Sarı" },
-  { value: "orange", label: "Narıncı" },
-];
-
-const SEAT_COUNTS = [
-  { value: "2", label: "2" },
-  { value: "4", label: "4" },
-  { value: "5", label: "5" },
-  { value: "7", label: "7" },
-  { value: "8", label: "8+" },
-];
-
-const CONDITION_OPTIONS = [
-  { value: "all", label: "Hamısı" },
-  { value: "new", label: "Yeni" },
-  { value: "used", label: "Sürülmüş" },
-];
-
-const PAYMENT_OPTIONS = [
-  { value: "credit", label: "Kredit" },
-  { value: "barter", label: "Barter" },
-];
+  EQUIPMENT_CATEGORIES,
+} from "../constants";
+import "../styles/VehicleFilters.css";
 
 const VehicleFilters = () => {
   const [filters, setFilters] = useState({
@@ -100,31 +38,33 @@ const VehicleFilters = () => {
     model: "",
     priceMin: "",
     priceMax: "",
+    color: "",
+    fuel: "",
+    bodyType: "",
+    volumeMin: "",
+    volumeMax: "",
     yearMin: "",
     yearMax: "",
-    mileageMin: "",
-    mileageMax: "",
-    color: "",
-    fuelType: "",
-    bodyType: "",
     transmission: "",
     city: "",
     condition: "all",
-    engineVolumeMin: "",
-    engineVolumeMax: "",
+    mileageMin: "",
+    mileageMax: "",
+    gearbox: "",
+    seatCount: "",
     powerMin: "",
     powerMax: "",
-    drivetrainType: "",
-    seatCount: "",
-    paymentOptions: [], // Changed to array
+    paymentOptions: [],
     equipment: [],
     showMoreFilters: false,
   });
 
-  const handleFilterChange = (key, value) => {
+  const handleFilterChange = (field, value) => {
     setFilters((prev) => ({
       ...prev,
-      [key]: value,
+      [field]: value,
+      // Reset model when brand changes
+      ...(field === "brand" && { model: "" }),
     }));
   };
 
@@ -134,22 +74,22 @@ const VehicleFilters = () => {
       model: "",
       priceMin: "",
       priceMax: "",
+      color: "",
+      fuel: "",
+      bodyType: "",
+      volumeMin: "",
+      volumeMax: "",
       yearMin: "",
       yearMax: "",
-      mileageMin: "",
-      mileageMax: "",
-      color: "",
-      fuelType: "",
-      bodyType: "",
       transmission: "",
       city: "",
       condition: "all",
-      engineVolumeMin: "",
-      engineVolumeMax: "",
+      mileageMin: "",
+      mileageMax: "",
+      gearbox: "",
+      seatCount: "",
       powerMin: "",
       powerMax: "",
-      drivetrainType: "",
-      seatCount: "",
       paymentOptions: [],
       equipment: [],
       showMoreFilters: false,
@@ -158,38 +98,44 @@ const VehicleFilters = () => {
 
   const handleShowResults = () => {
     console.log("Showing results with filters:", filters);
+    // TODO: Implement actual filtering/search logic
+  };
+
+  const getModelOptions = () => {
+    return filters.brand ? CAR_MODELS[filters.brand] || [] : [];
+  };
+
+  const getEquipmentByCategory = (category) => {
+    return VEHICLE_EQUIPMENT.filter((item) => item.category === category);
   };
 
   return (
-    <div className={styles.filtersSection}>
-      <div className={styles.filtersContainer}>
-        <h3 className={styles.titleCategory}>Nəqliyyat</h3>
+    <>
+      <h1 className="title_category">Nəqliyyat</h1>
 
-        <div className={styles.filtersGrid}>
-          {/* Row 1: Brand, Model, Price Range, Color */}
-          <div className={styles.filterField}>
+      <div className="main_container">
+        <div className="desctop_filters">
+          {/* Row 1: Brand, Model, Price, Color */}
+          <div className="form-group for_width20 grow-1 order-1">
             <Dropdown
               placeholder="Marka"
               options={CAR_BRANDS}
               value={filters.brand}
-              onChange={(value) => {
-                handleFilterChange("brand", value);
-                handleFilterChange("model", "");
-              }}
+              onChange={(value) => handleFilterChange("brand", value)}
             />
           </div>
 
-          <div className={styles.filterField}>
+          <div className="form-group for_width20 grow-1 order-2">
             <Dropdown
               placeholder="Model"
-              options={filters.brand ? CAR_MODELS[filters.brand] || [] : []}
+              options={getModelOptions()}
               value={filters.model}
               onChange={(value) => handleFilterChange("model", value)}
               disabled={!filters.brand}
             />
           </div>
 
-          <div className={styles.filterField}>
+          <div className="form-group for_width_big grow-1 order-3">
             <PriceRangeFilter
               minValue={filters.priceMin}
               maxValue={filters.priceMax}
@@ -198,7 +144,7 @@ const VehicleFilters = () => {
             />
           </div>
 
-          <div className={styles.filterField}>
+          <div className="form-group for_width_small grow-1 order-4">
             <Dropdown
               placeholder="Rəng"
               options={COLORS}
@@ -207,17 +153,17 @@ const VehicleFilters = () => {
             />
           </div>
 
-          {/* Row 2: Fuel Type, Body Type, Engine Volume, Year */}
-          <div className={styles.filterField}>
+          {/* Row 2: Fuel, Body Type, Engine Volume, Year */}
+          <div className="form-group for_width20 grow-1 order-5">
             <Dropdown
               placeholder="Yanacaq növü"
               options={FUEL_TYPES}
-              value={filters.fuelType}
-              onChange={(value) => handleFilterChange("fuelType", value)}
+              value={filters.fuel}
+              onChange={(value) => handleFilterChange("fuel", value)}
             />
           </div>
 
-          <div className={styles.filterField}>
+          <div className="form-group for_width20 grow-1 order-6">
             <Dropdown
               placeholder="Ban növü"
               options={BODY_TYPES}
@@ -226,20 +172,16 @@ const VehicleFilters = () => {
             />
           </div>
 
-          <div className={styles.filterField}>
+          <div className="form-group for_width_big grow-1 order-7">
             <EngineVolumeRangeFilter
-              minValue={filters.engineVolumeMin}
-              maxValue={filters.engineVolumeMax}
-              onMinChange={(value) =>
-                handleFilterChange("engineVolumeMin", value)
-              }
-              onMaxChange={(value) =>
-                handleFilterChange("engineVolumeMax", value)
-              }
+              minValue={filters.volumeMin}
+              maxValue={filters.volumeMax}
+              onMinChange={(value) => handleFilterChange("volumeMin", value)}
+              onMaxChange={(value) => handleFilterChange("volumeMax", value)}
             />
           </div>
 
-          <div className={styles.filterField}>
+          <div className="form-group for_width_small grow-1 order-8">
             <YearRangeFilter
               minValue={filters.yearMin}
               maxValue={filters.yearMax}
@@ -249,7 +191,7 @@ const VehicleFilters = () => {
           </div>
 
           {/* Row 3: Transmission, City, Condition, Mileage */}
-          <div className={styles.filterField}>
+          <div className="form-group for_width20 grow-1 order-9">
             <Dropdown
               placeholder="Sürətlər qutusu"
               options={TRANSMISSIONS}
@@ -258,14 +200,14 @@ const VehicleFilters = () => {
             />
           </div>
 
-          <div className={styles.filterField}>
+          <div className="form-group for_width20 grow-1 order-10">
             <LocationFilter
               value={filters.city}
               onChange={(value) => handleFilterChange("city", value)}
             />
           </div>
 
-          <div className={styles.filterField}>
+          <div className="form-group for_width_big grow-1 order-11">
             <RadioGroup2
               options={CONDITION_OPTIONS}
               value={filters.condition}
@@ -274,7 +216,7 @@ const VehicleFilters = () => {
             />
           </div>
 
-          <div className={styles.filterField}>
+          <div className="form-group for_width_small grow-1 order-12">
             <MileageRangeFilter
               minValue={filters.mileageMin}
               maxValue={filters.mileageMax}
@@ -283,21 +225,20 @@ const VehicleFilters = () => {
             />
           </div>
 
-          {/* Additional Filters */}
+          {/* Additional Filters - Hidden by Default */}
           {filters.showMoreFilters && (
             <>
-              <div className={styles.filterField}>
+              {/* Additional vehicle filters */}
+              <div className="form-group for_width20 grow-1 order-13">
                 <Dropdown
                   placeholder="Ötürücü"
                   options={DRIVETRAIN_TYPES}
-                  value={filters.drivetrainType}
-                  onChange={(value) =>
-                    handleFilterChange("drivetrainType", value)
-                  }
+                  value={filters.gearbox}
+                  onChange={(value) => handleFilterChange("gearbox", value)}
                 />
               </div>
 
-              <div className={styles.filterField}>
+              <div className="form-group for_width20 grow-1 order-14">
                 <Dropdown
                   placeholder="Yerlərin sayı"
                   options={SEAT_COUNTS}
@@ -306,7 +247,7 @@ const VehicleFilters = () => {
                 />
               </div>
 
-              <div className={styles.filterField}>
+              <div className="form-group for_width_big grow-1 order-15">
                 <PowerRangeFilter
                   minValue={filters.powerMin}
                   maxValue={filters.powerMax}
@@ -315,7 +256,7 @@ const VehicleFilters = () => {
                 />
               </div>
 
-              <div className={styles.filterField}>
+              <div className="form-group for_width_small grow-1 order-16">
                 <CheckboxGroup2
                   options={PAYMENT_OPTIONS}
                   values={filters.paymentOptions}
@@ -325,12 +266,45 @@ const VehicleFilters = () => {
                   name="payment-options"
                 />
               </div>
+
+              {/* Vehicle Equipment Section */}
+              <div className="additional_chekings_hero order-17">
+                <p className="additional_chekings_title">
+                  Avtomobilin təchizatı
+                </p>
+                <div className="additional_chekings">
+                  {EQUIPMENT_CATEGORIES.map((category) => {
+                    const categoryEquipment = getEquipmentByCategory(
+                      category.value
+                    );
+                    if (categoryEquipment.length === 0) return null;
+
+                    return (
+                      <div key={category.value} className="equipment-category">
+                        <h4 className="equipment-category-title">
+                          {category.label}
+                        </h4>
+                        <CheckboxGroup
+                          options={categoryEquipment}
+                          values={filters.equipment}
+                          onChange={(values) =>
+                            handleFilterChange("equipment", values)
+                          }
+                          name={`equipment-${category.value}`}
+                          layout="horizontal"
+                          variant="default"
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
             </>
           )}
         </div>
 
-        {/* Filter Buttons */}
-        <div className={styles.filterActions}>
+        {/* Filter Action Buttons */}
+        <div className="desc_filters_btns">
           <FilterButtons
             onReset={handleReset}
             onToggleMoreFilters={() =>
@@ -345,7 +319,143 @@ const VehicleFilters = () => {
           />
         </div>
       </div>
-    </div>
+
+      <div className="main_container">
+        {/* Mobile Sections (767px and below) */}
+        <div className="after_767">
+          <div id="mark767_show_btn">
+            <div className="mark767_show_btn_title">
+              <i className="fa-solid fa-car"></i>
+              <p>Bütün markalar</p>
+            </div>
+            <i className="fa-solid fa-chevron-down"></i>
+          </div>
+        </div>
+
+        <div className="neqliyyat_767">
+          <div id="afterMark767">
+            <label id="markLabel767">Marka</label>
+            <p id="checkedMark767">
+              {filters.brand &&
+                CAR_BRANDS.find((b) => b.value === filters.brand)?.label}
+            </p>
+            <i className="fa-solid fa-chevron-down" id="mark_arrow_down"></i>
+            <i className="fa-solid fa-circle-xmark" id="mark_reset_xmark"></i>
+          </div>
+          <div id="afterModel767">
+            <label id="modelLabel767">Model</label>
+            <p id="checkedModel767">
+              {filters.model &&
+                getModelOptions().find((m) => m.value === filters.model)?.label}
+            </p>
+            <i className="fa-solid fa-chevron-down" id="model_arrow_down"></i>
+            <i className="fa-solid fa-circle-xmark" id="model_reset_xmark"></i>
+          </div>
+        </div>
+
+        <div className="filters_767">
+          <div className="filters_767_inner">
+            <a href="filters.html">
+              <i className="fa-solid fa-arrow-down-short-wide"></i>
+              <p>Filtrlər</p>
+            </a>
+          </div>
+          <div className="filters_767_inner" id="filter_date">
+            <a href="#">
+              <i className="fa-solid fa-arrow-down-z-a"></i>
+              <p>Tarixə görə</p>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Mark Dropdown */}
+      <div id="mark767_dropdown">
+        <div className="mark767_header">
+          <i className="fa-solid fa-arrow-left" id="markCloseBtn767"></i>
+          <h3>Marka</h3>
+        </div>
+        <div className="search search--live">
+          <div className="input-group search__group">
+            <input
+              type="text"
+              className="form-control search__input"
+              id="markInput767"
+            />
+            <div className="input-group-append search__append">
+              <button className="search__btn" type="button"></button>
+            </div>
+          </div>
+        </div>
+        <ul className="selectBox__list" id="carMarks767">
+          {CAR_BRANDS.map((brand) => (
+            <li
+              key={brand.value}
+              onClick={() => handleFilterChange("brand", brand.value)}
+            >
+              {brand.label}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Mobile Model Dropdown */}
+      <div id="model767_dropdown">
+        <div className="model767_header">
+          <i className="fa-solid fa-arrow-left" id="modelCloseBtn767"></i>
+          <h3>Model</h3>
+        </div>
+        <div className="search search--live">
+          <div className="input-group search__group">
+            <input
+              type="text"
+              className="form-control search__input"
+              id="modelInput767"
+            />
+            <div className="input-group-append search__append">
+              <button className="search__btn" type="button"></button>
+            </div>
+          </div>
+        </div>
+        <ul className="selectBox__list" id="carModel767">
+          {getModelOptions().map((model) => (
+            <li
+              key={model.value}
+              onClick={() => handleFilterChange("model", model.value)}
+            >
+              {model.label}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Brands Section */}
+      <section className="mark_section">
+        <div className="main_container">
+          <div className="container-fluid">
+            <div className="brands">
+              <div className="brands__heading">
+                <h2 className="mb-0">Markalar</h2>
+                <a href="">Bütün markalar</a>
+              </div>
+              <div className="brands__grid">
+                {CAR_BRANDS.slice(0, 8).map((brand) => (
+                  <a
+                    key={brand.value}
+                    href="#"
+                    className="brands__item"
+                    onClick={() => handleFilterChange("brand", brand.value)}
+                  >
+                    {brand.label}
+                    <span>{Math.floor(Math.random() * 5000) + 100}</span>
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </>
   );
 };
 

@@ -1,0 +1,81 @@
+/* Add to src/components/features/vehicles/styles/VehicleFilters.module.css */
+
+/* Equipment Section Styling */
+.additional_chekings_hero {
+  width: 100%;
+  margin-top: 20px;
+  padding: 20px;
+  background: #f8fafc;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  display: block;
+}
+
+.additional_chekings_title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.additional_chekings {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.equipment-category {
+  background: white;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.equipment-category-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #6b7280;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Mobile Responsive */
+@media (max-width: 767px) {
+  .additional_chekings_hero {
+    margin: 16px;
+    padding: 16px;
+  }
+
+  .additional_chekings_title {
+    font-size: 16px;
+  }
+
+  .equipment-category {
+    padding: 12px;
+  }
+
+  .equipment-category-title {
+    font-size: 13px;
+    margin-bottom: 8px;
+  }
+}
+
+/* Legacy Classes - Keep original structure */
+.additional_chekings_hero.order-17 {
+  order: 17;
+}
+
+/* Original styles compatibility */
+.desctop_filters .additional_chekings_hero {
+  flex-basis: 100%;
+  margin-top: 16px;
+}
+
+@media (max-width: 1024px) {
+  .additional_chekings_hero {
+    margin-top: 12px;
+  }
+}
