@@ -1,0 +1,375 @@
+/* src/styles/bottom-drawer.css */
+
+/* ===================================
+   BOTTOM DRAWER STYLES
+   =================================== */
+
+.bottom-drawer-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9998;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.bottom-drawer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  max-height: 90vh;
+  background: white;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  animation: slideUpIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.bottom-drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e5e7eb;
+  background: white;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.bottom-drawer-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #013f44;
+  margin: 0;
+}
+
+.bottom-drawer-close {
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: #f8f9fa;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.bottom-drawer-close:hover {
+  background: #e9ecef;
+  transform: scale(1.05);
+}
+
+.bottom-drawer-close i {
+  font-size: 16px;
+  color: #6b7280;
+}
+
+.bottom-drawer-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 24px 24px;
+}
+
+.bottom-drawer-footer {
+  padding: 16px 24px;
+  border-top: 1px solid #e5e7eb;
+  background: white;
+  position: sticky;
+  bottom: 0;
+}
+
+.bottom-drawer-apply-btn {
+  width: 100%;
+  padding: 16px 24px;
+  background: #013f44;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.bottom-drawer-apply-btn:hover {
+  background: #20b038;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(1, 63, 68, 0.3);
+}
+
+/* ===================================
+     FILTER SECTIONS
+     =================================== */
+
+.filter-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.filter-section {
+  border-bottom: 1px solid #f1f3f4;
+}
+
+.filter-section-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+.filter-section-header:hover {
+  background: rgba(1, 63, 68, 0.02);
+}
+
+.filter-section-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.filter-section-header i {
+  font-size: 14px;
+  color: #9ca3af;
+  transition: transform 0.2s ease;
+}
+
+.filter-section-content {
+  padding-bottom: 16px;
+  animation: slideDown 0.3s ease-out;
+}
+
+/* ===================================
+     FILTER COMPONENTS
+     =================================== */
+
+.filter-dropdown {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #374151;
+  background: white;
+  cursor: pointer;
+}
+
+.filter-dropdown:focus {
+  outline: none;
+  border-color: #013f44;
+  box-shadow: 0 0 0 3px rgba(1, 63, 68, 0.1);
+}
+
+.filter-dropdown:disabled {
+  background: #f9fafb;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* Range Input Groups */
+.filter-range-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-range-input {
+  flex: 1;
+  padding: 12px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #374151;
+  background: white;
+}
+
+.filter-range-input:focus {
+  outline: none;
+  border-color: #013f44;
+  box-shadow: 0 0 0 3px rgba(1, 63, 68, 0.1);
+}
+
+.filter-range-input::placeholder {
+  color: #9ca3af;
+}
+
+.filter-range-separator {
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 500;
+  min-width: 12px;
+  text-align: center;
+}
+
+.filter-radio-group,
+.filter-checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.filter-radio-item,
+.filter-checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  padding: 8px 0;
+}
+
+.filter-radio-item input[type="radio"],
+.filter-checkbox-item input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  cursor: pointer;
+}
+
+.filter-radio-item input[type="radio"] {
+  accent-color: #013f44;
+}
+
+.filter-checkbox-item input[type="checkbox"] {
+  accent-color: #013f44;
+}
+
+.filter-radio-label,
+.filter-checkbox-label {
+  font-size: 14px;
+  color: #374151;
+  cursor: pointer;
+  user-select: none;
+}
+
+.filter-radio-item:hover,
+.filter-checkbox-item:hover {
+  background: rgba(1, 63, 68, 0.02);
+  border-radius: 6px;
+}
+
+/* ===================================
+     RESET SECTION
+     =================================== */
+
+.filter-reset-section {
+  padding: 20px 0;
+  border-top: 1px solid #e5e7eb;
+  margin-top: 20px;
+}
+
+.filter-reset-btn {
+  width: 100%;
+  padding: 14px 24px;
+  background: none;
+  border: 1px solid #d1d5db;
+  color: #6b7280;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-reset-btn:hover {
+  border-color: #9ca3af;
+  color: #374151;
+  background: #f9fafb;
+}
+
+/* ===================================
+     ANIMATIONS
+     =================================== */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUpIn {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 200px;
+  }
+}
+
+/* ===================================
+     RESPONSIVE
+     =================================== */
+
+/* Desktop - Hide drawer on larger screens */
+@media screen and (min-width: 768px) {
+  .bottom-drawer-backdrop,
+  .bottom-drawer {
+    display: none;
+  }
+}
+
+/* Mobile specific styles */
+@media screen and (max-width: 767px) {
+  .bottom-drawer {
+    max-height: 85vh;
+  }
+
+  .bottom-drawer-content {
+    padding: 0 20px 20px;
+  }
+
+  .bottom-drawer-footer {
+    padding: 12px 20px;
+  }
+
+  .bottom-drawer-header {
+    padding: 16px 20px;
+  }
+}
+
+@media screen and (max-width: 375px) {
+  .bottom-drawer-content {
+    padding: 0 16px 16px;
+  }
+
+  .bottom-drawer-footer {
+    padding: 12px 16px;
+  }
+
+  .bottom-drawer-header {
+    padding: 16px;
+  }
+}
