@@ -24,7 +24,7 @@ const PostItem = ({
   storeImage,
   storeHref,
 
-  // NEW: Variant prop for different layouts
+  // NEW: Variant prop for different layouts (favorites page)
   variant = "default", // "default" | "standalone"
 }) => {
   const { favorites, addToFavorites, removeFromFavorites } =

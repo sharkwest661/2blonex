@@ -1,4 +1,4 @@
-// src/components/features/home/SearchSection.js - Fixed Width Constraints
+// src/components/features/home/SearchSection.js - Original Code with Category Support
 "use client";
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
@@ -8,7 +8,7 @@ import {
   getCategorySearchPhrases,
 } from "../../../utils/constants";
 
-const SearchSection = () => {
+const SearchSection = ({ typingKeywords = null, category = "default" }) => {
   const [inputValue, setInputValue] = useState("");
   const [isInputFocused, setIsInputFocused] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
@@ -16,8 +16,8 @@ const SearchSection = () => {
   const inputRef = useRef(null);
   const router = useRouter();
 
-  // Define search phrases in Azerbaijani for the typing effect
-  const searchPhrases = getCategorySearchPhrases("default");
+  // Use provided typing keywords or fallback to category-specific or default
+  const searchPhrases = typingKeywords || getCategorySearchPhrases(category);
 
   // Get the current typing animation text
   const typingText = useTypingAnimation({
