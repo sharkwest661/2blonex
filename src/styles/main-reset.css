@@ -463,3 +463,22 @@
 .footer__navlink {
   margin-right: 28px;
 }
+
+.profile--secondary {
+  margin-top: -25px;
+}
+
+@media screen and (max-width: 767px) {
+  .profile--secondary {
+    margin-top: -72px;
+  }
+}
+
+.user-post {
+  padding: 20px 20px 30px 20px !important;
+  margin: 0 !important;
+}
+.user-post__list {
+  padding: 0 !important;
+  margin: 0 !important;
+}
