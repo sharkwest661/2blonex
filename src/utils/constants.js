@@ -221,6 +221,162 @@ export const getCategoryBySlug = (slug) => {
   return CATEGORIES.find((category) => category.slug === slug);
 };
 
+// Get category-specific configuration
+export const getCategoryConfig = (slug) => {
+  const configs = {
+    // Vehicles (already implemented)
+    neqliyyat: {
+      typingKeywords: [
+        "BMW axtarın...",
+        "Mercedes satılır...",
+        "Toyota Camry...",
+        "Hyundai Tucson...",
+        "motosiklet axtarın...",
+        "kamaz satılır...",
+        "avtobus kirayə...",
+      ],
+      resultCount: 15420,
+    },
+
+    // Real Estate
+    emlak: {
+      typingKeywords: [
+        "mənzil satılır...",
+        "ev kirayə...",
+        "ofis satılır...",
+        "villa kirayə...",
+        "torpaq satılır...",
+        "mənzil axtarın...",
+        "ev satılır...",
+      ],
+      resultCount: 8934,
+    },
+
+    // Electronics
+    elektronika: {
+      typingKeywords: [
+        "iPhone satılır...",
+        "Samsung axtarın...",
+        "laptop satılır...",
+        "TV axtarın...",
+        "kompyuter satılır...",
+        "telefon axtarın...",
+        "PlayStation satılır...",
+      ],
+      resultCount: 12567,
+    },
+
+    // Jobs
+    "is-elanlari": {
+      typingKeywords: [
+        "iş axtarıram...",
+        "IT vakansiya...",
+        "satış işi...",
+        "ofis işi...",
+        "part-time iş...",
+        "mühasib işi...",
+        "menecer vakansiya...",
+      ],
+      resultCount: 3421,
+    },
+
+    // Clothing
+    geyim: {
+      typingKeywords: [
+        "geyim satılır...",
+        "ayaqqabı axtarın...",
+        "çanta satılır...",
+        "palto axtarın...",
+        "köynək satılır...",
+        "qadın geyimi...",
+        "kişi geyimi...",
+      ],
+      resultCount: 6789,
+    },
+
+    // Services
+    xidmetler: {
+      typingKeywords: [
+        "təmir xidməti...",
+        "təmizlik xidməti...",
+        "tərcümə xidməti...",
+        "çatdırılma...",
+        "dizayn xidməti...",
+        "dərs xidməti...",
+        "fotoqraf xidməti...",
+      ],
+      resultCount: 4523,
+    },
+
+    // Children
+    "usaq-alemi": {
+      typingKeywords: [
+        "oyuncaq satılır...",
+        "uşaq geyimi...",
+        "uşaq arabaları...",
+        "oyun əşyası...",
+        "uşaq kitabı...",
+        "bebek ehtiyacları...",
+        "uşaq mebeli...",
+      ],
+      resultCount: 2876,
+    },
+
+    // Cosmetics
+    kosmetika: {
+      typingKeywords: [
+        "kosmetika satılır...",
+        "parfüm axtarın...",
+        "dəriyə qulluq...",
+        "şampun satılır...",
+        "məkiyaj axtarın...",
+        "krem satılır...",
+        "ətriyyat axtarın...",
+      ],
+      resultCount: 1897,
+    },
+
+    // Hobbies
+    hobiler: {
+      typingKeywords: [
+        "kitab satılır...",
+        "musiqi alətləri...",
+        "idman avadanlığı...",
+        "kolleksiya əşyası...",
+        "oyun konsolu...",
+        "kamera axtarın...",
+        "hobbi məmulatı...",
+      ],
+      resultCount: 5634,
+    },
+
+    // Free
+    pulsuz: {
+      typingKeywords: [
+        "pulsuz hədiyyə...",
+        "pulsuz elan...",
+        "mübadiləe təklif...",
+        "paylaşım elanı...",
+        "yardım təklifi...",
+        "təcrübə mübadiləsi...",
+        "sərvət paylaşımı...",
+      ],
+      resultCount: 892,
+    },
+  };
+
+  return (
+    configs[slug] || {
+      typingKeywords: [
+        `${categoryData.name} axtarın...`,
+        `${categoryData.name} satılır...`,
+        "nəyi axtarırsınız?",
+      ],
+      resultCount: categoryData.count || 0,
+    }
+  );
+};
+
 export const getCategoryById = (id) => {
   return CATEGORIES.find((category) => category.id === id);
 };
