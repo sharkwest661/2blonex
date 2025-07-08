@@ -6,6 +6,7 @@ import PostList from "@/components/shared/postitem/PostList";
 import { MOCK_PRODUCTS } from "@/utils/constants";
 import { Banner } from "../advertisement";
 import Select from "@/components/ui/forms/Select";
+import "./newListing.css";
 
 const NewListings = () => {
   const [sortValue, setSortValue] = useState("-created_at");
@@ -24,7 +25,7 @@ const NewListings = () => {
   };
 
   return (
-    <section>
+    <section className="new-listings">
       <SectionTitle
         title="Yeni elanlar"
         buttonText="Bütün yeni elanlar"
