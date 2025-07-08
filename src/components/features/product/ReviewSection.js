@@ -1,6 +1,6 @@
 // src/components/features/product/ReviewSection.js
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const ReviewSection = ({ reviews = [] }) => {
   const [showReviewForm, setShowReviewForm] = useState(false);
@@ -19,6 +19,8 @@ const ReviewSection = ({ reviews = [] }) => {
 
   const handleSubmitReview = (e) => {
     e.preventDefault();
+    e.stopPropagation();
+
     if (reviewText.trim()) {
       // Handle review submission
       console.log("Submitting review:", reviewText);
@@ -28,39 +30,65 @@ const ReviewSection = ({ reviews = [] }) => {
     }
   };
 
-  const toggleReviewForm = () => {
-    setShowReviewForm(!showReviewForm);
+  const toggleReviewForm = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log("Toggling review form. Current state:", showReviewForm);
+    setShowReviewForm((prev) => !prev);
   };
 
-  const toggleReviews = () => {
-    setShowReviews(!showReviews);
+  const toggleReviews = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setShowReviews((prev) => !prev);
   };
+
+  // Debug effect to track state changes
+  useEffect(() => {
+    console.log("ReviewSection state changed:", {
+      showReviewForm,
+      showReviews,
+    });
+  }, [showReviewForm, showReviews]);
 
   return (
     <div className="review">
       <div className="review__inner">
-        {/* Review Form */}
-        {showReviewForm ? (
-          <div className="review__form">
-            <form onSubmit={handleSubmitReview}>
-              <div className="form-group">
-                <label htmlFor="review">Şərh yaz</label>
-                <div className="textarea-group">
-                  <textarea
-                    name="review"
-                    id="review"
-                    className="form-control form-textarea"
-                    rows="5"
-                    maxLength={maxLength}
-                    value={reviewText}
-                    onChange={handleReviewChange}
-                    placeholder="Şərhinizi buraya yazın..."
-                  />
-                  <small className="textarea-counter">
-                    <span>{charCount}</span> hərf
-                  </small>
-                </div>
+        {/* Review Form - Override CSS display: none with inline style */}
+        <div
+          className="review__form"
+          style={{
+            display: showReviewForm ? "block" : "none",
+          }}
+        >
+          <form onSubmit={handleSubmitReview}>
+            <div className="form-group">
+              <label htmlFor="review">Şərh yaz</label>
+              <div className="textarea-group">
+                <textarea
+                  name="review"
+                  id="review"
+                  className="form-control form-textarea"
+                  rows="5"
+                  maxLength={maxLength}
+                  value={reviewText}
+                  onChange={handleReviewChange}
+                  placeholder="Şərhinizi buraya yazın..."
+                  autoFocus={showReviewForm}
+                />
+                <small className="textarea-counter">
+                  <span>{charCount}</span> hərf
+                </small>
               </div>
+            </div>
+            <div className="d-flex justify-content-between align-items-center">
+              <a
+                href="#"
+                className="btn btn--transparent"
+                onClick={toggleReviewForm}
+              >
+                Ləğv et
+              </a>
               <button
                 type="submit"
                 className="btn btn--icon btn--short ml-auto"
@@ -69,25 +97,25 @@ const ReviewSection = ({ reviews = [] }) => {
                 <img src="/img/review_submit-icon.svg" alt="review-icon" />
                 Paylaş
               </button>
-            </form>
-          </div>
-        ) : (
-          /* Review Button */
-          <a
-            href=""
-            className="btn btn--icon btn--short review__btn"
-            onClick={(e) => {
-              e.preventDefault();
-              toggleReviewForm();
-            }}
-          >
-            <img src="/img/review_add-icon.svg" alt="review-icon" />
-            Şərh yaz
-          </a>
-        )}
+            </div>
+          </form>
+        </div>
+
+        {/* Review Button - Keep as anchor as expected by CSS */}
+        <a
+          href="#"
+          className="btn btn--icon btn--short review__btn"
+          onClick={toggleReviewForm}
+          style={{
+            display: showReviewForm ? "none" : "flex",
+          }}
+        >
+          <img src="/img/review_add-icon.svg" alt="review-icon" />
+          Şərh yaz
+        </a>
       </div>
 
-      {/* Reviews Toggle */}
+      {/* Reviews Toggle - Keep as anchor to preserve styling */}
       <div>
         <a
           className="review__toggler"
@@ -95,10 +123,7 @@ const ReviewSection = ({ reviews = [] }) => {
           role="button"
           aria-expanded={showReviews}
           aria-controls="reviews"
-          onClick={(e) => {
-            e.preventDefault();
-            toggleReviews();
-          }}
+          onClick={toggleReviews}
         >
           <span>Şərhlər ({reviews.length})</span>
         </a>

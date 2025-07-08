@@ -21,8 +21,8 @@ const ProductInfo = ({ product }) => {
         <div className="d-flex">
           <span className="product__view">{product.views}</span>
           <a
-            href=""
-            className="product__favorite"
+            href="#"
+            className={`product__favorite${isFavorite ? " active" : ""}`}
             data-title={isFavorite ? "Seçilmişdir" : "Seçilmiş et"}
             onClick={handleFavoriteClick}
           >
