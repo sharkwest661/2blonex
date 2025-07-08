@@ -1,116 +1,75 @@
-"use client";
-// src/app/[category]/page.js (or wherever your category page is)
-import { useState, useEffect } from "react";
-import PostList from "@/components/shared/postitem/PostList";
-import { getCategoryBySlug, searchProducts } from "@/utils/constants";
+// src/app/[category]/page.js - Fixed version! 🔧
+import Layout from "@/components/layout/Layout";
+import CategoryPageTemplate from "@/components/templates/CategoryPageTemplate";
+import {
+  getCategoryBySlug,
+  CATEGORIES,
+  getCategoryConfig,
+} from "@/utils/constants";
+import { notFound } from "next/navigation";
 
-const CategoryPage = ({ categorySlug }) => {
-  const [products, setProducts] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [sortBy, setSortBy] = useState("newest");
-  const [loading, setLoading] = useState(true);
+// Generate metadata for each category dynamically
+export async function generateMetadata({ params }) {
+  const { category } = params;
 
-  const category = getCategoryBySlug(categorySlug);
-
-  // 🔑 Determine category type for layout
-  const getCategoryType = (slug) => {
-    const vehicleSlugs = ["neqliyyat", "vehicles", "avtomobil", "motosiklet"];
-    return vehicleSlugs.includes(slug) ? "vehicles" : "other";
-  };
-
-  const categoryType = getCategoryType(categorySlug);
-
-  useEffect(() => {
-    if (category) {
-      let filteredProducts = category.products;
-
-      // Apply search filter
-      if (searchQuery) {
-        filteredProducts = searchProducts(searchQuery, category.id);
-      }
-
-      // Apply sorting
-      filteredProducts = [...filteredProducts].sort((a, b) => {
-        switch (sortBy) {
-          case "price-low":
-            return (
-              parseFloat(a.price.replace(/[^\d]/g, "")) -
-              parseFloat(b.price.replace(/[^\d]/g, ""))
-            );
-          case "price-high":
-            return (
-              parseFloat(b.price.replace(/[^\d]/g, "")) -
-              parseFloat(a.price.replace(/[^\d]/g, ""))
-            );
-          case "newest":
-          default:
-            return new Date(b.date) - new Date(a.date);
-        }
-      });
-
-      setProducts(filteredProducts);
-      setLoading(false);
-    }
-  }, [category, searchQuery, sortBy]);
-
-  if (!category) {
-    return <div>Kateqoriya tapılmadı</div>;
+  // Check if category exists
+  const categoryData = getCategoryBySlug(category);
+  if (!categoryData) {
+    return {
+      title: "Kateqoriya tapılmadı | Bolbol.az",
+    };
   }
 
+  return {
+    title: `${categoryData.name} | Bolbol.az`,
+    description: `${categoryData.name} kateqoriyasında ${categoryData.count} elan`,
+    keywords: `${categoryData.name}, elan, alqı-satqı, Azərbaycan`,
+    openGraph: {
+      title: `${categoryData.name} | Bolbol.az`,
+      description: `${categoryData.name} kateqoriyasında ${categoryData.count} elan`,
+      type: "website",
+    },
+  };
+}
+
+// Generate static params for all categories (for SSG)
+export async function generateStaticParams() {
+  return CATEGORIES.map((category) => ({
+    category: category.slug,
+  }));
+}
+
+export default function CategoryPage({ params }) {
+  const { category } = params;
+
+  // Get category data
+  const categoryData = getCategoryBySlug(category);
+
+  // If category doesn't exist, show 404
+  if (!categoryData) {
+    notFound();
+  }
+
+  const config = getCategoryConfig(category);
+
+  // Generate breadcrumbs
+  const breadcrumbs = [
+    { label: "Ana səhifə", href: "/" },
+    { label: categoryData.name, href: `/${category}` },
+  ];
+
   return (
-    <div className="main_container">
-      <div className="wrapper">
-        {/* Category Header */}
-        <div className="category-header" style={{ marginBottom: "20px" }}>
-          <h1>{category.name}</h1>
-          <p>{category.count} elan tapıldı</p>
-        </div>
-
-        {/* Search and Sort Controls */}
-        <div
-          className="controls"
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            marginBottom: "20px",
-          }}
-        >
-          <input
-            type="text"
-            placeholder="Axtar..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            style={{
-              padding: "8px 12px",
-              borderRadius: "4px",
-              border: "1px solid #ccc",
-              flex: 1,
-              marginRight: "10px",
-            }}
-          />
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-            style={{
-              padding: "8px 12px",
-              borderRadius: "4px",
-              border: "1px solid #ccc",
-            }}
-          >
-            <option value="newest">Ən yeni</option>
-            <option value="price-low">Qiymət: Aşağıdan yuxarıya</option>
-            <option value="price-high">Qiymət: Yuxarıdan aşağıya</option>
-          </select>
-        </div>
-
-        {/* Products List with Dynamic Category Type */}
-        <PostList
-          posts={products}
-          category={categoryType} // 🔑 Use detected category type
-        />
-      </div>
-    </div>
+    <Layout>
+      <CategoryPageTemplate
+        category={category}
+        pageTitle={categoryData.name}
+        customTypingKeywords={config.typingKeywords}
+        customBreadcrumbs={breadcrumbs}
+        showVipListings={true}
+        showNewListings={true}
+        resultCount={categoryData.count}
+        showResultCount={true}
+      />
+    </Layout>
   );
-};
-
-export default CategoryPage;
+}

@@ -7,7 +7,7 @@
 .mobile-filter-trigger {
   display: none;
   padding: 16px 0;
-  background: white;
+  /* background: white; */
   margin: 0 auto;
   width: 95%;
   max-width: 1600px;

@@ -303,6 +303,314 @@ New component-specific styles (separate from main.css)
     font-size: 1.4rem;
   }
 }
+
+/* 
+File: src/styles/components.css
+New component-specific styles for CategoryPageTemplate system
+*/
+
+/* ===================================
+   PAGE HEADER COMPONENT
+   =================================== */
+
+.page-header {
+  padding: 16px 0;
+  margin-bottom: 0;
+}
+
+.page-header .main_container {
+  /* Uses existing main_container class for consistent spacing */
+}
+
+/* Breadcrumb Navigation */
+.breadcrumb-nav {
+  margin-bottom: 12px;
+}
+
+.breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 14px;
+}
+
+.breadcrumb-item {
+  display: flex;
+  align-items: center;
+}
+
+.breadcrumb-link {
+  color: #6b7280;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.breadcrumb-link:hover {
+  color: #013f44;
+  text-decoration: none;
+}
+
+.breadcrumb-current {
+  color: #013f44;
+  font-weight: 500;
+}
+
+.breadcrumb-separator {
+  margin: 0 8px;
+  color: #9ca3af;
+  font-size: 12px;
+}
+
+/* Page Title Section */
+.page-title-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.title_category {
+  font-size: 28px;
+  font-weight: 600;
+  color: #013f44;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.result-count {
+  display: flex;
+  align-items: center;
+}
+
+.result-count-text {
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .page-header {
+    padding: 12px 0;
+  }
+
+  .breadcrumb {
+    font-size: 13px;
+  }
+
+  .breadcrumb-separator {
+    margin: 0 6px;
+  }
+
+  .title_category {
+    font-size: 24px;
+  }
+
+  .page-title-section {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .result-count-text {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .title_category {
+    font-size: 22px;
+  }
+
+  .breadcrumb {
+    font-size: 12px;
+  }
+}
+
+/* ===================================
+     FILTER SECTION COMPONENT
+     =================================== */
+
+.filter-section {
+  position: relative;
+  padding: 0; /* Let main_container handle padding */
+}
+
+.filter-section .main_container {
+  /* Uses existing main_container class for consistent spacing */
+}
+
+/* Filter Loading States */
+.filter-loading {
+  padding: 20px 0;
+}
+
+.filter-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.skeleton-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.skeleton-item {
+  height: 48px;
+  background: linear-gradient(90deg, #f0f0f0 0%, #e0e0e0 50%, #f0f0f0 100%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  border-radius: 8px;
+  flex: 1;
+  min-width: 150px;
+}
+
+.skeleton-item.wide {
+  flex: 2;
+  min-width: 300px;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Filter Section Mobile */
+@media (max-width: 768px) {
+  .filter-loading {
+    padding: 16px 0;
+  }
+
+  .skeleton-row {
+    gap: 12px;
+  }
+
+  .skeleton-item {
+    min-width: 100%;
+    height: 40px;
+  }
+
+  .skeleton-item.wide {
+    min-width: 100%;
+  }
+}
+
+/* ===================================
+     CUSTOM CONTENT SECTION
+     =================================== */
+
+.custom-content-section {
+  padding: 24px 0;
+}
+
+@media (max-width: 768px) {
+  .custom-content-section {
+    padding: 16px 0;
+  }
+}
+
+/* ===================================
+     ENHANCED TITLE_CATEGORY STYLES
+     =================================== */
+
+/* Override existing title_category if needed for consistency */
+h1.title_category,
+.title_category {
+  font-family:
+    "Arimo",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+  font-size: 28px;
+  font-weight: 600;
+  color: #013f44;
+  margin: 0 0 16px 0;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+/* Mobile title scaling */
+@media (max-width: 768px) {
+  h1.title_category,
+  .title_category {
+    font-size: 24px;
+    margin-bottom: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  h1.title_category,
+  .title_category {
+    font-size: 22px;
+    margin-bottom: 10px;
+  }
+}
+
+/* ===================================
+     ACCESSIBILITY IMPROVEMENTS
+     =================================== */
+
+/* Focus states for better accessibility */
+.breadcrumb-link:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .breadcrumb-link {
+    color: #000;
+  }
+
+  .breadcrumb-current {
+    color: #000;
+    font-weight: 700;
+  }
+
+  .result-count-text {
+    color: #000;
+    font-weight: 700;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-item {
+    animation: none;
+    background: #f0f0f0;
+  }
+
+  .breadcrumb-link {
+    transition: none;
+  }
+}
+
+/* ===================================
+     PRINT STYLES
+     =================================== */
+
+@media print {
+  .breadcrumb-nav {
+    display: none;
+  }
+
+  .result-count {
+    display: none;
+  }
+}
 /* ===================================
    FUTURE COMPONENT STYLES
    =================================== */
