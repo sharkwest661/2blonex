@@ -128,7 +128,7 @@ const PromotionActions = () => {
                     width: "100%",
                     height: "100%",
                     background:
-                      'url("/assets/img/tooltip-arrow.svg") no-repeat center/cover',
+                      'url("/img/tooltip-arrow.svg") no-repeat center/cover',
                   }}
                 ></div>
               </div>

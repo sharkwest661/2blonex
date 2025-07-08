@@ -10,12 +10,25 @@ import SellerProfile from "@/components/features/product/SellerProfile";
 import PromotionActions from "@/components/features/product/PromotionActions";
 import ReviewSection from "@/components/features/product/ReviewSection";
 import SimilarListings from "@/components/features/product/SimilarListings";
+import ComplaintModal from "@/components/ui/modals/ComplaintModal";
+import SuccessModal from "@/components/ui/modals/SuccessModal";
 import { MOCK_PRODUCTS } from "@/utils/constants";
 
 const ProductDetailsPage = () => {
   const params = useParams();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showComplaintModal, setShowComplaintModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+
+  const handleComplaintClick = () => {
+    setShowComplaintModal(true);
+  };
+
+  const handleComplaintSubmit = () => {
+    setShowComplaintModal(false);
+    setShowSuccessModal(true);
+  };
 
   // Mock product data - replace with API call
   useEffect(() => {
@@ -132,8 +145,10 @@ const ProductDetailsPage = () => {
                     <a
                       href=""
                       className="product__complaint"
-                      data-toggle="modal"
-                      data-target="#complaintModal"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleComplaintClick();
+                      }}
                     >
                       Şikayət et
                     </a>
@@ -158,6 +173,17 @@ const ProductDetailsPage = () => {
         {/* Similar Listings Section */}
         <SimilarListings />
       </main>
+
+      {/* Modals */}
+      <ComplaintModal
+        isOpen={showComplaintModal}
+        onClose={() => setShowComplaintModal(false)}
+        onSuccess={handleComplaintSubmit}
+      />
+      <SuccessModal
+        isOpen={showSuccessModal}
+        onClose={() => setShowSuccessModal(false)}
+      />
     </Layout>
   );
 };
