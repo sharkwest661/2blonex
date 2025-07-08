@@ -1,4 +1,4 @@
-// src/app/product/[id]/page.js
+// src/app/product/[id]/page.js - Add isSuper property to mock product
 "use client";
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
@@ -50,6 +50,7 @@ const ProductDetailsPage = () => {
         views: "1974 baxış",
         lastUpdate: "28.04.2021",
         location: "Bakı",
+        isSuper: true, // ✅ Added this property to show the Super badge
         category: {
           main: "ELEKTRONİKA",
           sub: "MOBİL TELEFONLAR",
@@ -69,20 +70,18 @@ const ProductDetailsPage = () => {
         description: [
           'Euro Version !!! - bu versiya avropaya eksporta gedən versiyadır və suya tam davamlılıq keyfiyyətinə görə " IP68 Beynəlxalq Sertifikatı var !!! bu əsas keyfiyyət yalnızaca Euro Version - larda olur Amerikankalarda olmur !',
           "Qeyd: hədiyyə olaraq keyfiyyətli ekran qoruyucu və 2 ədəd dəri arxalıq veriləcək !",
-          "İdealın idealı, heç bir cızıq, əzik yoxdur, demək olarki yenidir ! kredit deyil, ustada olmayıb, qeydiyyatlı və rəsmi zəmanətli.",
+          "İdealın idealı, heç bir cızıq, əzik yoxdur, demək olarki yenidir ! kredit deyil, ustada olmayıb, qeydiyyatlı və rəsmi zəmanətli. arada bir dinamiki xarab olur dişimlə sıxıram telefonu düzəlir. Suya düşəndə düyünün içində quruduram 2 dəfə elə düzəltmişəm. Daş döyən telefondu.",
         ],
         seller: {
-          name: "Elmir",
+          name: "Məhəmməd",
           phone: "051 123 45 67",
-          storeUrl: "",
-          storeText: "Mağazanın bütün elanları (38 elan)",
+          storeUrl: "/magaza/mehemmed",
+          storeText: "Satıcının bütün elanları"
         },
-        isSuper: true,
-        isFavorite: false,
         reviews: [
           {
-            author: "N*** Ə***",
-            date: "28.04.2021, 14:00",
+            author: "O*** M***",
+            date: "28.04.2021, 16:30",
             text: "Çox babat telefondu. arada bir dinamiki xarab olur dişimlə sıxıram telefonu düzəlir. Suya düşəndə düyünün içində quruduram 2 dəfə elə düzəltmişəm. Daş döyən telefondu.",
           },
           {
@@ -143,7 +142,7 @@ const ProductDetailsPage = () => {
 
                   <div>
                     <a
-                      href=""
+                      href="#"
                       className="product__complaint"
                       onClick={(e) => {
                         e.preventDefault();

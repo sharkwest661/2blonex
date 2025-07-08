@@ -611,6 +611,27 @@ h1.title_category,
     display: none;
   }
 }
+
+.product__favorite.active:after {
+  background-image: url("../../public/img/favorite_full-icon.svg");
+  -moz-background-size: 18px 16px;
+  background-size: 18px 16px;
+  -webkit-transform: translateY(-1px);
+  -moz-transform: translateY(-1px);
+  -ms-transform: translateY(-1px);
+  -o-transform: translateY(-1px);
+  transform: translateY(-1px);
+  /* Add red color to the heart when favorited */
+  filter: hue-rotate(0deg) saturate(1.5) brightness(0.8);
+  /* Alternative: use a specific color filter */
+  /* filter: sepia(1) saturate(5) hue-rotate(330deg) brightness(0.8); */
+}
+
+/* Optional: Add a subtle color change on hover too */
+.product__favorite:hover:after {
+  /* Slight red tint on hover */
+  filter: sepia(0.3) saturate(1.2) hue-rotate(320deg) brightness(0.9);
+}
 /* ===================================
    FUTURE COMPONENT STYLES
    =================================== */

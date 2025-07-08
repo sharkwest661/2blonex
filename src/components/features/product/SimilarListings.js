@@ -1,8 +1,21 @@
 // src/components/features/product/SimilarListings.js
 "use client";
 import { useState, useEffect } from "react";
-import PostList from "@/components/shared/postitem/PostList";
+import PostItem from "@/components/shared/postitem/PostItem";
 import { MOCK_PRODUCTS } from "@/utils/constants";
+
+const STORE_NAMES = [
+  "Kontakt Home",
+  "World Telecom",
+  "Apple Store Baku",
+  "Samsung Plaza",
+  "Techno Store",
+  "Media Markt",
+  "Bravo Electronics",
+  "Digital Store",
+  "Mobile Center",
+  "Tech Point",
+];
 
 const SimilarListings = () => {
   const [similarProducts, setSimilarProducts] = useState([]);
@@ -13,22 +26,19 @@ const SimilarListings = () => {
       // Get some random products from electronics category
       const electronicsProducts = MOCK_PRODUCTS.electronics || [];
       const shuffled = [...electronicsProducts].sort(() => 0.5 - Math.random());
-      return shuffled.slice(0, 11); // 11 items to account for banner placement
+      const products = shuffled.slice(0, 10); // 10 products + 1 banner = 11 total
+
+      // Add store information to products
+      return products.map((product, index) => ({
+        ...product,
+        storeName: STORE_NAMES[index % STORE_NAMES.length],
+        storeImage: "/img/example/seller.svg",
+        storeHref: `/magaza/${STORE_NAMES[index % STORE_NAMES.length].toLowerCase().replace(/\s+/g, "-")}`,
+      }));
     };
 
     setSimilarProducts(getSimilarProducts());
   }, []);
-
-  // Insert banner at position 8 (after 7 products)
-  const productsWithBanner = [...similarProducts];
-  if (productsWithBanner.length >= 8) {
-    productsWithBanner.splice(7, 0, {
-      id: "banner",
-      type: "banner",
-      image: "/img/example/banner.png",
-      title: "Advertisement Banner",
-    });
-  }
 
   return (
     <section>
@@ -37,88 +47,67 @@ const SimilarListings = () => {
         <div className="wrapper wrapper--secondary">
           <div className="post">
             <div className="post__list">
-              {productsWithBanner.map((item, index) => {
-                // Handle banner item
-                if (item.type === "banner") {
-                  return (
-                    <div key={item.id} className="post__item">
-                      <a href="">
-                        <img src={item.image} alt="" className="img-fluid" />
-                      </a>
-                    </div>
-                  );
-                }
+              {/* Render first 7 products */}
+              {similarProducts.slice(0, 7).map((product) => (
+                <PostItem
+                  key={product.id}
+                  id={product.id}
+                  title={product.title}
+                  secondaryTitle={product.secondaryTitle}
+                  price={product.price}
+                  location={product.location}
+                  date={product.date}
+                  image={product.image}
+                  href={`/product/${product.id}`}
+                  isVip={product.isVip}
+                  isPremium={product.isPremium}
+                  hasBarter={product.features?.barter}
+                  hasCredit={product.features?.credit}
+                  storeName={product.storeName}
+                  storeImage={product.storeImage}
+                  storeHref={product.storeHref}
+                  category="other"
+                />
+              ))}
 
-                // Handle regular product item
-                return (
-                  <div key={item.id} className="post__item">
-                    <div className="post__img">
-                      <img src={item.image} alt="" />
-                      <div className="post__attributes">
-                        {item.isVip && (
-                          <span
-                            className="post__vip"
-                            data-toggle="tooltip"
-                            data-placement="top"
-                            title="VIP elan"
-                          ></span>
-                        )}
-                        {item.isSuper && (
-                          <div className="post__chance">SUPER FÜRSƏT!</div>
-                        )}
-                        <a href="" className="post__favorites"></a>
-                      </div>
-                    </div>
-                    <div className="post__info">
-                      {item.store && (
-                        <a href="" className="post__store">
-                          <img src="/img/example/seller.svg" alt="" />
-                          <span>{item.store}</span>
-                        </a>
-                      )}
-                      <div className="px-5">
-                        <a href="" className="post__title">
-                          {item.title}
-                        </a>
-                        <p>
-                          {item.location}, {item.date}
-                        </p>
-                      </div>
-                      <div className="d-flex justify-content-between">
-                        <div
-                          className={`post__price ${item.isSuper ? "post__price--secondary" : ""}`}
-                        >
-                          {item.price}
-                        </div>
-                        {(item.features?.barter || item.features?.credit) && (
-                          <div className="d-flex align-items-center">
-                            {item.features.barter && (
-                              <span
-                                className="post__feature"
-                                data-toggle="tooltip"
-                                data-placement="top"
-                                title="Barter mümkündür"
-                              >
-                                <img src="/img/barter.svg" alt="" />
-                              </span>
-                            )}
-                            {item.features.credit && (
-                              <span
-                                className="post__feature"
-                                data-toggle="tooltip"
-                                data-placement="top"
-                                title="Kredit mümkündür"
-                              >
-                                <img src="/img/percent.svg" alt="" />
-                              </span>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
+              {/* Banner at position 8 - using same image structure */}
+              <div className="post__item">
+                <div className="post__img">
+                  <img
+                    src="/img/example/banner.png"
+                    alt="Advertisement"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      display: "block",
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* Render remaining products (from index 7 onwards) */}
+              {similarProducts.slice(7).map((product) => (
+                <PostItem
+                  key={product.id}
+                  id={product.id}
+                  title={product.title}
+                  secondaryTitle={product.secondaryTitle}
+                  price={product.price}
+                  location={product.location}
+                  date={product.date}
+                  image={product.image}
+                  href={`/product/${product.id}`}
+                  isVip={product.isVip}
+                  isPremium={product.isPremium}
+                  hasBarter={product.features?.barter}
+                  hasCredit={product.features?.credit}
+                  storeName={product.storeName}
+                  storeImage={product.storeImage}
+                  storeHref={product.storeHref}
+                  category="other"
+                />
+              ))}
             </div>
           </div>
 

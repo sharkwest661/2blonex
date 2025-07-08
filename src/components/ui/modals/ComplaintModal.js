@@ -65,9 +65,7 @@ const ComplaintModal = ({ isOpen, onClose, onSuccess }) => {
               className="close"
               onClick={onClose}
               aria-label="Close"
-            >
-              <span aria-hidden="true">&times;</span>
-            </button>
+            ></button>
           </div>
           <div className="modal-body">
             <form onSubmit={handleSubmit}>
