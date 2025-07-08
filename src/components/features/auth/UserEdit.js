@@ -7,16 +7,54 @@ const UserEdit = () => {
   const [formData, setFormData] = useState({
     name: "Rüstəm",
     email: "elmir.latifov@gmail.com",
-    mobile: "051-123-45-67",
+    mobile: "051-555-85-69",
   });
+
+  const [errors, setErrors] = useState({});
+
+  // Phone number validation for format: 051-555-85-69
+  const validatePhoneNumber = (value) => {
+    const phoneRegex = /^0[1-9][0-9]-[0-9]{3}-[0-9]{2}-[0-9]{2}$/;
+
+    if (!value) {
+      return "Telefon nömrəsi tələb olunur";
+    }
+
+    if (!phoneRegex.test(value)) {
+      return "Düzgün telefon nömrəsi daxil edin (0**-***-**-**)";
+    }
+
+    return true;
+  };
 
   const handleChange = (e) => {
     const { id, value } = e.target;
     setFormData({ ...formData, [id]: value });
+
+    // Clear error when user starts typing
+    if (errors[id]) {
+      setErrors({ ...errors, [id]: "" });
+    }
+
+    // Validate phone number on change
+    if (id === "mobile") {
+      const validation = validatePhoneNumber(value);
+      if (validation !== true) {
+        setErrors({ ...errors, [id]: validation });
+      }
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    // Validate phone number before submission
+    const phoneValidation = validatePhoneNumber(formData.mobile);
+    if (phoneValidation !== true) {
+      setErrors({ ...errors, mobile: phoneValidation });
+      return;
+    }
+
     console.log("Form submitted:", formData);
   };
 
@@ -53,10 +91,16 @@ const UserEdit = () => {
                   <input
                     type="text"
                     id="mobile"
-                    className="form-control"
+                    className={`form-control ${
+                      errors.mobile ? "is-invalid" : ""
+                    }`}
                     value={formData.mobile}
                     onChange={handleChange}
+                    placeholder="055-262-65-00"
                   />
+                  {errors.mobile && (
+                    <div className="invalid-feedback">{errors.mobile}</div>
+                  )}
                 </div>
               </div>
               <button
@@ -65,11 +109,7 @@ const UserEdit = () => {
                 data-toggle="modal"
                 data-target="#saveModal"
               >
-                <img
-                  src="/img/submit-icon.svg"
-                  alt=""
-                  className="mr-2"
-                />
+                <img src="/img/submit-icon.svg" alt="" className="mr-2" />
                 Yadda saxla
               </button>
             </form>
