@@ -1,0 +1,10 @@
+.store-page{
+    .post{
+        margin-right: 0 !important;
+        margin: auto !important;
+    }
+    .container-fluid{
+        padding-left: 20px !important;
+        padding-right: 20px !important;
+    }
+}
