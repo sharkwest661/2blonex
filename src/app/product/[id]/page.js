@@ -76,7 +76,7 @@ const ProductDetailsPage = () => {
           name: "Məhəmməd",
           phone: "051 123 45 67",
           storeUrl: "/magaza/mehemmed",
-          storeText: "Satıcının bütün elanları"
+          storeText: "Satıcının bütün elanları",
         },
         reviews: [
           {
@@ -132,6 +132,11 @@ const ProductDetailsPage = () => {
         <section>
           <div className="container">
             <div className="product">
+              {/* <div class="product__moderation">ELAN AKTİV DEYİL</div>
+              <div class="product__moderation product__moderation--secondary">
+                ELAN MODERASİYADADIR
+              </div> */}
+
               <div className="row">
                 {/* Left Column */}
                 <div className="col-md-6">
