@@ -5,37 +5,39 @@ import VipListings from "@/components/shared/listings/VipListings";
 import NewListings from "@/components/shared/listings/NewListings";
 import PremiumListings from "@/components/shared/listings/PremiumListings";
 import { FullWidthBanner } from "@/components/shared/advertisement";
+import UserPage from "@/components/features/auth/UserPage";
 
 const HomePage = () => {
   return (
     <>
       {/* Main container with Home Filters Section ONLY */}
+        <UserPage/>
       <div className="main_container">
-        <section id="home_filters_sec">
-          <div className="container-fluid">
+        {/* <section id="home_filters_sec">
+          <div className="container-fluid"> */}
             {/* Search Section */}
-            <SearchSection />
+            {/* <SearchSection /> */}
 
             {/* Categories Grid */}
-            <CategoriesGrid />
-          </div>
-        </section>
+            {/* <CategoriesGrid /> */}
+          {/* </div>
+        </section> */}
       </div>
 
       {/* VIP Listings Section - Outside main_container */}
-      <VipListings />
+      {/* <VipListings /> */}
 
       {/* Full-Width Banner Advertisement - banner2.png */}
-      <FullWidthBanner href="" image="/img/example/banner2.png" altText="" />
+      {/* <FullWidthBanner href="" image="/img/example/banner2.png" altText="" /> */}
 
       {/* New Listings Section - Outside main_container */}
-      <NewListings />
+      {/* <NewListings /> */}
 
       {/* Full-Width Banner Advertisement - banner2.png */}
-      <FullWidthBanner href="" image="/img/example/banner2.png" altText="" />
+      {/* <FullWidthBanner href="" image="/img/example/banner2.png" altText="" /> */}
 
       {/* Premium Listings Section - Outside main_container */}
-      <PremiumListings />
+      {/* <PremiumListings /> */}
     </>
   );
 };

@@ -1,8 +1,24 @@
+"use client";
+import { useState, useMemo } from "react";
 import Image from "next/image";
 import PostList from "@/components/shared/postitem/PostList";
-import { MOCK_PRODUCTS } from "@/utils/constants";
+import { MOCK_PRODUCTS, CATEGORIES } from "@/utils/constants";
 
 const UserPage = () => {
+  const [activeCategory, setActiveCategory] = useState("all");
+
+  const allProducts = useMemo(() => {
+    return Object.values(MOCK_PRODUCTS).flat();
+  }, []);
+
+  const filteredPosts = useMemo(() => {
+    if (activeCategory === "all") return allProducts;
+    const selectedCategory = CATEGORIES.find(
+      (cat) => cat.id === activeCategory
+    );
+    return selectedCategory?.products || [];
+  }, [activeCategory, allProducts]);
+
   return (
     <div>
       <section className="d-md-none">
@@ -24,7 +40,7 @@ const UserPage = () => {
         </div>
       </section>
 
-     <section>
+      <section>
         <div className="profile profile--secondary">
           <div
             className="profile__cover"
@@ -55,21 +71,28 @@ const UserPage = () => {
             <div className="post__options">
               <div className="group">
                 <div className="group__inner">
-                  {[
-                    { label: "Bütün elanlar", count: 83, active: true },
-                    { label: "Elektronika", count: 36 },
-                    { label: "Uşaq aləmi", count: 3 },
-                    { label: "Kosmetika", count: 1 },
-                    { label: "Ev və bağ üçün", count: 36 },
-                    { label: "İş elanları", count: 3 },
-                  ].map((item, index) => (
+                  <button
+                    type="button"
+                    className={`btn group__btn ${
+                      activeCategory === "all" ? "group__btn--active" : ""
+                    }`}
+                    onClick={() => setActiveCategory("all")}
+                  >
+                    Bütün elanlar
+                    <span className="badge">{allProducts.length}</span>
+                  </button>
+
+                  {CATEGORIES.map((item) => (
                     <button
-                      key={index}
+                      key={item.id}
                       type="button"
-                      className={`btn group__btn ${item.active ? "group__btn--active" : ""}`}
+                      className={`btn group__btn ${
+                        activeCategory === item.id ? "group__btn--active" : ""
+                      }`}
+                      onClick={() => setActiveCategory(item.id)}
                     >
-                      {item.label}
-                      <span className="badge">{item.count}</span>
+                      {item.name}
+                      <span className="badge">{item.products.length}</span>
                     </button>
                   ))}
                 </div>
@@ -77,10 +100,10 @@ const UserPage = () => {
             </div>
 
             <PostList
-            posts={MOCK_PRODUCTS.vipListings?.slice(0, 2) || []} 
-            category="other" 
-            className="user-post__list"
-          />
+              posts={filteredPosts.slice(0, 20)}
+              category={activeCategory}
+              className="user-post__list"
+            />
           </div>
         </div>
       </section>
