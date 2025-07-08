@@ -81,11 +81,6 @@ const CategoryPageTemplate = ({
       {showNewListings && (
         <>
           <NewListings category={category} />
-          <FullWidthBanner
-            href=""
-            image="/img/example/banner2.png"
-            altText={`${pageTitle} reklamı`}
-          />
         </>
       )}
     </>

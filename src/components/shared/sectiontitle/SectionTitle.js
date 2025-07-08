@@ -14,7 +14,7 @@ const SectionTitle = ({
   alignment = "left", // "left", "center", "right"
   showSortSelect = false,
   sortValue = "-created_at",
-  onSortChange = () => { },
+  onSortChange = () => {},
   className = "",
 }) => {
   const alignmentClass =
@@ -36,7 +36,7 @@ const SectionTitle = ({
     <div className="title_bg">
       <div className="main_container">
         <div
-          className={`title ${alignmentClass} ${showSortSelect ? "yeniElanlar" : ""} ${className} wrapper`}
+          className={`title ${alignmentClass} ${showSortSelect ? "yeniElanlar" : ""} ${className} ${alignment === "left" ? "wrapper" : ""}`}
           style={{ padding: "0 !important" }}
         >
           <div className="d-flex align-items-center justify-content-between">
@@ -54,7 +54,10 @@ const SectionTitle = ({
             </span>
 
             {showSortSelect && (
-              <form className="datefiltersort_form" style={{ marginRight: "0" }}>
+              <form
+                className="datefiltersort_form"
+                style={{ marginRight: "0" }}
+              >
                 <div className="form-group sort__select desktop-sort">
                   <Select
                     options={sortOptions}
@@ -69,9 +72,12 @@ const SectionTitle = ({
             )}
           </div>
 
-          <div className='d-flex align-items-center justify-content-end'>
+          <div className="d-flex align-items-center justify-content-end">
             {buttonText && (
-              <Link className="btn btn--icon btn--transparent" href={buttonHref}>
+              <Link
+                className="btn btn--icon btn--transparent"
+                href={buttonHref}
+              >
                 <Image
                   src="/img/chevron_lmain.svg"
                   alt=""
