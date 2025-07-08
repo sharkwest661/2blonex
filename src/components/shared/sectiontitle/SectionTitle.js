@@ -14,7 +14,7 @@ const SectionTitle = ({
   alignment = "left", // "left", "center", "right"
   showSortSelect = false,
   sortValue = "-created_at",
-  onSortChange = () => {},
+  onSortChange = () => { },
   className = "",
 }) => {
   const alignmentClass =
@@ -36,48 +36,52 @@ const SectionTitle = ({
     <div className="title_bg">
       <div className="main_container">
         <div
-          className={`title ${alignmentClass} ${showSortSelect ? "yeniElanlar" : ""} ${className}`}
+          className={`title ${alignmentClass} ${showSortSelect ? "yeniElanlar" : ""} ${className} wrapper`}
           style={{ padding: "0 !important" }}
         >
-          <span className="center-vertical">
-            {icon && (
-              <Image
-                src={icon}
-                alt=""
-                className={iconMarginClass}
-                width={iconSize}
-                height={iconSize}
-              />
-            )}
-            {title}
-          </span>
-
-          {showSortSelect && (
-            <form className="datefiltersort_form">
-              <div className="form-group sort__select desktop-sort">
-                <Select
-                  options={sortOptions}
-                  value={sortValue}
-                  onChange={onSortChange}
-                  isSearchable={false}
-                  size="small"
-                  placeholder="Çeşidlə..."
+          <div className="d-flex align-items-center justify-content-between">
+            <span className="center-vertical">
+              {icon && (
+                <Image
+                  src={icon}
+                  alt=""
+                  className={iconMarginClass}
+                  width={iconSize}
+                  height={iconSize}
                 />
-              </div>
-            </form>
-          )}
+              )}
+              {title}
+            </span>
 
-          {buttonText && (
-            <Link className="btn btn--icon btn--transparent" href={buttonHref}>
-              <Image
-                src="/img/chevron_lmain.svg"
-                alt=""
-                width={16}
-                height={16}
-              />{" "}
-              {buttonText}
-            </Link>
-          )}
+            {showSortSelect && (
+              <form className="datefiltersort_form" style={{ marginRight: "0" }}>
+                <div className="form-group sort__select desktop-sort">
+                  <Select
+                    options={sortOptions}
+                    value={sortValue}
+                    onChange={onSortChange}
+                    isSearchable={false}
+                    size="small"
+                    placeholder="Çeşidlə..."
+                  />
+                </div>
+              </form>
+            )}
+          </div>
+
+          <div className='d-flex align-items-center justify-content-end'>
+            {buttonText && (
+              <Link className="btn btn--icon btn--transparent" href={buttonHref}>
+                <Image
+                  src="/img/chevron_lmain.svg"
+                  alt=""
+                  width={16}
+                  height={16}
+                />{" "}
+                {buttonText}
+              </Link>
+            )}
+          </div>
         </div>
       </div>
     </div>
