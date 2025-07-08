@@ -1,0 +1,26 @@
+.btnSave {
+  width: 100%;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+.customCol {
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  padding-top: 25px;
+}
+
+@media (min-width: 768px) {
+  .customCol {
+    width: 58.333333%;
+  }
+}
+
+@media (min-width: 992px) {
+  .customCol {
+    width: 41.666667%;
+  }
+}

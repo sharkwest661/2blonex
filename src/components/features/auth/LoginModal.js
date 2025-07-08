@@ -44,16 +44,16 @@ const LoginModal = () => {
     await submitPhoneNumber(cleanPhone);
   };
 
-  // Phone number validation
+  // Phone number validation for format: 051-555-85-69
   const validatePhoneNumber = (value) => {
-    const phoneRegex = /^\+994[0-9]{9}$/;
+    const phoneRegex = /^0[1-9][0-9]-[0-9]{3}-[0-9]{2}-[0-9]{2}$/;
 
     if (!value) {
       return "Telefon nömrəsi tələb olunur";
     }
 
     if (!phoneRegex.test(value)) {
-      return "Düzgün telefon nömrəsi daxil edin (+994501234567)";
+      return "Düzgün telefon nömrəsi daxil edin (0**-***-**-**)";
     }
 
     return true;
@@ -77,7 +77,7 @@ const LoginModal = () => {
             type="text"
             id="phoneNumber"
             className="form-control"
-            placeholder="+994501234567"
+            placeholder="055-262-65-00"
             disabled={isSubmittingPhone}
             {...register("phoneNumber", {
               validate: validatePhoneNumber,
