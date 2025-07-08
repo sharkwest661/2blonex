@@ -6,20 +6,20 @@ const FILTER_COMPONENTS = {
   neqliyyat: lazy(
     () => import("@/components/features/vehicles/components/VehicleFilters")
   ),
-  emlak: lazy(
-    () =>
-      import("@/components/features/realestate/components/RealEstateFilters")
-  ),
-  elektronika: lazy(
-    () =>
-      import("@/components/features/electronics/components/ElectronicsFilters")
-  ),
-  is_elanlari: lazy(
-    () => import("@/components/features/jobs/components/JobFilters")
-  ),
-  xidmetler: lazy(
-    () => import("@/components/features/services/components/ServiceFilters")
-  ),
+  // emlak: lazy(
+  //   () =>
+  //     import("@/components/features/realestate/components/RealEstateFilters")
+  // ),
+  // elektronika: lazy(
+  //   () =>
+  //     import("@/components/features/electronics/components/ElectronicsFilters")
+  // ),
+  // is_elanlari: lazy(
+  //   () => import("@/components/features/jobs/components/JobFilters")
+  // ),
+  // xidmetler: lazy(
+  //   () => import("@/components/features/services/components/ServiceFilters")
+  // ),
   // Add more categories as needed
 };
 
