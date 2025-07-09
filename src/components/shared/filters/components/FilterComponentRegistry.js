@@ -1,10 +1,8 @@
 // src/components/shared/filters/components/FilterComponentRegistry.js
 
-import Dropdown from "../../../ui/forms/Dropdown";
-import RadioGroup2 from "../../../ui/forms/RadioGroup2";
-import CheckboxGroup from "../../../ui/forms/CheckboxGroup";
-import PriceRangeFilter from "../../PriceRangeFilter";
-import LocationFilter from "../../LocationFilter";
+import { CheckboxGroup, Dropdown, RadioGroup2 } from "@/components/ui/forms";
+import { PriceRangeFilter } from "../PriceRangeFilter";
+import { LocationFilter } from "../LocationFilter";
 
 /**
  * Maps filter configuration types to actual React components

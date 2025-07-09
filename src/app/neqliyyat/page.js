@@ -1,10 +1,14 @@
-// src/app/neqliyyat/page.js - Updated to use CategoryPageTemplate
+// src/app/neqliyyat/page.js - Uses fixed FilterManager via CategoryPageTemplate
 import Layout from "@/components/layout/Layout";
 import CategoryPageTemplate from "@/components/templates/CategoryPageTemplate";
 import { getCategoryMetadata } from "@/utils/filterRegistry";
 
 export async function generateMetadata() {
-  const metadata = getCategoryMetadata("neqliyyat");
+  const metadata = getCategoryMetadata("vehicles") || {
+    title: "Nəqliyyat",
+    description: "Azərbaycanda nəqliyyat vasitələri alış-satışı",
+    keywords: "avtomobil, maşın, nəqliyyat, satış",
+  };
 
   return {
     title: `${metadata.title} | Bolbol.az`,
@@ -30,7 +34,7 @@ export default function NeqliyyatPage() {
     "avtobus kirayə...",
   ];
 
-  // Custom breadcrumbs if needed (optional)
+  // Custom breadcrumbs
   const customBreadcrumbs = [
     { label: "Ana səhifə", href: "/" },
     { label: "Nəqliyyat", href: "/neqliyyat" },
@@ -39,12 +43,13 @@ export default function NeqliyyatPage() {
   return (
     <Layout>
       <CategoryPageTemplate
-        category="neqliyyat"
+        category="vehicles" // This triggers the hardcoded VehicleFilters structure in FilterManager
         pageTitle="Nəqliyyat"
         customTypingKeywords={vehicleTypingKeywords}
         customBreadcrumbs={customBreadcrumbs}
         showVipListings={true}
         showNewListings={true}
+        showFilters={true}
         resultCount={1234}
         showResultCount={true}
       />

@@ -3,278 +3,536 @@
 import React, { useState } from "react";
 import { useFilterConfig } from "./hooks/useFilterConfig";
 import { useFilterManager } from "./hooks/useFilterManager";
-import { renderFilterComponent } from "./components/FilterComponentRegistry";
-import UniversalFilterDrawer from "./UniversalFilterDrawer";
-import FilterSection from "./FilterSection";
-import "./styles/FilterManager.css";
+
+// Import EXACT same components as VehicleFilters
+import {
+  Dropdown,
+  FilterButtons,
+  RadioGroup2,
+  CheckboxGroup2,
+  CheckboxGroup,
+} from "@/components/ui/forms";
+import {
+  PriceRangeFilter,
+  LocationFilter,
+  YearRangeFilter,
+  MileageRangeFilter,
+  PowerRangeFilter,
+  EngineVolumeRangeFilter,
+} from "@/components/shared/filters";
+
+// Import vehicle constants
+import {
+  CAR_BRANDS,
+  CAR_MODELS,
+  FUEL_TYPES,
+  BODY_TYPES,
+  TRANSMISSIONS,
+  DRIVETRAIN_TYPES,
+  COLORS,
+  SEAT_COUNTS,
+  CONDITION_OPTIONS,
+  PAYMENT_OPTIONS,
+  VEHICLE_EQUIPMENT,
+  EQUIPMENT_CATEGORIES,
+} from "@/components/features/vehicles/constants";
+
+// Import vehicle styles
+import "@/components/features/vehicles/styles/VehicleFilters.css";
+
+// Import mobile drawer
+import VehicleFilterBottomDrawer from "@/components/features/vehicles/components/VehicleFilterBottomDrawer";
 
 /**
- * Universal filter manager component
- * Renders filters for any category based on configuration
+ * Universal FilterManager that preserves exact VehicleFilters structure for vehicles
+ * and uses config system for other categories
  */
 const FilterManager = ({
   category,
   onFiltersChange,
   initialFilters = {},
-  className = "",
-  showMobileDrawer = true,
-  showDesktopFilters = true,
-  autoApply = false,
-  urlSync = true,
   ...props
 }) => {
-  // Load configuration for the category
+  // Load configuration
   const config = useFilterConfig(category);
 
   // State for mobile drawer
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
 
-  // Universal filter state management
+  // FOR VEHICLES - Use exact VehicleFilters structure
+  if (category === "vehicles") {
+    // Filters state - EXACT same as VehicleFilters
+    const [filters, setFilters] = useState({
+      brand: "",
+      model: "",
+      priceMin: "",
+      priceMax: "",
+      color: "",
+      fuel: "",
+      bodyType: "",
+      volumeMin: "",
+      volumeMax: "",
+      yearMin: "",
+      yearMax: "",
+      transmission: "",
+      city: "",
+      condition: "all",
+      mileageMin: "",
+      mileageMax: "",
+      gearbox: "",
+      seatCount: "",
+      powerMin: "",
+      powerMax: "",
+      paymentOptions: [],
+      equipment: [],
+      showMoreFilters: false,
+      ...initialFilters,
+    });
+
+    const handleFilterChange = (field, value) => {
+      const newFilters = {
+        ...filters,
+        [field]: value,
+        // Reset model when brand changes
+        ...(field === "brand" && { model: "" }),
+      };
+
+      setFilters(newFilters);
+
+      if (onFiltersChange) {
+        onFiltersChange(newFilters);
+      }
+    };
+
+    const handleReset = () => {
+      const resetFilters = {
+        brand: "",
+        model: "",
+        priceMin: "",
+        priceMax: "",
+        color: "",
+        fuel: "",
+        bodyType: "",
+        volumeMin: "",
+        volumeMax: "",
+        yearMin: "",
+        yearMax: "",
+        transmission: "",
+        city: "",
+        condition: "all",
+        mileageMin: "",
+        mileageMax: "",
+        gearbox: "",
+        seatCount: "",
+        powerMin: "",
+        powerMax: "",
+        paymentOptions: [],
+        equipment: [],
+        showMoreFilters: false,
+      };
+
+      setFilters(resetFilters);
+
+      if (onFiltersChange) {
+        onFiltersChange(resetFilters);
+      }
+    };
+
+    const handleShowResults = () => {
+      console.log("Showing results with filters:", filters);
+      if (onFiltersChange) {
+        onFiltersChange(filters);
+      }
+    };
+
+    const handleMobileFiltersApply = (newFilters) => {
+      setFilters(newFilters);
+      if (onFiltersChange) {
+        onFiltersChange(newFilters);
+      }
+      handleShowResults();
+    };
+
+    const getModelOptions = () => {
+      return filters.brand
+        ? CAR_MODELS.filter((model) => model.brand === filters.brand)
+        : [];
+    };
+
+    // EXACT SAME RENDER as VehicleFilters
+    return (
+      <>
+        {/* Mobile Filter Trigger */}
+        <div className="desc_filters_btn_mobile d-md-none">
+          <button
+            className="filter_btn_mobile"
+            onClick={() => setIsMobileDrawerOpen(true)}
+          >
+            <i className="fas fa-filter"></i>
+            <span>Filtr</span>
+          </button>
+        </div>
+
+        {/* Desktop Filters */}
+        <div className="d-none d-md-block">
+          <div className="main_container">
+            <div className="desctop_filters">
+              {/* First Row */}
+              <Dropdown
+                options={CAR_BRANDS}
+                value={filters.brand}
+                onChange={(value) => handleFilterChange("brand", value)}
+                placeholder="Marka"
+                className="for_width20"
+              />
+
+              <Dropdown
+                options={getModelOptions()}
+                value={filters.model}
+                onChange={(value) => handleFilterChange("model", value)}
+                placeholder="Model"
+                disabled={!filters.brand}
+                className="for_width20"
+              />
+
+              <PriceRangeFilter
+                minValue={filters.priceMin}
+                maxValue={filters.priceMax}
+                onMinChange={(value) => handleFilterChange("priceMin", value)}
+                onMaxChange={(value) => handleFilterChange("priceMax", value)}
+                className="for_width20"
+                currency="AZN"
+              />
+
+              <Dropdown
+                options={COLORS}
+                value={filters.color}
+                onChange={(value) => handleFilterChange("color", value)}
+                placeholder="Rəng"
+                className="for_width20"
+              />
+
+              <Dropdown
+                options={FUEL_TYPES}
+                value={filters.fuel}
+                onChange={(value) => handleFilterChange("fuel", value)}
+                placeholder="Yanacaq"
+                className="for_width20"
+              />
+
+              {/* Second Row */}
+              <Dropdown
+                options={BODY_TYPES}
+                value={filters.bodyType}
+                onChange={(value) => handleFilterChange("bodyType", value)}
+                placeholder="Ban növü"
+                className="for_width20"
+              />
+
+              <EngineVolumeRangeFilter
+                minValue={filters.volumeMin}
+                maxValue={filters.volumeMax}
+                onMinChange={(value) => handleFilterChange("volumeMin", value)}
+                onMaxChange={(value) => handleFilterChange("volumeMax", value)}
+                className="for_width20"
+              />
+
+              <YearRangeFilter
+                minValue={filters.yearMin}
+                maxValue={filters.yearMax}
+                onMinChange={(value) => handleFilterChange("yearMin", value)}
+                onMaxChange={(value) => handleFilterChange("yearMax", value)}
+                className="for_width20"
+              />
+
+              <Dropdown
+                options={TRANSMISSIONS}
+                value={filters.transmission}
+                onChange={(value) => handleFilterChange("transmission", value)}
+                placeholder="Sürət qutusu"
+                className="for_width20"
+              />
+
+              <LocationFilter
+                value={filters.city}
+                onChange={(value) => handleFilterChange("city", value)}
+                placeholder="Şəhər"
+                className="for_width20"
+              />
+
+              {/* Third Row - Condition */}
+              <RadioGroup2
+                options={CONDITION_OPTIONS}
+                value={filters.condition}
+                onChange={(value) => handleFilterChange("condition", value)}
+                name="condition"
+                className="for_width100"
+              />
+
+              {/* More Filters Section */}
+              {filters.showMoreFilters && (
+                <>
+                  {/* Fourth Row */}
+                  <MileageRangeFilter
+                    minValue={filters.mileageMin}
+                    maxValue={filters.mileageMax}
+                    onMinChange={(value) =>
+                      handleFilterChange("mileageMin", value)
+                    }
+                    onMaxChange={(value) =>
+                      handleFilterChange("mileageMax", value)
+                    }
+                    className="for_width20"
+                  />
+
+                  <Dropdown
+                    options={DRIVETRAIN_TYPES}
+                    value={filters.gearbox}
+                    onChange={(value) => handleFilterChange("gearbox", value)}
+                    placeholder="Ötürücü"
+                    className="for_width20"
+                  />
+
+                  <Dropdown
+                    options={SEAT_COUNTS}
+                    value={filters.seatCount}
+                    onChange={(value) => handleFilterChange("seatCount", value)}
+                    placeholder="Oturacaq"
+                    className="for_width20"
+                  />
+
+                  <PowerRangeFilter
+                    minValue={filters.powerMin}
+                    maxValue={filters.powerMax}
+                    onMinChange={(value) =>
+                      handleFilterChange("powerMin", value)
+                    }
+                    onMaxChange={(value) =>
+                      handleFilterChange("powerMax", value)
+                    }
+                    className="for_width20"
+                  />
+
+                  {/* Payment Options */}
+                  <CheckboxGroup2
+                    options={PAYMENT_OPTIONS}
+                    values={filters.paymentOptions}
+                    onChange={(values) =>
+                      handleFilterChange("paymentOptions", values)
+                    }
+                    className="for_width100"
+                    title="Ödəniş növü"
+                    layout="horizontal"
+                  />
+
+                  {/* Equipment Section */}
+                  <div className="additional_chekings_hero order-17">
+                    <div className="additional_chekings_title">Avadanlıq</div>
+                    <div className="additional_chekings">
+                      {EQUIPMENT_CATEGORIES.map((category) => {
+                        const categoryEquipment = VEHICLE_EQUIPMENT.filter(
+                          (item) => item.category === category.value
+                        );
+                        if (categoryEquipment.length === 0) return null;
+
+                        return (
+                          <div
+                            key={category.value}
+                            className="equipment-category"
+                          >
+                            <h4 className="equipment-category-title">
+                              {category.label}
+                            </h4>
+                            <CheckboxGroup
+                              options={categoryEquipment}
+                              values={filters.equipment}
+                              onChange={(values) =>
+                                handleFilterChange("equipment", values)
+                              }
+                              name={`equipment-${category.value}`}
+                              layout="horizontal"
+                              variant="default"
+                            />
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* Filter Action Buttons */}
+            <div className="desc_filters_btns">
+              <FilterButtons
+                onReset={handleReset}
+                onToggleMoreFilters={() =>
+                  handleFilterChange(
+                    "showMoreFilters",
+                    !filters.showMoreFilters
+                  )
+                }
+                onShowResults={handleShowResults}
+                moreFiltersExpanded={filters.showMoreFilters}
+                resultsCount={0}
+                resetText="Sıfırla"
+                moreFiltersText="Daha çox filtr"
+                showResultsText="Elanları göstər"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Bottom Drawer */}
+        <VehicleFilterBottomDrawer
+          isOpen={isMobileDrawerOpen}
+          onClose={() => setIsMobileDrawerOpen(false)}
+          filters={filters}
+          onApplyFilters={handleMobileFiltersApply}
+          resultsCount={0}
+        />
+      </>
+    );
+  }
+
+  // FOR OTHER CATEGORIES - Use configuration system
   const {
     filters,
-    sectionVisibility,
     updateFilter,
-    updateRangeFilter,
-    updateArrayFilter,
     resetFilters,
-    toggleMoreFilters,
     applyFilters,
     activeFilterCount,
-    visibleSections,
-    hasActiveFilters,
-    showMoreFilters,
   } = useFilterManager(config, {
     onFiltersChange,
     initialFilters,
-    autoApply,
-    urlSync,
   });
 
-  // Don't render if no configuration
   if (!config) {
     console.warn(
       `FilterManager: No configuration found for category "${category}"`
     );
-    return null;
+    return <div>Filter configuration not found for {category}</div>;
   }
 
-  // Handle filter updates with proper type handling
-  const handleFilterChange = (filterId, value, filterConfig) => {
-    if (filterConfig.type === "PriceRangeFilter") {
-      // Handle price range filter
-      updateRangeFilter("price", value.min, value.max);
-    } else if (filterConfig.type === "RangeInput") {
-      // Handle range input (e.g., year, engine, mileage)
-      const baseId = filterId.replace(/(Min|Max)$/, "");
-      const isMin = filterId.endsWith("Min");
-      const isMax = filterId.endsWith("Max");
-
-      if (isMin || isMax) {
-        const minValue = isMin ? value : filters[`${baseId}Min`];
-        const maxValue = isMax ? value : filters[`${baseId}Max`];
-        updateRangeFilter(baseId, minValue, maxValue);
-      } else {
-        updateFilter(filterId, value);
-      }
-    } else if (filterConfig.type === "CheckboxGroup") {
-      // Handle checkbox group
-      updateArrayFilter(filterId, value);
-    } else {
-      // Handle standard filters
-      updateFilter(filterId, value);
-    }
+  const handleFilterChange = (field, value) => {
+    updateFilter(field, value);
   };
 
-  // Render individual filter component
-  const renderFilter = (filterConfig, sectionId) => {
-    const {
-      id,
-      type,
-      className: filterClassName = "",
-      ...filterProps
-    } = filterConfig;
-
-    // Get current filter value
-    let currentValue = filters[id];
-
-    // Handle special cases for different filter types
-    if (type === "PriceRangeFilter") {
-      currentValue = {
-        min: filters.priceMin || "",
-        max: filters.priceMax || "",
-      };
-    } else if (type === "RangeInput") {
-      currentValue = {
-        min: filters[`${id}Min`] || "",
-        max: filters[`${id}Max`] || "",
-      };
-    }
-
-    // Prepare component props
-    const componentProps = {
-      ...filterProps.componentProps,
-      value: currentValue,
-      onChange: (value) => handleFilterChange(id, value, filterConfig),
-      className: filterClassName,
-    };
-
-    // Handle special props for specific component types
-    if (type === "RangeInput") {
-      componentProps.min = currentValue.min;
-      componentProps.max = currentValue.max;
-      componentProps.onMinChange = (value) =>
-        handleFilterChange(`${id}Min`, value, filterConfig);
-      componentProps.onMaxChange = (value) =>
-        handleFilterChange(`${id}Max`, value, filterConfig);
-    }
-
-    return (
-      <div key={id} className={`filter-item ${filterClassName}`}>
-        {renderFilterComponent(filterConfig, componentProps)}
-      </div>
-    );
+  const handleShowResults = () => {
+    applyFilters();
   };
 
-  // Render filter section
-  const renderSection = (section, isDesktop = true) => {
-    const {
-      id,
-      title,
-      className: sectionClassName = "",
-      layout = "grid",
-      filters: sectionFilters,
-    } = section;
-
-    // Check if section should be visible
-    if (!sectionVisibility[id]) {
-      return null;
-    }
-
-    return (
-      <FilterSection
-        key={id}
-        id={id}
-        title={title}
-        className={`filter-section ${sectionClassName} layout-${layout}`}
-        isCollapsible={!section.alwaysVisible}
-        isExpanded={sectionVisibility[id]}
-        onToggle={() => toggleSectionVisibility && toggleSectionVisibility(id)}
-      >
-        <div
-          className={`filter-grid ${layout === "flex" ? "filter-flex" : ""}`}
-        >
-          {sectionFilters.map((filterConfig) => renderFilter(filterConfig, id))}
-        </div>
-      </FilterSection>
-    );
-  };
-
-  // Render desktop filters
-  const renderDesktopFilters = () => {
-    if (!showDesktopFilters) return null;
-
-    return (
-      <div className={`filter-manager-desktop ${className}`} {...props}>
-        <div className="desctop_filters">
-          {visibleSections.map((section) => renderSection(section, true))}
-        </div>
-
-        {/* More filters toggle and action buttons */}
-        <div className="filter-actions">
-          {config.sections.some((s) => s.visible === "showMoreFilters") && (
-            <button
-              type="button"
-              className="btn btn-link more-filters-toggle"
-              onClick={toggleMoreFilters}
-            >
-              {showMoreFilters ? "Daha az filtr" : "Daha çox filtr"}
-              <i
-                className={`icon-chevron-${showMoreFilters ? "up" : "down"}`}
-              ></i>
-            </button>
-          )}
-
-          {hasActiveFilters && (
-            <button
-              type="button"
-              className="btn btn-outline reset-filters"
-              onClick={resetFilters}
-            >
-              Sıfırla
-            </button>
-          )}
-
-          {!autoApply && (
-            <button
-              type="button"
-              className="btn btn-primary apply-filters"
-              onClick={applyFilters}
-            >
-              Nəticələri göstər
-              {activeFilterCount > 0 && (
-                <span className="filter-count">({activeFilterCount})</span>
-              )}
-            </button>
-          )}
-        </div>
-      </div>
-    );
-  };
-
-  // Render mobile filter trigger
-  const renderMobileFilterTrigger = () => {
-    if (!showMobileDrawer) return null;
-
-    return (
-      <div className="filter-manager-mobile d-lg-none">
+  // Render filters for other categories (electronics, jobs, real estate)
+  return (
+    <>
+      {/* Mobile Filter Trigger */}
+      <div className="desc_filters_btn_mobile d-md-none">
         <button
-          type="button"
-          className="btn btn-outline-primary mobile-filter-trigger"
+          className="filter_btn_mobile"
           onClick={() => setIsMobileDrawerOpen(true)}
         >
-          <i className="icon-filter"></i>
-          Filtr
+          <i className="fas fa-filter"></i>
+          <span>Filtr</span>
           {activeFilterCount > 0 && (
-            <span className="filter-badge">{activeFilterCount}</span>
+            <span className="filter_btn_count">{activeFilterCount}</span>
           )}
         </button>
       </div>
-    );
-  };
 
-  return (
-    <>
-      {/* Desktop Filters */}
-      <div className="d-none d-lg-block">{renderDesktopFilters()}</div>
+      {/* Desktop Filters for other categories */}
+      <div className="d-none d-md-block">
+        <div className="main_container">
+          <div className="desctop_filters">
+            {/* Render based on configuration */}
+            {config.sections?.map((section) => {
+              if (
+                section.visible === "showMoreFilters" &&
+                !filters.showMoreFilters
+              ) {
+                return null;
+              }
 
-      {/* Mobile Filter Trigger */}
-      {renderMobileFilterTrigger()}
+              return section.filters.map((filter) => {
+                if (filter.type === "Dropdown") {
+                  return (
+                    <Dropdown
+                      key={filter.id}
+                      options={filter.componentProps?.options || []}
+                      value={filters[filter.id] || ""}
+                      onChange={(value) => handleFilterChange(filter.id, value)}
+                      placeholder={filter.placeholder}
+                      className={filter.className || "for_width20"}
+                    />
+                  );
+                }
 
-      {/* Mobile Filter Drawer */}
-      {showMobileDrawer && (
-        <UniversalFilterDrawer
-          isOpen={isMobileDrawerOpen}
-          onClose={() => setIsMobileDrawerOpen(false)}
-          config={config}
-          filters={filters}
-          sectionVisibility={sectionVisibility}
-          visibleSections={visibleSections}
-          activeFilterCount={activeFilterCount}
-          hasActiveFilters={hasActiveFilters}
-          showMoreFilters={showMoreFilters}
-          onFilterChange={handleFilterChange}
-          onRangeFilterChange={updateRangeFilter}
-          onArrayFilterChange={updateArrayFilter}
-          onToggleMoreFilters={toggleMoreFilters}
-          onResetFilters={resetFilters}
-          onApplyFilters={() => {
-            applyFilters();
-            setIsMobileDrawerOpen(false);
-          }}
-          renderFilter={renderFilter}
-          renderSection={renderSection}
-        />
-      )}
+                if (filter.type === "PriceRangeFilter") {
+                  return (
+                    <PriceRangeFilter
+                      key={filter.id}
+                      minValue={filters.priceMin || ""}
+                      maxValue={filters.priceMax || ""}
+                      onMinChange={(value) =>
+                        handleFilterChange("priceMin", value)
+                      }
+                      onMaxChange={(value) =>
+                        handleFilterChange("priceMax", value)
+                      }
+                      className={filter.className || "for_width20"}
+                      currency={filter.componentProps?.currency || "AZN"}
+                    />
+                  );
+                }
+
+                if (filter.type === "LocationFilter") {
+                  return (
+                    <LocationFilter
+                      key={filter.id}
+                      value={filters[filter.id] || ""}
+                      onChange={(value) => handleFilterChange(filter.id, value)}
+                      placeholder={filter.placeholder}
+                      className={filter.className || "for_width20"}
+                    />
+                  );
+                }
+
+                if (filter.type === "RadioGroup2") {
+                  return (
+                    <RadioGroup2
+                      key={filter.id}
+                      options={filter.componentProps?.options || []}
+                      value={filters[filter.id] || "all"}
+                      onChange={(value) => handleFilterChange(filter.id, value)}
+                      name={filter.id}
+                      className={filter.className || "for_width100"}
+                    />
+                  );
+                }
+
+                return null;
+              });
+            })}
+          </div>
+
+          {/* Filter Action Buttons */}
+          <div className="desc_filters_btns">
+            <FilterButtons
+              onReset={() => resetFilters()}
+              onToggleMoreFilters={() =>
+                handleFilterChange("showMoreFilters", !filters.showMoreFilters)
+              }
+              onShowResults={handleShowResults}
+              moreFiltersExpanded={filters.showMoreFilters}
+              resultsCount={0}
+              resetText="Sıfırla"
+              moreFiltersText="Daha çox filtr"
+              showResultsText="Elanları göstər"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile drawer for other categories would go here */}
     </>
   );
 };

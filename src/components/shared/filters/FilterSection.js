@@ -3,51 +3,47 @@
 import React from "react";
 
 /**
- * Filter section wrapper component
- * Handles section layout, collapsibility, and styling
+ * Layout wrapper component for filter sections
+ * Provides consistent structure and styling for filter groups
  */
 const FilterSection = ({
+  children,
   id,
   title,
-  children,
   className = "",
   isCollapsible = false,
   isExpanded = true,
   onToggle,
-  layout = "grid",
+  style = {},
 }) => {
-  // Render section header if title exists or section is collapsible
-  const renderHeader = () => {
-    if (!title && !isCollapsible) return null;
-
-    return (
-      <div className="filter-section-header">
-        {title && <h4 className="filter-section-title">{title}</h4>}
-        {isCollapsible && (
-          <button
-            type="button"
-            className="btn btn-link filter-section-toggle"
-            onClick={onToggle}
-            aria-expanded={isExpanded}
-            aria-controls={`filter-section-${id}`}
-          >
-            <i className={`icon-chevron-${isExpanded ? "up" : "down"}`}></i>
-          </button>
-        )}
-      </div>
-    );
-  };
+  const sectionClass = [
+    "filter-section",
+    className,
+    isCollapsible && !isExpanded ? "collapsed" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return (
-    <div
-      className={`filter-section ${className} ${layout ? `layout-${layout}` : ""} ${isExpanded ? "expanded" : "collapsed"}`}
-      data-section={id}
-    >
-      {renderHeader()}
-
+    <div className={sectionClass} style={style}>
+      {title && (
+        <div className="filter-section-header">
+          <h3 className="filter-section-title">{title}</h3>
+          {isCollapsible && (
+            <button
+              className="filter-section-toggle"
+              onClick={onToggle}
+              aria-expanded={isExpanded}
+              aria-controls={id}
+            >
+              <i className={`fas fa-chevron-${isExpanded ? "up" : "down"}`}></i>
+            </button>
+          )}
+        </div>
+      )}
       <div
-        id={`filter-section-${id}`}
         className={`filter-section-content ${isExpanded ? "show" : "hide"}`}
+        id={id}
       >
         {children}
       </div>
