@@ -10,6 +10,7 @@ const HomePage = () => {
   return (
     <>
       {/* Main container with Home Filters Section ONLY */}
+
       <div className="main_container">
         <section id="home_filters_sec">
           <div className="container-fluid">
