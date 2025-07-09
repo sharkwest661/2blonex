@@ -2,8 +2,52 @@
 
 /**
  * Electronics filter configuration for FilterManager
- * Covers computers, phones, audio-video, and other electronics
  */
+
+// Electronics data constants (you would typically import these from data files)
+const ELECTRONICS_BRANDS = [
+  { value: "apple", label: "Apple" },
+  { value: "samsung", label: "Samsung" },
+  { value: "sony", label: "Sony" },
+  { value: "lg", label: "LG" },
+  { value: "dell", label: "Dell" },
+  { value: "hp", label: "HP" },
+  { value: "lenovo", label: "Lenovo" },
+  { value: "asus", label: "Asus" },
+  { value: "acer", label: "Acer" },
+  { value: "huawei", label: "Huawei" },
+  { value: "xiaomi", label: "Xiaomi" },
+  { value: "canon", label: "Canon" },
+  { value: "nikon", label: "Nikon" },
+  { value: "panasonic", label: "Panasonic" },
+];
+
+const ITEM_TYPES = [
+  { value: "phones", label: "Mobil telefonlar" },
+  { value: "laptops", label: "Noutbuklar" },
+  { value: "computers", label: "Kompüterlər" },
+  { value: "tablets", label: "Planşetlər" },
+  { value: "tv", label: "Televizorlar" },
+  { value: "audio", label: "Audio texnika" },
+  { value: "cameras", label: "Fotoaparatlar" },
+  { value: "gaming", label: "Oyun konsolları" },
+  { value: "smart_home", label: "Ağıllı ev" },
+  { value: "accessories", label: "Aksesuarlar" },
+];
+
+const ELECTRONICS_CONDITIONS = [
+  { value: "all", label: "Hamısı" },
+  { value: "new", label: "Yeni" },
+  { value: "used", label: "İşlənmiş" },
+  { value: "refurbished", label: "Təmir edilmiş" },
+];
+
+const DELIVERY_OPTIONS = [
+  { value: "all", label: "Hamısı" },
+  { value: "yes", label: "Bəli" },
+  { value: "no", label: "Xeyr" },
+];
+
 const electronicsConfig = {
   category: "electronics",
 
@@ -15,8 +59,8 @@ const electronicsConfig = {
     priceMin: "",
     priceMax: "",
     condition: "all",
+    delivery: "all",
     location: "",
-    delivery: "",
     showMoreFilters: false,
   },
 
@@ -33,20 +77,11 @@ const electronicsConfig = {
           id: "itemType",
           type: "Dropdown",
           label: "Malın tipi",
-          placeholder: "Malın tipini seçin",
+          placeholder: "Malın tipi seçin",
           className: "for_width20",
-          dependencies: ["brand", "model"], // Reset brand/model when item type changes
+          dependencies: ["brand", "model"],
           componentProps: {
-            options: [
-              { value: "computers", label: "Kompüterlər və noutbuklar" },
-              { value: "phones", label: "Telefonlar" },
-              { value: "tablets", label: "Planşetlər" },
-              { value: "audio-video", label: "Audio və video" },
-              { value: "gaming", label: "Oyun konsolları" },
-              { value: "accessories", label: "Aksesuarlar" },
-              { value: "appliances", label: "Məişət texnikası" },
-              { value: "other", label: "Digər" },
-            ],
+            options: ITEM_TYPES,
           },
         },
         {
@@ -55,11 +90,9 @@ const electronicsConfig = {
           label: "Marka",
           placeholder: "Marka seçin",
           className: "for_width20",
-          dependsOn: "itemType",
           dependencies: ["model"],
-          dataSource: "DYNAMIC", // Will be populated based on item type
           componentProps: {
-            options: [], // Will be populated dynamically
+            options: ELECTRONICS_BRANDS,
           },
         },
         {
@@ -69,9 +102,8 @@ const electronicsConfig = {
           placeholder: "Model seçin",
           className: "for_width20",
           dependsOn: "brand",
-          dataSource: "DYNAMIC",
           componentProps: {
-            options: [],
+            options: [], // Will be populated dynamically
           },
         },
         {
@@ -88,6 +120,16 @@ const electronicsConfig = {
           },
         },
         {
+          id: "condition",
+          type: "RadioGroup2",
+          label: "Vəziyyəti",
+          className: "for_width20",
+          componentProps: {
+            name: "condition",
+            options: ELECTRONICS_CONDITIONS,
+          },
+        },
+        {
           id: "location",
           type: "LocationFilter",
           label: "Şəhər",
@@ -99,25 +141,12 @@ const electronicsConfig = {
       ],
     },
     {
-      id: "additional",
-      title: "Əlavə filtrlər",
+      id: "advanced",
+      title: "Ətraflı axtarış",
       visible: "showMoreFilters",
-      className: "additional_filters",
+      className: "advanced_filters",
+      layout: "grid",
       filters: [
-        {
-          id: "condition",
-          type: "RadioGroup2",
-          label: "Vəziyyəti",
-          className: "for_width20",
-          componentProps: {
-            options: [
-              { value: "all", label: "Hamısı" },
-              { value: "new", label: "Yeni" },
-              { value: "used", label: "İstifadə olunmuş" },
-            ],
-            name: "condition",
-          },
-        },
         {
           id: "delivery",
           type: "Dropdown",
@@ -125,10 +154,7 @@ const electronicsConfig = {
           placeholder: "Çatdırılma seçin",
           className: "for_width20",
           componentProps: {
-            options: [
-              { value: "yes", label: "Bəli" },
-              { value: "no", label: "Xeyr" },
-            ],
+            options: DELIVERY_OPTIONS,
           },
         },
       ],
@@ -150,15 +176,15 @@ const electronicsConfig = {
     preserveOnReset: ["condition"],
     urlSync: true,
     dependencies: {
-      brand: {
-        dependsOn: "itemType",
-        resetWhen: ["itemType"],
-        dataSource: "getBrandsForItemType",
-      },
       model: {
         dependsOn: "brand",
         resetWhen: ["brand", "itemType"],
         dataSource: "getModelsForBrand",
+      },
+      brand: {
+        dependsOn: "itemType",
+        resetWhen: ["itemType"],
+        dataSource: "getBrandsForItemType",
       },
     },
   },
@@ -171,85 +197,16 @@ const electronicsConfig = {
       required: false,
     },
   },
-};
 
-// Brand mappings by item type
-export const ELECTRONICS_BRANDS = {
-  computers: [
-    { value: "apple", label: "Apple" },
-    { value: "dell", label: "Dell" },
-    { value: "hp", label: "HP" },
-    { value: "lenovo", label: "Lenovo" },
-    { value: "asus", label: "ASUS" },
-    { value: "acer", label: "Acer" },
-    { value: "msi", label: "MSI" },
-    { value: "samsung", label: "Samsung" },
-    { value: "other", label: "Digər" },
-  ],
-  phones: [
-    { value: "apple", label: "Apple" },
-    { value: "samsung", label: "Samsung" },
-    { value: "huawei", label: "Huawei" },
-    { value: "xiaomi", label: "Xiaomi" },
-    { value: "oppo", label: "OPPO" },
-    { value: "oneplus", label: "OnePlus" },
-    { value: "sony", label: "Sony" },
-    { value: "nokia", label: "Nokia" },
-    { value: "other", label: "Digər" },
-  ],
-  tablets: [
-    { value: "apple", label: "Apple" },
-    { value: "samsung", label: "Samsung" },
-    { value: "huawei", label: "Huawei" },
-    { value: "lenovo", label: "Lenovo" },
-    { value: "microsoft", label: "Microsoft" },
-    { value: "other", label: "Digər" },
-  ],
-  "audio-video": [
-    { value: "sony", label: "Sony" },
-    { value: "samsung", label: "Samsung" },
-    { value: "lg", label: "LG" },
-    { value: "bose", label: "Bose" },
-    { value: "jbl", label: "JBL" },
-    { value: "panasonic", label: "Panasonic" },
-    { value: "philips", label: "Philips" },
-    { value: "other", label: "Digər" },
-  ],
-  gaming: [
-    { value: "sony", label: "Sony PlayStation" },
-    { value: "microsoft", label: "Microsoft Xbox" },
-    { value: "nintendo", label: "Nintendo" },
-    { value: "other", label: "Digər" },
-  ],
-  appliances: [
-    { value: "samsung", label: "Samsung" },
-    { value: "lg", label: "LG" },
-    { value: "bosch", label: "Bosch" },
-    { value: "siemens", label: "Siemens" },
-    { value: "whirlpool", label: "Whirlpool" },
-    { value: "electrolux", label: "Electrolux" },
-    { value: "other", label: "Digər" },
-  ],
-  accessories: [
-    { value: "apple", label: "Apple" },
-    { value: "samsung", label: "Samsung" },
-    { value: "logitech", label: "Logitech" },
-    { value: "belkin", label: "Belkin" },
-    { value: "anker", label: "Anker" },
-    { value: "other", label: "Digər" },
-  ],
-};
-
-// Helper function to get brands for item type
-export const getBrandsForItemType = (itemType) => {
-  return ELECTRONICS_BRANDS[itemType] || [];
-};
-
-// Helper function to get models for brand (simplified - would be dynamic in real app)
-export const getModelsForBrand = (brand, itemType) => {
-  // This would typically fetch from an API based on brand and item type
-  // For now, return empty array - implement based on your data structure
-  return [];
+  // Filter labels and text
+  labels: {
+    resetAll: "Hamısını təmizlə",
+    applyFilters: "Filtrləri tətbiq et",
+    showResults: "Nəticələri göstər",
+    moreFilters: "Daha çox filtr",
+    lessFilters: "Az filtr",
+    activeFilters: "Aktiv filtrlər",
+  },
 };
 
 export default electronicsConfig;

@@ -1,7 +1,7 @@
 // src/components/shared/filters/hooks/useFilterManager.js
 
+import { useRouter } from "next/navigation";
 import { useState, useCallback, useMemo, useEffect } from "react";
-import { useRouter } from "next/router";
 
 /**
  * Universal filter state management hook
