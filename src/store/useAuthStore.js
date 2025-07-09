@@ -1,8 +1,8 @@
 // src/store/useAuthStore.js
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import toast from "react-hot-toast";
 import { authAPI, formatPhoneNumber } from "../utils/authAPI";
+import { showToast } from "../utils/toastHelper";
 
 export const useAuthStore = create(
   persist(
@@ -72,8 +72,7 @@ export const useAuthStore = create(
 
             get().openConfirmModal();
 
-            toast.success("Telefon nömrənizə SMS göndərildi", {
-              duration: 4000,
+            showToast("Telefon nömrənizə SMS göndərildi", "success", {
               icon: "📱",
             });
           }
@@ -81,9 +80,7 @@ export const useAuthStore = create(
           set({ isSubmittingPhone: false });
           const errorMessage =
             error.message || "Xəta baş verdi. Yenidən cəhd edin";
-          toast.error(errorMessage, {
-            duration: 4000,
-          });
+          showToast(errorMessage, "error");
         }
       },
 
@@ -112,18 +109,15 @@ export const useAuthStore = create(
               ? "Xoş gəldiniz! Hesabınız yaradıldı"
               : "Uğurla daxil oldunuz";
 
-            toast.success(welcomeMessage, {
-              duration: 4000,
-              icon: "🎉",
+            showToast(welcomeMessage, "success", {
+              icon: "🎉"
             });
           }
         } catch (error) {
           set({ isSubmittingOTP: false });
           const errorMessage =
             error.message || "Şifrə yanlışdır. Yenidən cəhd edin";
-          toast.error(errorMessage, {
-            duration: 4000,
-          });
+          showToast(errorMessage, "error");
         }
       },
 
@@ -132,7 +126,7 @@ export const useAuthStore = create(
         const { phoneNumber } = get();
 
         if (!phoneNumber) {
-          toast.error("Telefon nömrəsi tapılmadı", { duration: 3000 });
+          showToast("Telefon nömrəsi tapılmadı", "error");
           return;
         }
 
@@ -140,17 +134,14 @@ export const useAuthStore = create(
           const response = await authAPI.resendOTP(phoneNumber);
 
           if (response.success) {
-            toast.success("SMS yenidən göndərildi", {
-              duration: 4000,
+            showToast("SMS yenidən göndərildi", "success", {
               icon: "📱",
             });
           }
         } catch (error) {
           const errorMessage =
             error.message || "SMS göndərilmədi. Yenidən cəhd edin";
-          toast.error(errorMessage, {
-            duration: 4000,
-          });
+          showToast(errorMessage, "error");
         }
       },
 
@@ -168,8 +159,7 @@ export const useAuthStore = create(
 
         get().closeAllModals();
 
-        toast.success("Uğurla çıxış etdiniz", {
-          duration: 3000,
+        showToast("Uğurla çıxış etdiniz", "success", {
           icon: "👋",
         });
       },

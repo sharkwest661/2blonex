@@ -1,7 +1,7 @@
 // src/store/useFavoritesStore.js
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import toast from "react-hot-toast";
+import { showToast } from "../utils/toastHelper";
 
 export const useFavoritesStore = create(
   persist(
@@ -23,10 +23,7 @@ export const useFavoritesStore = create(
         }));
 
         // Show success notification
-        toast.success("Seçilmişlərə əlavə edildi", {
-          duration: 3000,
-          icon: "❤️",
-        });
+        showToast("Seçilmişlərə əlavə edildi", "success", { icon: "❤️" });
       },
 
       removeFromFavorites: (productId) => {
@@ -35,10 +32,7 @@ export const useFavoritesStore = create(
         }));
 
         // Show removal notification
-        toast.success("Seçilmişlərdən silindi", {
-          duration: 3000,
-          icon: "🗑️",
-        });
+        showToast("Seçilmişlərdən silindi", "success", { icon: "🗑️" });
       },
 
       toggleFavorite: (productId) => {
@@ -65,10 +59,7 @@ export const useFavoritesStore = create(
 
       clearAllFavorites: () => {
         set({ favorites: [] });
-        toast.success("Bütün seçilmişlər silindi", {
-          duration: 3000,
-          icon: "🧹",
-        });
+        showToast("Seçilmişlərdən silindi", "success", { icon: "🗑️" });
       },
 
       // Batch operations for future use
@@ -83,12 +74,7 @@ export const useFavoritesStore = create(
             favorites: [...state.favorites, ...newFavorites],
           }));
 
-          toast.success(
-            `${newFavorites.length} məhsul seçilmişlərə əlavə edildi`,
-            {
-              duration: 3000,
-            }
-          );
+          showToast(`${newFavorites.length} məhsul seçilmişlərə əlavə edildi`, "success");
         }
       },
 
@@ -97,9 +83,7 @@ export const useFavoritesStore = create(
           favorites: state.favorites.filter((id) => !productIds.includes(id)),
         }));
 
-        toast.success(`${productIds.length} məhsul seçilmişlərdən silindi`, {
-          duration: 3000,
-        });
+        showToast(`${productIds.length} məhsul seçilmişlərdən silindi`, "success");
       },
 
       // Utility methods
@@ -117,14 +101,10 @@ export const useFavoritesStore = create(
           const favorites = JSON.parse(favoritesJson);
           if (Array.isArray(favorites)) {
             set({ favorites });
-            toast.success("Seçilmişlər uğurla yükləndi", {
-              duration: 3000,
-            });
+           showToast("Seçilmişlər uğurla yükləndi", "success");
           }
         } catch (error) {
-          toast.error("Seçilmişlər yüklənərkən xəta baş verdi", {
-            duration: 3000,
-          });
+          showToast("Seçilmişlər yüklənərkən xəta baş verdi", "error");
         }
       },
     }),
