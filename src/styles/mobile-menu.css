@@ -208,7 +208,7 @@ Modern Mobile Menu Design
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(255, 255, 255, 0.1),
+    rgba(255, 255, 255, 0.212),
     transparent
   );
   transition: left 0.5s ease;
@@ -221,6 +221,7 @@ Modern Mobile Menu Design
 .quick-action-primary:hover {
   transform: translateY(-2px);
   box-shadow: 0 12px 32px rgba(1, 63, 68, 0.3);
+  color: #ffffff !important;
 }
 
 .quick-action-secondary {
