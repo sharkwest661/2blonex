@@ -61,12 +61,13 @@ export default function CategoryPage({ params }) {
   return (
     <Layout>
       <CategoryPageTemplate
-        category={category}
+        category={categoryData.id} // Use category ID for FilterManager
         pageTitle={categoryData.name}
         customTypingKeywords={config.typingKeywords}
         customBreadcrumbs={breadcrumbs}
         showVipListings={true}
         showNewListings={true}
+        showFilters={true}
         resultCount={categoryData.count}
         showResultCount={true}
       />

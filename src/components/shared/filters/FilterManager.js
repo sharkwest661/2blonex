@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useFilterConfig } from "./hooks/useFilterConfig";
 import { useFilterManager } from "./hooks/useFilterManager";
+import { getFilterCategoryId } from "@/utils/filterRegistry";
 
 // Import EXACT same components as VehicleFilters
 import {
@@ -53,6 +54,9 @@ const FilterManager = ({
   initialFilters = {},
   ...props
 }) => {
+  // Map slug to actual category ID for filter components
+  const actualCategory = getFilterCategoryId(category);
+
   // Load configuration
   const config = useFilterConfig(category);
 
@@ -65,7 +69,7 @@ const FilterManager = ({
   console.log("FUEL_TYPES:", FUEL_TYPES);
 
   // FOR VEHICLES - Use exact VehicleFilters structure
-  if (category === "vehicles") {
+  if (actualCategory === "vehicles") {
     // Filters state - EXACT same as VehicleFilters
     const [filters, setFilters] = useState({
       brand: "",

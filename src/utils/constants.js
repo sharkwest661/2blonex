@@ -48,7 +48,7 @@ export const CATEGORIES = [
   {
     id: "vehicles",
     name: "Nəqliyyat",
-    slug: "neqliyyat",
+    slug: "neqliyyat", // Keep Azerbaijani slug
     icon: "https://bolbol.az/media/2021/08/04/categories/Group_9638.svg",
     href: "/neqliyyat",
     count: 15420,
@@ -365,16 +365,7 @@ export const getCategoryConfig = (slug) => {
     },
   };
 
-  return (
-    configs[slug] || {
-      typingKeywords: [
-        `${categoryData.name} axtarın...`,
-        `${categoryData.name} satılır...`,
-        "nəyi axtarırsınız?",
-      ],
-      resultCount: categoryData.count || 0,
-    }
-  );
+  return configs[slug] || { typingKeywords: [] };
 };
 
 export const getCategoryById = (id) => {

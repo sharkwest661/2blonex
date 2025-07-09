@@ -23,6 +23,18 @@ const FILTER_COMPONENTS = {
   // Add more categories as needed
 };
 
+// Add slug to category ID mapping
+export const getFilterCategoryId = (slug) => {
+  const mapping = {
+    neqliyyat: "vehicles",
+    emlak: "realestate",
+    elektronika: "electronics",
+    // Add more mappings
+  };
+
+  return mapping[slug] || slug;
+};
+
 // Category-specific typing keywords for search animation
 export const CATEGORY_TYPING_KEYWORDS = {
   default: ["avtomobil", "telefon", "ev", "iş", "mənzil"],
