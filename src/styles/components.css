@@ -811,6 +811,97 @@ h1.title_category,
     background: #20b038;
   }
 }
+
+/* CSS fix for dropdown interaction issues */
+
+/* Ensure form-group doesn't block dropdown clicks */
+.desctop_filters .form-group {
+  position: relative;
+  z-index: 1;
+}
+
+/* Ensure dropdown can expand properly */
+.desctop_filters .form-group:hover,
+.desctop_filters .form-group:focus-within {
+  z-index: 100;
+}
+
+/* Fix dropdown wrapper positioning */
+.desctop_filters .form-group [class*="dropdownWrapper"] {
+  position: relative;
+  z-index: inherit;
+  width: 100%;
+}
+
+/* Ensure dropdown trigger is clickable */
+.desctop_filters .form-group [class*="dropdownTrigger"] {
+  pointer-events: auto;
+  cursor: pointer;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+/* Ensure dropdown menu appears above other elements */
+.desctop_filters .form-group [class*="dropdownMenu"] {
+  position: absolute;
+  z-index: 1000;
+  width: 100%;
+  top: 100%;
+  left: 0;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+/* FIX: Double scrollbar issue for cities dropdown */
+.desctop_filters .form-group [class*="dropdownOptions"] {
+  max-height: 180px; /* Slightly smaller than menu max-height */
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Remove nested scrollable containers */
+.desctop_filters
+  .form-group
+  [class*="dropdownMenu"]
+  [class*="dropdownOptions"] {
+  max-height: none; /* Remove max-height from nested container */
+  overflow: visible; /* Remove overflow from nested container */
+}
+
+/* Ensure only the main menu container scrolls */
+.desctop_filters .form-group [class*="dropdownMenu"] {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+/* LocationFilter specific fixes */
+.desctop_filters .form-group [class*="dropdownSearch"] {
+  position: sticky;
+  top: 0;
+  background: white;
+  border-bottom: 1px solid #eee;
+  padding: 8px;
+  z-index: 1;
+}
+
+.desctop_filters .form-group [class*="dropdownSearchInput"] {
+  width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 6px 8px;
+  font-size: 14px;
+  outline: none;
+}
+
+.desctop_filters .form-group [class*="dropdownSearchInput"]:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
+}
 /* ===================================
    FUTURE COMPONENT STYLES
    =================================== */
