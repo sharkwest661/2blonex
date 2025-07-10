@@ -1,154 +1,322 @@
 // src/utils/filterRegistry.js
-import { lazy } from "react";
+import { CATEGORIES } from "./constants";
 
-// Lazy load filter components for better performance
-const FILTER_COMPONENTS = {
-  neqliyyat: lazy(
-    () => import("@/components/features/vehicles/components/VehicleFilters")
-  ),
-  // emlak: lazy(
-  //   () =>
-  //     import("@/components/features/realestate/components/RealEstateFilters")
-  // ),
-  // elektronika: lazy(
-  //   () =>
-  //     import("@/components/features/electronics/components/ElectronicsFilters")
-  // ),
-  // is_elanlari: lazy(
-  //   () => import("@/components/features/jobs/components/JobFilters")
-  // ),
-  // xidmetler: lazy(
-  //   () => import("@/components/features/services/components/ServiceFilters")
-  // ),
-  // Add more categories as needed
-};
-
-// Category-specific typing keywords for search animation
-export const CATEGORY_TYPING_KEYWORDS = {
-  default: ["avtomobil", "telefon", "ev", "iş", "mənzil"],
-  neqliyyat: [
-    "BMW",
-    "Mercedes",
-    "Toyota",
-    "Hyundai",
-    "motosiklet",
-    "kamaz",
-    "avtobus",
-  ],
-  emlak: ["mənzil", "ev", "ofis", "torpaq", "villa", "şəhər evi", "bağ evi"],
-  elektronika: [
-    "iPhone",
-    "Samsung",
-    "laptop",
-    "televizor",
-    "telefon",
-    "kompüter",
-  ],
-  is_elanlari: ["iş", "vakansiya", "CV", "məşğulluq", "karyer", "maaş"],
-  xidmetler: ["təmir", "təmizlik", "çatdırılma", "dizayn", "tərcümə", "dərs"],
-  ev_bahce: ["mebel", "məişət", "bağ", "alət", "dekor", "tekstil"],
-  uşaq_aləmi: ["oyuncaq", "geyim", "arabası", "çarpayı", "kitab", "aksesuar"],
-  hobbi_istirahət: [
-    "kitab",
-    "musiqi",
-    "idman",
-    "oyun",
-    "kolleksiya",
-    "səyahət",
-  ],
-  şəxsi_əşyalar: ["geyim", "ayaqqabı", "saat", "zinət", "çanta", "aksesuar"],
-  pulsuz: ["hədiyyə", "pulsuz", "bağışlama", "mübadiləe", "yardım"],
-};
-
-// Category metadata for SEO and display
-export const CATEGORY_METADATA = {
-  neqliyyat: {
-    title: "Nəqliyyat elanları - Avtomobil alqı-satqısı",
-    description:
-      "Azərbaycanda avtomobil alqı-satqısı. Yeni və işlənmiş avtomobillər, motosikletlər və digər nəqliyyat vasitələri.",
-    keywords: "avtomobil, maşın, nəqliyyat, alqı-satqı, BMW, Mercedes, Toyota",
-    breadcrumbs: [
-      { label: "Ana səhifə", href: "/" },
-      { label: "Nəqliyyat", href: "/neqliyyat" },
-    ],
-  },
-  emlak: {
-    title: "Əmlak elanları - Ev, mənzil alqı-satqısı",
-    description:
-      "Azərbaycanda əmlak alqı-satqısı. Mənzillər, evlər, ofioslər və torpaq sahələri.",
-    keywords: "əmlak, mənzil, ev, ofis, torpaq, villa, kirayə, satış",
-    breadcrumbs: [
-      { label: "Ana səhifə", href: "/" },
-      { label: "Əmlak", href: "/emlak" },
-    ],
-  },
-  elektronika: {
-    title: "Elektronika elanları - Telefon, kompüter, TV",
-    description:
-      "Elektron cihazlar, telefonlar, kompüterlər, televizorlar və digər elektronika.",
-    keywords:
-      "elektronika, telefon, kompüter, laptop, televizor, iPhone, Samsung",
-    breadcrumbs: [
-      { label: "Ana səhifə", href: "/" },
-      { label: "Elektronika", href: "/elektronika" },
-    ],
-  },
-  is_elanlari: {
-    title: "İş elanları - Vakansiyalar və CV",
-    description:
-      "Azərbaycanda iş elanları, vakansiyalar və CV-lər. İş axtaranlar və işəgötürənlər üçün.",
-    keywords: "iş, vakansiya, CV, məşğulluq, karyer, maaş, iş elanı",
-    breadcrumbs: [
-      { label: "Ana səhifə", href: "/" },
-      { label: "İş elanları", href: "/is-elanlari" },
-    ],
-  },
-  xidmetler: {
-    title: "Xidmətlər - Təmir, təmizlik və digər xidmətlər",
-    description:
-      "Müxtəlif xidmətlər: təmir, təmizlik, çatdırılma, dizayn və digər peşəkar xidmətlər.",
-    keywords: "xidmət, təmir, təmizlik, çatdırılma, dizayn, dərs, tərcümə",
-    breadcrumbs: [
-      { label: "Ana səhifə", href: "/" },
-      { label: "Xidmətlər", href: "/xidmetler" },
-    ],
-  },
+// Mapping from URL slugs to filter category IDs
+const SLUG_TO_CATEGORY_MAPPING = {
+  neqliyyat: "vehicles",
+  emlak: "realestate",
+  elektronika: "electronics",
+  "is-elanlari": "jobs",
+  xidmetler: "services",
+  // Add more mappings as needed
 };
 
 /**
- * Get filter component for a specific category
- * @param {string} categorySlug - Category slug (e.g., 'neqliyyat')
- * @returns {React.Component|null} Filter component or null
+ * Maps URL slug to internal category ID for filter components
+ * @param {string} slug - URL slug (e.g., "neqliyyat")
+ * @returns {string} - Internal category ID (e.g., "vehicles")
  */
-export const getFilterComponent = (categorySlug) => {
-  return FILTER_COMPONENTS[categorySlug] || null;
+export const getFilterCategoryId = (slug) => {
+  return SLUG_TO_CATEGORY_MAPPING[slug] || slug;
 };
 
 /**
- * Get typing keywords for a specific category
- * @param {string} categorySlug - Category slug
- * @returns {string[]} Array of typing keywords
+ * Get category configuration by slug
+ * @param {string} slug - URL slug
+ * @returns {object} - Category configuration
  */
-export const getCategoryTypingKeywords = (categorySlug) => {
-  return (
-    CATEGORY_TYPING_KEYWORDS[categorySlug] || CATEGORY_TYPING_KEYWORDS.default
-  );
+export const getCategoryConfig = (slug) => {
+  const category = getCategoryBySlug(slug);
+  if (!category) return null;
+
+  return {
+    ...category,
+    filterCategoryId: getFilterCategoryId(slug),
+  };
 };
 
 /**
- * Get metadata for a specific category
- * @param {string} categorySlug - Category slug
- * @returns {object} Category metadata
+ * Find category by slug
+ * @param {string} slug - URL slug
+ * @returns {object|null} - Category object or null
  */
-export const getCategoryMetadata = (categorySlug) => {
-  return (
-    CATEGORY_METADATA[categorySlug] || {
-      title: "Elanlar - Bolbol.az",
-      description: "Azərbaycanın ən böyük elan portalı",
-      keywords: "elan, alqı-satqı, Azərbaycan",
-      breadcrumbs: [{ label: "Ana səhifə", href: "/" }],
+export const getCategoryBySlug = (slug) => {
+  return CATEGORIES.find((category) => category.slug === slug) || null;
+};
+
+/**
+ * Get typing keywords for search section based on category
+ * @param {string} category - Category slug or ID
+ * @returns {array} - Array of typing keywords
+ */
+export const getCategoryTypingKeywords = (category) => {
+  const keywords = {
+    vehicles: [
+      "Mercedes E220",
+      "BMW X5",
+      "Toyota Camry",
+      "Hyundai Elantra",
+      "Kia Sportage",
+      "VAZ 2107",
+    ],
+    electronics: [
+      "iPhone 15 Pro",
+      "Samsung Galaxy S24",
+      "MacBook Pro",
+      "PlayStation 5",
+      "AirPods Pro",
+      "Dell XPS",
+    ],
+    realestate: [
+      "3 otaqlı mənzil",
+      "Villa satılır",
+      "Ofis icarəsi",
+      "Yasamal rayonu",
+      "Binəqədi villa",
+      "Sabunçu torpaq",
+    ],
+    jobs: [
+      "Frontend developer",
+      "Satış meneceri",
+      "Mühasib vakansiya",
+      "İnsan resursları",
+      "Marketinq mütəxəssisi",
+      "İT mühəndis",
+    ],
+    services: [
+      "Təmizlik xidməti",
+      "Avtomobil təmiri",
+      "İngiliscə dərsi",
+      "Fotoqraf xidməti",
+      "Məsləhət xidməti",
+      "Texniki dəstək",
+    ],
+  };
+
+  const categoryId = getFilterCategoryId(category);
+  return keywords[categoryId] || keywords.vehicles;
+};
+
+/**
+ * Get metadata for category pages
+ * @param {string} category - Category slug or ID
+ * @returns {object} - Metadata object
+ */
+export const getCategoryMetadata = (category) => {
+  const metadata = {
+    vehicles: {
+      title: "Nəqliyyat - Avtomobil alqı-satqısı",
+      description:
+        "Azərbaycanda avtomobil, motosiklet və digər nəqliyyat vasitələrinin alqı-satqısı elanları",
+      breadcrumbs: [
+        { label: "Ana səhifə", href: "/" },
+        { label: "Nəqliyyat", href: "/neqliyyat" },
+      ],
+    },
+    electronics: {
+      title: "Elektronika - Telefon, kompüter, texnika",
+      description:
+        "Telefon, kompüter, texnika və elektronika elanları Azərbaycanda",
+      breadcrumbs: [
+        { label: "Ana səhifə", href: "/" },
+        { label: "Elektronika", href: "/elektronika" },
+      ],
+    },
+    realestate: {
+      title: "Daşınmaz əmlak - Mənzil, ev, villa, torpaq",
+      description: "Mənzil, ev, villa, torpaq və digər daşınmaz əmlak elanları",
+      breadcrumbs: [
+        { label: "Ana səhifə", href: "/" },
+        { label: "Daşınmaz əmlak", href: "/emlak" },
+      ],
+    },
+    jobs: {
+      title: "İş elanları - Vakansiyalar Azərbaycanda",
+      description:
+        "Azərbaycanda iş axtarışı və vakansiya elanları. Hər sahədə iş imkanları",
+      breadcrumbs: [
+        { label: "Ana səhifə", href: "/" },
+        { label: "İş elanları", href: "/is-elanlari" },
+      ],
+    },
+    services: {
+      title: "Xidmətlər - Müxtəlif xidmət növləri",
+      description:
+        "Təmir, təmizlik, təhsil və digər xidmət elanları Azərbaycanda",
+      breadcrumbs: [
+        { label: "Ana səhifə", href: "/" },
+        { label: "Xidmətlər", href: "/xidmetler" },
+      ],
+    },
+  };
+
+  const categoryId = getFilterCategoryId(category);
+  return metadata[categoryId] || metadata.vehicles;
+};
+
+/**
+ * Check if a category supports advanced filters
+ * @param {string} category - Category slug or ID
+ * @returns {boolean} - Whether category has advanced filters
+ */
+export const hasAdvancedFilters = (category) => {
+  const categoryId = getFilterCategoryId(category);
+
+  // Categories with advanced/complex filtering
+  const advancedCategories = ["vehicles", "realestate", "electronics"];
+
+  return advancedCategories.includes(categoryId);
+};
+
+/**
+ * Get filter validation rules for a category
+ * @param {string} category - Category slug or ID
+ * @returns {object} - Validation rules
+ */
+export const getFilterValidationRules = (category) => {
+  const categoryId = getFilterCategoryId(category);
+
+  const rules = {
+    vehicles: {
+      priceMin: { min: 0, max: 1000000 },
+      priceMax: { min: 0, max: 1000000 },
+      yearMin: { min: 1990, max: new Date().getFullYear() },
+      yearMax: { min: 1990, max: new Date().getFullYear() },
+      mileageMax: { min: 0, max: 1000000 },
+    },
+    electronics: {
+      priceMin: { min: 0, max: 50000 },
+      priceMax: { min: 0, max: 50000 },
+      yearMin: { min: 2010, max: new Date().getFullYear() },
+      yearMax: { min: 2010, max: new Date().getFullYear() },
+    },
+    realestate: {
+      priceMin: { min: 0, max: 10000000 },
+      priceMax: { min: 0, max: 10000000 },
+      areaMin: { min: 1, max: 10000 },
+      areaMax: { min: 1, max: 10000 },
+      floor: { min: 1, max: 100 },
+      totalFloors: { min: 1, max: 100 },
+    },
+    jobs: {
+      salaryMin: { min: 0, max: 50000 },
+      salaryMax: { min: 0, max: 50000 },
+    },
+    services: {
+      priceMin: { min: 0, max: 10000 },
+      priceMax: { min: 0, max: 10000 },
+    },
+  };
+
+  return rules[categoryId] || {};
+};
+
+/**
+ * Generate URL parameters from filter state
+ * @param {object} filters - Filter state object
+ * @returns {string} - URL query string
+ */
+export const generateFilterURL = (filters) => {
+  const params = new URLSearchParams();
+
+  Object.entries(filters).forEach(([key, value]) => {
+    if (value && value !== "" && value !== "all") {
+      if (Array.isArray(value) && value.length > 0) {
+        params.set(key, value.join(","));
+      } else if (typeof value === "string" || typeof value === "number") {
+        params.set(key, value.toString());
+      }
     }
-  );
+  });
+
+  return params.toString();
 };
 
-export default FILTER_COMPONENTS;
+/**
+ * Parse URL parameters to filter state
+ * @param {string} searchParams - URL search parameters
+ * @returns {object} - Filter state object
+ */
+export const parseFilterURL = (searchParams) => {
+  const filters = {};
+  const params = new URLSearchParams(searchParams);
+
+  params.forEach((value, key) => {
+    // Handle array values (comma-separated)
+    if (value.includes(",")) {
+      filters[key] = value.split(",");
+    } else {
+      filters[key] = value;
+    }
+  });
+
+  return filters;
+};
+
+/**
+ * Get default filters for a category
+ * @param {string} category - Category slug or ID
+ * @returns {object} - Default filter state
+ */
+export const getDefaultFilters = (category) => {
+  const categoryId = getFilterCategoryId(category);
+
+  const defaults = {
+    vehicles: {
+      brand: "",
+      model: "",
+      priceMin: "",
+      priceMax: "",
+      yearMin: "",
+      yearMax: "",
+      condition: "all",
+      city: "",
+      showMoreFilters: false,
+    },
+    electronics: {
+      category: "all",
+      brand: "",
+      priceMin: "",
+      priceMax: "",
+      condition: "all",
+      city: "",
+      storage: [],
+      ram: [],
+      os: "",
+      showMoreFilters: false,
+    },
+    realestate: {
+      propertyType: "all",
+      transactionType: "",
+      priceMin: "",
+      priceMax: "",
+      city: "",
+      roomCount: "all",
+      areaMin: "",
+      areaMax: "",
+      showMoreFilters: false,
+    },
+    jobs: {
+      category: "all",
+      employmentType: [],
+      salaryMin: "",
+      salaryMax: "",
+      city: "",
+      experienceLevel: "all",
+      education: [],
+      showMoreFilters: false,
+    },
+    services: {
+      category: "all",
+      serviceType: "",
+      priceMin: "",
+      priceMax: "",
+      city: "",
+      providerType: "",
+      availability: [],
+      showMoreFilters: false,
+    },
+  };
+
+  return defaults[categoryId] || defaults.vehicles;
+};

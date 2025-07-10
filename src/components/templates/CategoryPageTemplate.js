@@ -1,6 +1,6 @@
 // src/components/templates/CategoryPageTemplate.js
 "use client";
-import { Suspense, useState, useCallback } from "react";
+import { Suspense, useState, useCallback, useMemo, useRef } from "react";
 import SearchSection from "@/components/features/home/SearchSection";
 import PageHeader from "@/components/shared/PageHeader";
 import FilterSection from "@/components/shared/FilterSection";
@@ -29,41 +29,55 @@ const CategoryPageTemplate = ({
   const [currentFilters, setCurrentFilters] = useState({});
   const [filteredResultCount, setFilteredResultCount] = useState(resultCount);
 
-  // Get category-specific data
-  const typingKeywords =
-    customTypingKeywords || getCategoryTypingKeywords(category);
-  const metadata = getCategoryMetadata(category);
-  const breadcrumbs = customBreadcrumbs || metadata.breadcrumbs;
+  // Use ref to prevent unnecessary re-renders
+  const resultCountRef = useRef(resultCount);
+  resultCountRef.current = resultCount;
 
-  // Handle filter changes
-  const handleFiltersChange = useCallback(
-    (filters) => {
-      setCurrentFilters(filters);
+  // Memoize category-specific data to prevent recalculation
+  const categoryData = useMemo(() => {
+    const typingKeywords =
+      customTypingKeywords || getCategoryTypingKeywords(category);
+    const metadata = getCategoryMetadata(category);
+    const breadcrumbs = customBreadcrumbs || metadata.breadcrumbs;
 
-      console.log("Filters changed:", filters);
+    return { typingKeywords, metadata, breadcrumbs };
+  }, [category, customTypingKeywords, customBreadcrumbs]);
 
-      // Count active filters
-      const activeFilterCount = Object.values(filters).filter((value) => {
-        if (Array.isArray(value)) return value.length > 0;
-        return value && value !== "" && value !== "all";
-      }).length;
+  // Optimized filter change handler with proper dependencies
+  const handleFiltersChange = useCallback((filters) => {
+    console.log("Filters changed:", filters); // Remove this log when done testing
 
-      // Simulate filtered result count (replace with actual API call)
-      if (activeFilterCount > 0) {
-        setFilteredResultCount(Math.floor((resultCount || 1000) * 0.7));
-      } else {
-        setFilteredResultCount(resultCount || 1000);
-      }
+    // Update current filters state
+    setCurrentFilters(filters);
 
-      // Here you would typically:
-      // 1. Update URL parameters
-      // 2. Call API with new filters
-      // 3. Update listings
-      // updateURLWithFilters(filters);
-      // fetchFilteredResults(category, filters);
-    },
-    [resultCount]
-  );
+    // Count active filters efficiently
+    const activeFilterCount = Object.entries(filters).filter(([key, value]) => {
+      // Skip meta fields
+      if (key === "showMoreFilters") return false;
+
+      if (Array.isArray(value)) return value.length > 0;
+      return value && value !== "" && value !== "all";
+    }).length;
+
+    // Calculate filtered result count
+    const currentResultCount = resultCountRef.current || 1000;
+    const newFilteredCount =
+      activeFilterCount > 0
+        ? Math.floor(currentResultCount * 0.7)
+        : currentResultCount;
+
+    setFilteredResultCount(newFilteredCount);
+
+    // Here you would typically:
+    // 1. Update URL parameters
+    // 2. Call API with new filters
+    // 3. Update listings
+    // updateURLWithFilters(filters);
+    // fetchFilteredResults(category, filters);
+  }, []); // Empty dependency array since we use refs for dynamic values
+
+  // Memoize initial filters to prevent constant re-initialization
+  const initialFilters = useMemo(() => ({}), []);
 
   return (
     <>
@@ -72,7 +86,7 @@ const CategoryPageTemplate = ({
         <section id="home_filters_sec">
           <div className="container-fluid">
             <SearchSection
-              typingKeywords={typingKeywords}
+              typingKeywords={categoryData.typingKeywords}
               category={category}
             />
           </div>
@@ -82,7 +96,7 @@ const CategoryPageTemplate = ({
       {/* Page Header with breadcrumbs and title */}
       <PageHeader
         title={pageTitle}
-        breadcrumbs={breadcrumbs}
+        breadcrumbs={categoryData.breadcrumbs}
         resultCount={filteredResultCount}
         showResultCount={showResultCount}
       />
@@ -94,7 +108,7 @@ const CategoryPageTemplate = ({
             <FilterManager
               category={category}
               onFiltersChange={handleFiltersChange}
-              initialFilters={{}}
+              initialFilters={initialFilters}
             />
           </Suspense>
         </FilterSection>

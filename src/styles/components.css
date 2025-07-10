@@ -676,7 +676,6 @@ h1.title_category,
 }
 
 .filter_btn_mobile:hover {
-  background: #20b038;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(1, 63, 68, 0.3);
 }
@@ -808,7 +807,7 @@ h1.title_category,
   }
 
   .filter_btn_mobile:hover {
-    background: #20b038;
+    /* background: #20b038; */
   }
 }
 

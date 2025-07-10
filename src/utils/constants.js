@@ -48,7 +48,7 @@ export const CATEGORIES = [
   {
     id: "vehicles",
     name: "Nəqliyyat",
-    slug: "neqliyyat",
+    slug: "neqliyyat", // Keep Azerbaijani slug
     icon: "https://bolbol.az/media/2021/08/04/categories/Group_9638.svg",
     href: "/neqliyyat",
     count: 15420,
@@ -365,16 +365,7 @@ export const getCategoryConfig = (slug) => {
     },
   };
 
-  return (
-    configs[slug] || {
-      typingKeywords: [
-        `${categoryData.name} axtarın...`,
-        `${categoryData.name} satılır...`,
-        "nəyi axtarırsınız?",
-      ],
-      resultCount: categoryData.count || 0,
-    }
-  );
+  return configs[slug] || { typingKeywords: [] };
 };
 
 export const getCategoryById = (id) => {
@@ -616,3 +607,56 @@ export const getCategorySearchPhrases = (category) => {
 export const getCategoryTypingKeywords = (category) => {
   return getCategorySearchPhrases(category);
 };
+
+// src/utils/constants.js - Add these city constants
+
+export const AZERBAIJAN_CITIES = [
+  { value: "all", label: "Bütün şəhərlər" },
+  { value: "baku", label: "Bakı" },
+  { value: "ganja", label: "Gəncə" },
+  { value: "sumqayit", label: "Sumqayıt" },
+  { value: "mingachevir", label: "Mingəçevir" },
+  { value: "lankaran", label: "Lənkəran" },
+  { value: "shaki", label: "Şəki" },
+  { value: "yevlakh", label: "Yevlax" },
+  { value: "nakhchivan", label: "Naxçıvan" },
+  { value: "shamakhi", label: "Şamaxı" },
+  { value: "quba", label: "Quba" },
+  { value: "khachmaz", label: "Xaçmaz" },
+  { value: "goychay", label: "Göyçay" },
+  { value: "shirvan", label: "Şirvan" },
+  { value: "sabirabad", label: "Sabirabad" },
+  { value: "salyan", label: "Salyan" },
+  { value: "bilasuvar", label: "Biləsuvar" },
+  { value: "jalilabad", label: "Cəlilabad" },
+  { value: "masalli", label: "Masallı" },
+  { value: "astara", label: "Astara" },
+  { value: "lerik", label: "Lerik" },
+  { value: "yardimli", label: "Yardımlı" },
+  { value: "gabala", label: "Qəbələ" },
+  { value: "oghuz", label: "Oğuz" },
+  { value: "qakh", label: "Qax" },
+  { value: "zagatala", label: "Zaqatala" },
+  { value: "balakan", label: "Balakən" },
+  { value: "shemkir", label: "Şəmkir" },
+  { value: "samukh", label: "Samux" },
+  { value: "goranboy", label: "Goranboy" },
+  { value: "dashkasan", label: "Daşkəsən" },
+  { value: "gadabay", label: "Gədəbəy" },
+  { value: "tovuz", label: "Tovuz" },
+  { value: "agstafa", label: "Ağstafa" },
+  { value: "qazakh", label: "Qazax" },
+  { value: "tartar", label: "Tərtər" },
+  { value: "agdam", label: "Ağdam" },
+  { value: "barda", label: "Bərdə" },
+  { value: "agjabadi", label: "Ağcabədi" },
+  { value: "beylagan", label: "Beyləqan" },
+  { value: "imishli", label: "İmişli" },
+  { value: "kurdamir", label: "Kürdəmir" },
+  { value: "ujar", label: "Ucar" },
+  { value: "agdash", label: "Ağdaş" },
+  { value: "gobustan", label: "Qobustan" },
+  { value: "ismailli", label: "İsmayıllı" },
+  { value: "shamkir", label: "Şəmkir" },
+  { value: "other", label: "Digər" },
+];
