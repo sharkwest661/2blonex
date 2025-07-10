@@ -208,7 +208,8 @@ const FilterManager = ({ category, onFiltersChange, initialFilters = {} }) => {
 
   // Render individual filter components
   const renderFilterComponent = (filter) => {
-    const commonProps = {
+    // ✅ Extract key separately from other props
+    const { key, ...componentProps } = {
       key: filter.id,
       value: filters[filter.id] || filter.defaultValue || "",
       onChange: (value) => handleFilterChange(filter.id, value),
@@ -219,8 +220,9 @@ const FilterManager = ({ category, onFiltersChange, initialFilters = {} }) => {
       case "Dropdown":
         return (
           <Dropdown
-            {...commonProps}
-            options={filter.options || []} // Fixed: Use filter.options directly
+            key={key} // ✅ Pass key directly
+            {...componentProps} // ✅ Spread only the remaining props
+            options={filter.options || []}
             placeholder={filter.placeholder}
           />
         );
@@ -228,7 +230,7 @@ const FilterManager = ({ category, onFiltersChange, initialFilters = {} }) => {
       case "PriceRangeFilter":
         return (
           <PriceRangeFilter
-            key={filter.id}
+            key={key} // ✅ Pass key directly
             minValue={filters.priceMin || ""}
             maxValue={filters.priceMax || ""}
             onMinChange={(value) => handleFilterChange("priceMin", value)}
@@ -241,8 +243,9 @@ const FilterManager = ({ category, onFiltersChange, initialFilters = {} }) => {
       case "LocationFilter":
         return (
           <LocationFilter
-            {...commonProps}
-            options={filter.options || []} // Fixed: Add options support
+            key={key} // ✅ Pass key directly
+            {...componentProps}
+            options={filter.options || []}
             placeholder={filter.placeholder || "Şəhər"}
           />
         );
@@ -250,7 +253,7 @@ const FilterManager = ({ category, onFiltersChange, initialFilters = {} }) => {
       case "YearRangeFilter":
         return (
           <YearRangeFilter
-            key={filter.id}
+            key={key} // ✅ Pass key directly
             minValue={filters.yearMin || ""}
             maxValue={filters.yearMax || ""}
             onMinChange={(value) => handleFilterChange("yearMin", value)}
@@ -262,8 +265,9 @@ const FilterManager = ({ category, onFiltersChange, initialFilters = {} }) => {
       case "RadioGroup":
         return (
           <RadioGroup2
-            {...commonProps}
-            options={filter.options || []} // Fixed: Use filter.options
+            key={key} // ✅ Pass key directly
+            {...componentProps}
+            options={filter.options || []}
             name={filter.id}
             layout={filter.layout || "horizontal"}
           />
@@ -271,9 +275,9 @@ const FilterManager = ({ category, onFiltersChange, initialFilters = {} }) => {
 
       case "CheckboxGroup":
         return (
-          <CheckboxGroup2
-            key={filter.id}
-            options={filter.options || []} // Fixed: Use filter.options
+          <CheckboxGroup
+            key={key} // ✅ Pass key directly
+            options={filter.options || []}
             values={filters[filter.id] || []}
             onChange={(values) => handleFilterChange(filter.id, values)}
             name={filter.id}
@@ -283,13 +287,12 @@ const FilterManager = ({ category, onFiltersChange, initialFilters = {} }) => {
         );
 
       case "CustomComponent":
-        // For custom components defined in configuration
         if (filter.component) {
           const CustomComponent = filter.component;
           return (
             <CustomComponent
-              key={filter.id}
-              {...commonProps}
+              key={key} // ✅ Pass key directly
+              {...componentProps}
               {...filter.componentProps}
             />
           );
