@@ -56,6 +56,14 @@ const PostItem = ({
               title="VIP elan"
             ></span>
           )}
+          {isPremium && (
+            <span
+              className="post__premium"
+              data-toggle="tooltip"
+              data-placement="top"
+              title="Premium elan"
+            ></span>
+          )}
           <button
             onClick={handleFavoriteClick}
             className={`post__favorites${isFavorited ? " active" : ""}`}
