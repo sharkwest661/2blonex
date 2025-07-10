@@ -1218,3 +1218,50 @@ h1.title_category,
     font-size: 13px;
   }
 }
+
+/* Better looking layout with spacious 400-500px per input */
+.desctop_filters {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)) !important;
+  gap: 25px !important;
+  align-items: start !important;
+}
+
+.desctop_filters .form-group {
+  width: 100% !important;
+  margin-bottom: 0 !important;
+}
+
+/* Advanced filter sections - each takes full row */
+.desctop_filters .advanced-filter-section,
+.desctop_filters [class*="storage-section"],
+.desctop_filters [class*="ram-section"],
+.desctop_filters [class*="os-section"],
+.desctop_filters [class*="screen-section"],
+.desctop_filters [class*="connectivity-section"],
+.desctop_filters [class*="delivery-section"] {
+  grid-column: 1 / -1 !important; /* Take full width */
+  width: 100% !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .desctop_filters {
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)) !important;
+    gap: 20px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .desctop_filters {
+    grid-template-columns: 1fr 1fr !important; /* 2 per row on mobile */
+    gap: 12px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .desctop_filters {
+    grid-template-columns: 1fr !important; /* 1 per row on small mobile */
+    gap: 10px !important;
+  }
+}
