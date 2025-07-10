@@ -52,14 +52,24 @@ const MobileMenu = ({
   ];
 
   const categories = [
-    { name: "Nəqliyyat", icon: "🚗", count: "15,420" },
-    { name: "Daşınmaz əmlak", icon: "🏠", count: "8,920" },
-    { name: "Elektronika", icon: "📱", count: "12,340" },
-    { name: "Moda və gözəllik", icon: "👗", count: "6,780" },
-    { name: "Ev və bağ", icon: "🏡", count: "4,560" },
-    { name: "İş elanları", icon: "💼", count: "2,890" },
-    { name: "Xidmətlər", icon: "🔧", count: "3,450" },
-    { name: "Hobi və asudə", icon: "🎮", count: "1,980" },
+    { name: "Nəqliyyat", icon: "🚗", count: "15,420", url: "neqliyyat" },
+    {
+      name: "Daşınmaz əmlak",
+      icon: "🏠",
+      count: "8,920",
+      url: "dasinmaz-emlak",
+    },
+    { name: "Elektronika", icon: "📱", count: "12,340", url: "elektronika" },
+    {
+      name: "Moda və gözəllik",
+      icon: "👗",
+      count: "6,780",
+      url: "moda-gozellik",
+    },
+    { name: "Ev və bağ", icon: "🏡", count: "4,560", url: "ev-bag" },
+    { name: "İş elanları", icon: "💼", count: "2,890", url: "is-elanlari" },
+    { name: "Xidmətlər", icon: "🔧", count: "3,450", url: "xidmetler" },
+    { name: "Hobi və asudə", icon: "🎮", count: "1,980", url: "hobi-asude" },
   ];
 
   return (
@@ -173,7 +183,7 @@ const MobileMenu = ({
                 {categories.map((category, index) => (
                   <Link
                     key={index}
-                    href={`/category/${category.name.toLowerCase()}`}
+                    href={`/${category.url}`}
                     className="category-item"
                   >
                     <div className="category-icon">{category.icon}</div>

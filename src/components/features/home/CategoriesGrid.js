@@ -11,82 +11,82 @@ const CategoriesGrid = () => {
   // Complete categories data from the original homepage (all 16 categories)
   const categories = [
     {
-      href: "neqliyyat",
+      href: "/neqliyyat",
       icon: "img/category-icons/bolbol_icons_nəqliyyat.svg",
       name: "Nəqliyyat",
     },
     {
-      href: "dashinmaz_emlak_checks.html",
+      href: "/dasinmaz-emlak",
       icon: "img/category-icons/bolbol_icons_daşınmaz_əmlak.svg",
       name: "Daşınmaz Əmlak",
     },
     {
-      href: "",
+      href: "/geyim",
       icon: "img/category-icons/bolbol_icons_geyim.svg",
       name: "Geyim",
     },
     {
-      href: "",
+      href: "/usaq-alemi",
       icon: "img/category-icons/bolbol_icons_uşaq aləmi.svg",
       name: "Uşaq aləmi",
     },
     {
-      href: "",
+      href: "/kosmetika",
       icon: "img/category-icons/bolbol_icons_kosmetika.svg",
       name: "Kosmetika və sağlamlıq",
     },
     {
-      href: "ish_elanlari.html",
+      href: "/is-elanlari",
       icon: "img/category-icons/bolbol_icons_iş elanları.svg",
       name: "İş Elanları",
     },
     {
-      href: "kategoriya.html",
+      href: "/elektronika",
       icon: "img/category-icons/bolbol_icons_elektronika.svg",
       name: "Elektronika",
     },
     {
-      href: "",
+      href: "/ev-ve-bag",
       icon: "img/category-icons/bolbol_icons_ev_bağ.svg",
       name: "Ev və bağ üçün",
     },
     {
-      href: "",
+      href: "/erzaq",
       icon: "img/category-icons/bolbol_icons_ərzaq.svg",
       name: "Ərzaq",
     },
     {
-      href: "",
+      href: "/heyvan-bitki",
       icon: "img/category-icons/bolbol_icons_heyvan_bitki.svg",
       name: "Heyvan, Bitki",
     },
     {
-      href: "",
+      href: "/idman-musiqi-hobbi",
       icon: "img/category-icons/bolbol_icons_idman_musiqi_hobbi.svg",
       name: "İdman, musiqi, hobbi",
     },
     {
-      href: "",
+      href: "/digər",
       icon: "img/category-icons/bolbol_icons_digər.svg",
       name: "Digər",
     },
     {
-      href: "",
+      href: "/xidmətlər",
       icon: "img/category-icons/bolbol_icons_xidmətlər.svg",
       name: "Xidmətlər",
     },
     {
-      href: "",
+      href: "/pulsuz",
       icon: "img/category-icons/bolbol_icons_pulsuz.svg",
       name: "Pulsuz",
     },
     {
-      href: "",
+      href: "/super-fürsət",
       icon: "img/category-icons/bolbol_icons_super fürsət.svg",
       name: "Super Fürsət",
     },
     {
-      href: "",
+      href: "/magaza-ve-sirketler",
       icon: "img/category-icons/bolbol_icons_mağaza və şirkətlər.svg",
       name: "Mağaza və şirkətlər",
     },
