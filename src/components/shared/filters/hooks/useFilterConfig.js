@@ -2,8 +2,8 @@
 
 import { useMemo } from "react";
 import vehicleConfig from "../configs/vehicleConfig";
+import electronicsConfig from "../configs/electronicsConfig";
 // Import other configs as they are created
-// import electronicsConfig from "../configs/electronicsConfig";
 // import realEstateConfig from "../configs/realEstateConfig";
 // import jobsConfig from "../configs/jobsConfig";
 // import servicesConfig from "../configs/servicesConfig";
@@ -17,8 +17,8 @@ export const useFilterConfig = (category) => {
   return useMemo(() => {
     const configs = {
       vehicles: vehicleConfig,
+      electronics: electronicsConfig,
       // Add other configs as they are implemented
-      // electronics: electronicsConfig,
       // realestate: realEstateConfig,
       // jobs: jobsConfig,
       // services: servicesConfig,
@@ -31,8 +31,11 @@ export const useFilterConfig = (category) => {
       return null;
     }
 
-    // For vehicles, we use the original structure, so minimal validation
-    if (category === "vehicles" && config.useOriginalStructure) {
+    // For vehicles and electronics, we use the original structure, so minimal validation
+    if (
+      (category === "vehicles" || category === "electronics") &&
+      config.useOriginalStructure
+    ) {
       return config;
     }
 

@@ -36,6 +36,16 @@ import {
   VEHICLE_EQUIPMENT,
   EQUIPMENT_CATEGORIES,
 } from "@/components/features/vehicles/constants";
+import {
+  ELECTRONICS_CATEGORIES,
+  ELECTRONICS_BRANDS,
+  ELECTRONICS_CONDITIONS,
+  STORAGE_OPTIONS,
+  RAM_OPTIONS,
+  OPERATING_SYSTEMS,
+  SCREEN_SIZES,
+  CONNECTIVITY_OPTIONS,
+} from "@/components/features/electronics/constants";
 
 const FilterManager = ({ category, onFiltersChange, initialFilters = {} }) => {
   // Map slug to actual category ID for filter components
@@ -397,6 +407,210 @@ const FilterManager = ({ category, onFiltersChange, initialFilters = {} }) => {
 
         {/* Mobile Bottom Drawer - Original VehicleFilterBottomDrawer */}
         <VehicleFilterBottomDrawer
+          isOpen={isMobileDrawerOpen}
+          onClose={() => setIsMobileDrawerOpen(false)}
+          filters={filters}
+          onApplyFilters={handleMobileFiltersApply}
+          resultsCount={0}
+        />
+      </>
+    );
+  }
+
+  // Electronics category with EXACT vehicle structure
+  if (actualCategory === "electronics") {
+    return (
+      <>
+        {/* Mobile Filter Button - EXACT same as vehicles */}
+        <div className="mobile-filter-trigger">
+          <button
+            className="mobile-filter-btn"
+            onClick={() => setIsMobileDrawerOpen(true)}
+          >
+            <i className="fa-solid fa-filter"></i>
+            <span>Filter</span>
+            {getActiveFiltersCount() > 0 && (
+              <span className="filter-count-badge">
+                {getActiveFiltersCount()}
+              </span>
+            )}
+          </button>
+        </div>
+
+        {/* Desktop Filters - EXACT Vehicle Structure */}
+        <div className="main_container">
+          <div className="desctop_filters">
+            {/* Row 1: Category, Brand, Price, Condition - SAME as vehicles row 1 */}
+            <div className="form-group for_width20 grow-1 order-1">
+              <Dropdown
+                placeholder="Malın tipi"
+                options={ELECTRONICS_CATEGORIES}
+                value={filters.category}
+                onChange={(value) => handleFilterChange("category", value)}
+              />
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-2">
+              <Dropdown
+                placeholder="Marka"
+                options={ELECTRONICS_BRANDS}
+                value={filters.brand}
+                onChange={(value) => handleFilterChange("brand", value)}
+              />
+            </div>
+
+            <div className="form-group for_width_big grow-1 order-3">
+              <PriceRangeFilter
+                minValue={filters.priceMin}
+                maxValue={filters.priceMax}
+                onMinChange={(value) => handleFilterChange("priceMin", value)}
+                onMaxChange={(value) => handleFilterChange("priceMax", value)}
+              />
+            </div>
+
+            <div className="form-group for_width_small grow-1 order-4">
+              <Dropdown
+                placeholder="Vəziyyət"
+                options={ELECTRONICS_CONDITIONS}
+                value={filters.condition}
+                onChange={(value) => handleFilterChange("condition", value)}
+              />
+            </div>
+
+            {/* Row 2: City only - like vehicles row 2 */}
+            <div className="form-group for_width20 grow-1 order-5">
+              <LocationFilter
+                placeholder="Şəhər"
+                value={filters.city}
+                onChange={(value) => handleFilterChange("city", value)}
+              />
+            </div>
+
+            {/* Çatdırılma Section - EXACT same as vehicle condition */}
+            <div className="form-group for_width_big grow-1 order-6">
+              <div className="condition-filters">
+                <label className="condition-label">Çatdırılma?</label>
+                <RadioGroup2
+                  options={[
+                    { value: "all", label: "Hamısı" },
+                    { value: "yes", label: "Bəli" },
+                    { value: "no", label: "Xeyr" },
+                  ]}
+                  value={filters.delivery || "all"}
+                  onChange={(value) => handleFilterChange("delivery", value)}
+                  name="delivery"
+                  layout="horizontal"
+                />
+              </div>
+            </div>
+
+            {/* More Filters Section - EXACT same structure as vehicles */}
+            {filters.showMoreFilters && (
+              <>
+                {/* Storage Options */}
+                <div className="form-group for_width_big grow-1 order-7">
+                  <div className="payment-options">
+                    <label className="payment-label">Yaddaş həcmi</label>
+                    <CheckboxGroup
+                      options={STORAGE_OPTIONS}
+                      values={filters.storage}
+                      onChange={(values) =>
+                        handleFilterChange("storage", values)
+                      }
+                      name="storage"
+                      layout="horizontal"
+                      variant="default"
+                    />
+                  </div>
+                </div>
+
+                {/* RAM Options */}
+                <div className="form-group for_width_big grow-1 order-8">
+                  <div className="payment-options">
+                    <label className="payment-label">RAM</label>
+                    <CheckboxGroup
+                      options={RAM_OPTIONS}
+                      values={filters.ram}
+                      onChange={(values) => handleFilterChange("ram", values)}
+                      name="ram"
+                      layout="horizontal"
+                      variant="default"
+                    />
+                  </div>
+                </div>
+
+                {/* Operating System */}
+                <div className="form-group for_width_big grow-1 order-9">
+                  <div className="condition-filters">
+                    <label className="condition-label">Əməliyyat sistemi</label>
+                    <RadioGroup2
+                      options={OPERATING_SYSTEMS}
+                      value={filters.os}
+                      onChange={(value) => handleFilterChange("os", value)}
+                      name="os"
+                      layout="horizontal"
+                    />
+                  </div>
+                </div>
+
+                {/* Screen Size */}
+                <div className="form-group for_width_big grow-1 order-10">
+                  <div className="payment-options">
+                    <label className="payment-label">Ekran ölçüsü</label>
+                    <CheckboxGroup
+                      options={SCREEN_SIZES}
+                      values={filters.screenSize}
+                      onChange={(values) =>
+                        handleFilterChange("screenSize", values)
+                      }
+                      name="screenSize"
+                      layout="horizontal"
+                      variant="default"
+                    />
+                  </div>
+                </div>
+
+                {/* Connectivity - SAME as vehicles equipment section */}
+                <div className="additional_chekings_hero order-11">
+                  <div className="additional_chekings_title">Əlaqə</div>
+                  <div className="additional_chekings">
+                    <div className="equipment-category">
+                      <CheckboxGroup
+                        options={CONNECTIVITY_OPTIONS}
+                        values={filters.connectivity}
+                        onChange={(values) =>
+                          handleFilterChange("connectivity", values)
+                        }
+                        name="connectivity"
+                        layout="horizontal"
+                        variant="default"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* Filter Action Buttons - EXACT same as vehicles */}
+          <div className="desc_filters_btns">
+            <FilterButtons
+              onReset={handleReset}
+              onToggleMoreFilters={() =>
+                handleFilterChange("showMoreFilters", !filters.showMoreFilters)
+              }
+              onShowResults={handleShowResults}
+              moreFiltersExpanded={filters.showMoreFilters}
+              resultsCount={0}
+              resetText="Sıfırla"
+              moreFiltersText="Daha çox filtr"
+              showResultsText="Elanları göstər"
+            />
+          </div>
+        </div>
+
+        {/* Mobile Bottom Drawer - Electronics specific */}
+        <ElectronicsFilterDrawer
           isOpen={isMobileDrawerOpen}
           onClose={() => setIsMobileDrawerOpen(false)}
           filters={filters}
