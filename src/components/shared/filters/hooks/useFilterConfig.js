@@ -1,10 +1,11 @@
 // src/components/shared/filters/hooks/useFilterConfig.js
 
 import { useMemo } from "react";
-import vehicleConfig from "../configs/vehicleConfig";
-import electronicsConfig from "../configs/electronicsConfig";
-import realEstateConfig from "../configs/realEstateConfig";
-import jobsConfig from "../configs/jobsConfig";
+import { vehicleConfig } from "../config/vehicleConfig";
+import { electronicsConfig } from "../config/electronicsConfig";
+import { realEstateConfig } from "../config/realEstateConfig";
+import { jobsConfig } from "../config/jobsConfig";
+import { servicesConfig } from "../config/servicesConfig";
 
 /**
  * Configuration registry mapping category names to their config objects
@@ -25,35 +26,19 @@ const CONFIG_REGISTRY = {
  * @param {string} category - Category identifier
  * @returns {Object} Filter configuration object
  */
+
 export const useFilterConfig = (category) => {
-  const config = useMemo(() => {
-    if (!category) {
-      console.warn("useFilterConfig: No category provided");
-      return null;
-    }
+  return useMemo(() => {
+    const configs = {
+      vehicles: vehicleConfig,
+      electronics: electronicsConfig,
+      realestate: realEstateConfig,
+      jobs: jobsConfig,
+      services: servicesConfig,
+    };
 
-    const normalizedCategory = category.toLowerCase().trim();
-    const loadedConfig = CONFIG_REGISTRY[normalizedCategory];
-
-    if (!loadedConfig) {
-      console.warn(
-        `useFilterConfig: Configuration not found for category "${category}"`
-      );
-      return null;
-    }
-
-    // Validate configuration structure
-    if (!validateConfig(loadedConfig)) {
-      console.error(
-        `useFilterConfig: Invalid configuration for category "${category}"`
-      );
-      return null;
-    }
-
-    return loadedConfig;
+    return configs[category] || null;
   }, [category]);
-
-  return config;
 };
 
 /**
