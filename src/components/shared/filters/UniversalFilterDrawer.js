@@ -1,37 +1,46 @@
 // src/components/shared/filters/UniversalFilterDrawer.js
-
-import React, { useEffect } from "react";
+"use client";
+import React, { useState, useEffect } from "react";
 import { renderFilterComponent } from "./components/FilterComponentRegistry";
-import "./styles/FilterManager.css";
+import { Dropdown, RadioGroup2, CheckboxGroup } from "@/components/ui/forms";
+import {
+  PriceRangeFilter,
+  LocationFilter,
+  YearRangeFilter,
+  MileageRangeFilter,
+  PowerRangeFilter,
+  EngineVolumeRangeFilter,
+} from "@/components/shared/filters";
+import { CAR_MODELS } from "@/components/features/vehicles/constants";
 
-/**
- * Universal mobile filter drawer component
- * Works with any category configuration
- */
 const UniversalFilterDrawer = ({
   isOpen,
   onClose,
   config,
   filters,
   onFilterChange,
-  onReset,
-  onApply,
-  activeFilterCount = 0,
-  sectionVisibility = {},
-  onToggleSection,
+  activeFilterCount,
+  onApplyFilters,
 }) => {
-  // Prevent body scroll when drawer is open
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
+  // Local filter state for drawer
+  const [localFilters, setLocalFilters] = useState(filters || {});
+  const [sectionVisibility, setSectionVisibility] = useState({});
 
-    return () => {
-      document.body.style.overflow = "unset";
-    };
-  }, [isOpen]);
+  // Update local filters when prop changes
+  useEffect(() => {
+    setLocalFilters(filters || {});
+  }, [filters]);
+
+  // Initialize section visibility
+  useEffect(() => {
+    if (config?.sections) {
+      const initialVisibility = {};
+      config.sections.forEach((section) => {
+        initialVisibility[section.id] = section.alwaysVisible !== false;
+      });
+      setSectionVisibility(initialVisibility);
+    }
+  }, [config]);
 
   // Handle backdrop click
   const handleBackdropClick = (e) => {
@@ -40,74 +49,200 @@ const UniversalFilterDrawer = ({
     }
   };
 
-  // Handle filter change with proper type handling
-  const handleFilterChange = (filterId, value, filterConfig) => {
-    if (filterConfig.type === "PriceRangeFilter") {
-      onFilterChange(filterId, value, filterConfig);
-    } else if (filterConfig.type === "RangeInput") {
-      const baseId = filterId.replace(/(Min|Max)$/, "");
-      const isMin = filterId.endsWith("Min");
-      const isMax = filterId.endsWith("Max");
+  // Handle local filter change
+  const handleFilterChange = (filterId, value) => {
+    const newFilters = { ...localFilters, [filterId]: value };
 
-      if (isMin || isMax) {
-        const minValue = isMin ? value : filters[`${baseId}Min`];
-        const maxValue = isMax ? value : filters[`${baseId}Max`];
-        onFilterChange(baseId, { min: minValue, max: maxValue }, filterConfig);
-      } else {
-        onFilterChange(filterId, value, filterConfig);
-      }
-    } else {
-      onFilterChange(filterId, value, filterConfig);
+    // Handle brand/model dependency for vehicles
+    if (filterId === "brand" && config?.category === "vehicles") {
+      newFilters.model = ""; // Reset model when brand changes
+    }
+
+    setLocalFilters(newFilters);
+  };
+
+  // Handle apply filters
+  const handleApply = () => {
+    if (onApplyFilters) {
+      onApplyFilters(localFilters);
+    }
+    onClose();
+  };
+
+  // Handle reset filters
+  const handleReset = () => {
+    const resetFilters = config?.defaultFilters || {};
+    setLocalFilters(resetFilters);
+  };
+
+  // Toggle section visibility
+  const handleToggleSection = (sectionId) => {
+    setSectionVisibility((prev) => ({
+      ...prev,
+      [sectionId]: !prev[sectionId],
+    }));
+  };
+
+  // Get model options for vehicles
+  const getModelOptions = () => {
+    if (config?.category === "vehicles" && localFilters.brand) {
+      return CAR_MODELS[localFilters.brand] || [];
+    }
+    return [];
+  };
+
+  // Render individual filter component
+  const renderFilter = (filter) => {
+    let currentValue = localFilters[filter.id] || filter.defaultValue || "";
+
+    // Handle special cases
+    if (filter.type === "PriceRangeFilter") {
+      currentValue = {
+        min: localFilters.priceMin || "",
+        max: localFilters.priceMax || "",
+      };
+    }
+
+    const componentProps = {
+      value: currentValue,
+      onChange: (value) => handleFilterChange(filter.id, value),
+      className: "mobile-filter-item",
+    };
+
+    switch (filter.type) {
+      case "Dropdown":
+        let options = filter.options || [];
+        if (filter.id === "model" && config?.category === "vehicles") {
+          options = getModelOptions();
+        }
+
+        return (
+          <Dropdown
+            {...componentProps}
+            options={options}
+            placeholder={filter.placeholder}
+            disabled={filter.id === "model" && !localFilters.brand}
+          />
+        );
+
+      case "PriceRangeFilter":
+        return (
+          <PriceRangeFilter
+            minValue={localFilters.priceMin || ""}
+            maxValue={localFilters.priceMax || ""}
+            onMinChange={(value) => handleFilterChange("priceMin", value)}
+            onMaxChange={(value) => handleFilterChange("priceMax", value)}
+            currency={filter.currency || "AZN"}
+            className="mobile-filter-item"
+          />
+        );
+
+      case "YearRangeFilter":
+        return (
+          <YearRangeFilter
+            minValue={localFilters.yearMin || ""}
+            maxValue={localFilters.yearMax || ""}
+            onMinChange={(value) => handleFilterChange("yearMin", value)}
+            onMaxChange={(value) => handleFilterChange("yearMax", value)}
+            className="mobile-filter-item"
+          />
+        );
+
+      case "EngineVolumeRangeFilter":
+        return (
+          <EngineVolumeRangeFilter
+            minValue={localFilters.volumeMin || ""}
+            maxValue={localFilters.volumeMax || ""}
+            onMinChange={(value) => handleFilterChange("volumeMin", value)}
+            onMaxChange={(value) => handleFilterChange("volumeMax", value)}
+            className="mobile-filter-item"
+          />
+        );
+
+      case "MileageRangeFilter":
+        return (
+          <MileageRangeFilter
+            minValue={localFilters.mileageMin || ""}
+            maxValue={localFilters.mileageMax || ""}
+            onMinChange={(value) => handleFilterChange("mileageMin", value)}
+            onMaxChange={(value) => handleFilterChange("mileageMax", value)}
+            className="mobile-filter-item"
+          />
+        );
+
+      case "PowerRangeFilter":
+        return (
+          <PowerRangeFilter
+            minValue={localFilters.powerMin || ""}
+            maxValue={localFilters.powerMax || ""}
+            onMinChange={(value) => handleFilterChange("powerMin", value)}
+            onMaxChange={(value) => handleFilterChange("powerMax", value)}
+            className="mobile-filter-item"
+          />
+        );
+
+      case "LocationFilter":
+        return (
+          <LocationFilter
+            {...componentProps}
+            options={filter.options || []}
+            placeholder={filter.placeholder || "Şəhər"}
+          />
+        );
+
+      case "RadioGroup2":
+        return (
+          <RadioGroup2
+            {...componentProps}
+            options={filter.options || []}
+            name={filter.id}
+            layout="vertical"
+          />
+        );
+
+      case "CheckboxGroup":
+        return (
+          <CheckboxGroup
+            options={filter.options || []}
+            values={localFilters[filter.id] || []}
+            onChange={(values) => handleFilterChange(filter.id, values)}
+            name={filter.id}
+            layout="vertical"
+            variant="default"
+          />
+        );
+
+      case "EquipmentCategory":
+        const categoryEquipment = filter.options || [];
+        if (categoryEquipment.length === 0) return null;
+
+        return (
+          <div className="equipment-category">
+            <h4 className="equipment-category-title">{filter.label}</h4>
+            <CheckboxGroup
+              options={categoryEquipment}
+              values={localFilters.equipment || []}
+              onChange={(values) => handleFilterChange("equipment", values)}
+              name={`equipment-${filter.category}`}
+              layout="vertical"
+              variant="default"
+            />
+          </div>
+        );
+
+      default:
+        return null;
     }
   };
 
-  // Render individual filter
-  const renderFilter = (filterConfig) => {
-    const {
-      id,
-      type,
-      className: filterClassName = "",
-      ...filterProps
-    } = filterConfig;
-
-    // Get current filter value
-    let currentValue = filters[id];
-
-    // Handle special cases for different filter types
-    if (type === "PriceRangeFilter") {
-      currentValue = {
-        min: filters.priceMin || "",
-        max: filters.priceMax || "",
-      };
-    } else if (type === "RangeInput") {
-      currentValue = {
-        min: filters[`${id}Min`] || "",
-        max: filters[`${id}Max`] || "",
-      };
-    }
-
-    // Prepare component props
-    const componentProps = {
-      ...filterProps.componentProps,
-      value: currentValue,
-      onChange: (value) => handleFilterChange(id, value, filterConfig),
-      className: `mobile-filter-item ${filterClassName}`,
-    };
-
-    // Handle special props for RangeInput
-    if (type === "RangeInput") {
-      componentProps.min = currentValue.min;
-      componentProps.max = currentValue.max;
-      componentProps.onMinChange = (value) =>
-        handleFilterChange(`${id}Min`, value, filterConfig);
-      componentProps.onMaxChange = (value) =>
-        handleFilterChange(`${id}Max`, value, filterConfig);
-    }
-
+  // Render individual filter with wrapper
+  const renderFilterWithWrapper = (filter) => {
     return (
-      <div key={id} className="mobile-filter-wrapper">
-        <label className="mobile-filter-label">{filterConfig.label}</label>
-        {renderFilterComponent(filterConfig, componentProps)}
+      <div key={filter.id} className="mobile-filter-wrapper">
+        <label className="mobile-filter-label">
+          {filter.label || filter.placeholder}
+        </label>
+        {renderFilter(filter)}
       </div>
     );
   };
@@ -116,9 +251,18 @@ const UniversalFilterDrawer = ({
   const renderSection = (section) => {
     const { id, title, filters: sectionFilters, visible } = section;
 
-    // Check if section should be visible
-    if (visible === "showMoreFilters" && !filters.showMoreFilters) {
+    // Check visibility conditions
+    if (visible === "showMoreFilters" && !localFilters.showMoreFilters) {
       return null;
+    }
+
+    // Skip sections without title for basic filters
+    if (!title && id === "basic") {
+      return (
+        <div key={id} className="mobile-section-content">
+          {sectionFilters.map((filter) => renderFilterWithWrapper(filter))}
+        </div>
+      );
     }
 
     const isExpanded = sectionVisibility[id] !== false;
@@ -128,7 +272,7 @@ const UniversalFilterDrawer = ({
         {title && (
           <div
             className="mobile-section-header"
-            onClick={() => onToggleSection && onToggleSection(id)}
+            onClick={() => handleToggleSection(id)}
           >
             <h3 className="mobile-section-title">{title}</h3>
             <i className={`fas fa-chevron-${isExpanded ? "up" : "down"}`}></i>
@@ -136,7 +280,7 @@ const UniversalFilterDrawer = ({
         )}
         {isExpanded && (
           <div className="mobile-section-content">
-            {sectionFilters.map((filter) => renderFilter(filter))}
+            {sectionFilters.map((filter) => renderFilterWithWrapper(filter))}
           </div>
         )}
       </div>
@@ -162,7 +306,7 @@ const UniversalFilterDrawer = ({
             <h2 className="filter-drawer-title">
               {config.mobile?.drawerTitle || "Filtrlər"}
             </h2>
-            <button className="filter-drawer-reset" onClick={onReset}>
+            <button className="filter-drawer-reset" onClick={handleReset}>
               Təmizlə
             </button>
           </div>
@@ -179,10 +323,7 @@ const UniversalFilterDrawer = ({
                   onClick={() =>
                     handleFilterChange(
                       "showMoreFilters",
-                      !filters.showMoreFilters,
-                      {
-                        type: "toggle",
-                      }
+                      !localFilters.showMoreFilters
                     )
                   }
                 >
@@ -191,7 +332,7 @@ const UniversalFilterDrawer = ({
                   </span>
                   <i
                     className={`fas fa-chevron-${
-                      filters.showMoreFilters ? "up" : "down"
+                      localFilters.showMoreFilters ? "up" : "down"
                     }`}
                   ></i>
                 </button>
@@ -201,7 +342,7 @@ const UniversalFilterDrawer = ({
 
           {/* Footer */}
           <div className="filter-drawer-footer">
-            <button className="filter-drawer-apply" onClick={onApply}>
+            <button className="filter-drawer-apply" onClick={handleApply}>
               Nəticələri göstər
               {activeFilterCount > 0 && (
                 <span className="filter-count">({activeFilterCount})</span>

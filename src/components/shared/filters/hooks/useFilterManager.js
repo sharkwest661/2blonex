@@ -1,115 +1,82 @@
 // src/components/shared/filters/hooks/useFilterManager.js
-import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 
+import { useState, useCallback, useEffect } from "react";
+
+/**
+ * Universal filter state management hook
+ * @param {Object} config - Filter configuration object
+ * @param {Object} options - Hook options
+ * @returns {Object} Filter state and methods
+ */
 export const useFilterManager = (config, options = {}) => {
   const { onFiltersChange, initialFilters = {} } = options;
 
-  // Use ref to track if this is the initial mount
-  const isInitialMount = useRef(true);
-  const onFiltersChangeRef = useRef(onFiltersChange);
+  // Initialize filters based on config
+  const getInitialFilters = useCallback(() => {
+    if (!config) return {};
 
-  // Update ref when callback changes
-  useEffect(() => {
-    onFiltersChangeRef.current = onFiltersChange;
-  }, [onFiltersChange]);
-
-  // Memoize initial filters calculation
-  const getInitialFilters = useMemo(() => {
-    const defaultFilters = {};
-
-    if (config?.sections) {
-      config.sections.forEach((section) => {
-        section.filters.forEach((filter) => {
-          defaultFilters[filter.id] =
-            filter.defaultValue || (filter.type === "CheckboxGroup" ? [] : "");
-        });
-      });
+    // For vehicles with original structure, use default filters directly
+    if (config.useOriginalStructure) {
+      return { ...config.defaultFilters, ...initialFilters };
     }
 
-    return { ...defaultFilters, ...initialFilters };
+    // For universal system, merge default filters with initial
+    return { ...config.defaultFilters, ...initialFilters };
   }, [config, initialFilters]);
 
   const [filters, setFilters] = useState(getInitialFilters);
 
-  // Update filters when config changes, but only if config actually changes
-  useEffect(() => {
-    if (!isInitialMount.current) {
-      setFilters(getInitialFilters);
-    }
-    isInitialMount.current = false;
-  }, [getInitialFilters]);
-
-  // Update individual filter with dependency handling
+  // Update filter value
   const updateFilter = useCallback(
-    (field, value) => {
+    (key, value) => {
       setFilters((prev) => {
-        const newFilters = { ...prev, [field]: value };
+        const newFilters = { ...prev, [key]: value };
 
-        // Handle dependencies (e.g., brand -> model reset)
-        if (config?.dependencies?.[field]) {
-          config.dependencies[field].forEach((dependentField) => {
-            if (dependentField === "model" && field === "brand") {
-              newFilters.model = "";
-            }
-            if (dependentField === "brand" && field === "category") {
-              newFilters.brand = "";
-              newFilters.model = ""; // Also reset model when category changes
-            }
-          });
+        // Handle dependencies (e.g., model resets when brand changes)
+        if (key === "brand" && config?.category === "vehicles") {
+          newFilters.model = "";
+        }
+
+        // Call onChange callback if provided
+        if (onFiltersChange) {
+          onFiltersChange(newFilters);
         }
 
         return newFilters;
       });
     },
-    [config]
+    [onFiltersChange, config]
   );
 
   // Reset all filters
   const resetFilters = useCallback(() => {
-    const resetFilters = getInitialFilters;
-    setFilters(resetFilters);
+    const resetState = config?.defaultFilters || {};
+    setFilters(resetState);
 
-    // Call onFiltersChange immediately for reset
-    if (onFiltersChangeRef.current) {
-      onFiltersChangeRef.current(resetFilters);
+    if (onFiltersChange) {
+      onFiltersChange(resetState);
     }
-  }, [getInitialFilters]);
+  }, [config, onFiltersChange]);
 
-  // Apply filters (trigger callback manually)
+  // Apply filters (for mobile drawer)
   const applyFilters = useCallback(() => {
-    if (onFiltersChangeRef.current) {
-      onFiltersChangeRef.current(filters);
+    if (onFiltersChange) {
+      onFiltersChange(filters);
     }
-  }, [filters]);
+  }, [filters, onFiltersChange]);
 
-  // Calculate active filter count
-  const activeFilterCount = useMemo(() => {
-    return Object.entries(filters).filter(([key, value]) => {
-      // Skip meta fields
-      if (key === "showMoreFilters") return false;
+  // Get active filter count
+  const activeFilterCount = Object.values(filters).filter((value) => {
+    if (Array.isArray(value)) return value.length > 0;
+    return value !== "" && value !== false && value !== "all";
+  }).length;
 
-      // Check for active values
-      if (Array.isArray(value)) return value.length > 0;
-      return value && value !== "" && value !== "all";
-    }).length;
-  }, [filters]);
-
-  // Debounced effect to call onFiltersChange (prevents excessive calls)
+  // Update filters when config changes
   useEffect(() => {
-    // Skip calling onFiltersChange on initial mount
-    if (isInitialMount.current) {
-      return;
+    if (config) {
+      setFilters(getInitialFilters());
     }
-
-    // Debounce the callback to prevent excessive calls
-    const timeoutId = setTimeout(() => {
-      if (onFiltersChangeRef.current) {
-        onFiltersChangeRef.current(filters);
-      }
-    }, 300); // 300ms debounce
-
-    return () => clearTimeout(timeoutId);
-  }, [filters]);
+  }, [config, getInitialFilters]);
 
   return {
     filters,
@@ -119,3 +86,5 @@ export const useFilterManager = (config, options = {}) => {
     activeFilterCount,
   };
 };
+
+export default useFilterManager;
