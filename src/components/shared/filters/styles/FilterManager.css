@@ -1872,3 +1872,370 @@
     display: none;
   }
 }
+
+/* src/components/shared/filters/styles/FilterManager.css */
+
+/* ===================================
+   MOBILE FILTER TRIGGER - EXACT ORIGINAL
+   =================================== */
+
+.mobile-filter-trigger {
+  display: none;
+  padding: 16px 0;
+  margin: 0 auto;
+  width: 95%;
+  max-width: 1600px;
+}
+
+.mobile-filter-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 24px;
+  background: #013f44;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(1, 63, 68, 0.15);
+}
+
+.mobile-filter-btn:hover {
+  background: #20b038;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(1, 63, 68, 0.3);
+}
+
+.mobile-filter-btn i {
+  font-size: 16px;
+}
+
+.filter-count-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #ffe600;
+  color: #013f44;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 12px;
+  min-width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* ===================================
+     RESPONSIVE BEHAVIOR - EXACT ORIGINAL
+     =================================== */
+
+/* Show mobile filter button only on mobile */
+@media screen and (max-width: 767px) {
+  .mobile-filter-trigger {
+    display: block;
+  }
+
+  /* Hide desktop filters on mobile */
+  .desctop_filters,
+  .desc_filters_btns {
+    display: none !important;
+  }
+}
+
+/* Hide mobile filter button on desktop */
+@media screen and (min-width: 768px) {
+  .mobile-filter-trigger {
+    display: none !important;
+  }
+}
+
+/* ===================================
+     DESKTOP FILTERS - EXACT ORIGINAL STRUCTURE
+     =================================== */
+
+.main_container {
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+.desctop_filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  align-items: flex-end;
+  padding: 20px 0;
+}
+
+/* Form Group Styles - Exact Original */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  min-width: 0;
+  margin-bottom: 0;
+}
+
+/* Width Classes - Exact Original */
+.for_width20 {
+  flex: 0 0 calc(20% - 12px);
+  min-width: 180px;
+}
+
+.for_width_big {
+  flex: 0 0 calc(25% - 12px);
+  min-width: 220px;
+}
+
+.for_width_small {
+  flex: 0 0 calc(15% - 12px);
+  min-width: 140px;
+}
+
+.grow-1 {
+  flex-grow: 1;
+}
+
+/* Condition Filters Styling */
+.condition-filters {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.condition-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+/* Payment Options Styling */
+.payment-options {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.payment-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+/* Equipment Section - Exact Original Structure */
+.additional_chekings_hero {
+  width: 100%;
+  flex-basis: 100%;
+  margin-top: 20px;
+  padding: 20px;
+  background: #f8fafc;
+  border-radius: 12px;
+  display: block;
+  order: 17;
+}
+
+.additional_chekings_title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+}
+
+.additional_chekings {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 20px;
+}
+
+.equipment-category {
+  background: white;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.equipment-category-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #6b7280;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Filter Action Buttons */
+.desc_filters_btns {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 20px 0;
+  margin-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+/* ===================================
+     RESPONSIVE ADJUSTMENTS - EXACT ORIGINAL
+     =================================== */
+
+@media (max-width: 1200px) {
+  .for_width20,
+  .for_width_big,
+  .for_width_small {
+    flex: 1 1 calc(33.333% - 10px);
+    min-width: 0;
+  }
+}
+
+@media (max-width: 992px) {
+  .for_width20,
+  .for_width_big,
+  .for_width_small {
+    flex: 1 1 calc(50% - 8px);
+    min-width: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .for_width20,
+  .for_width_big,
+  .for_width_small {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+
+  .desctop_filters {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .additional_chekings_hero {
+    margin: 16px;
+    padding: 16px;
+  }
+
+  .additional_chekings_title {
+    font-size: 16px;
+  }
+
+  .equipment-category {
+    padding: 12px;
+  }
+
+  .equipment-category-title {
+    font-size: 13px;
+    margin-bottom: 8px;
+  }
+}
+
+@media (max-width: 375px) {
+  .mobile-filter-trigger {
+    width: 98%;
+    padding: 12px 0;
+  }
+
+  .mobile-filter-btn {
+    padding: 14px 20px;
+    font-size: 15px;
+  }
+}
+
+/* ===================================
+     ORDER SYSTEM - EXACT ORIGINAL
+     =================================== */
+
+.order-1 {
+  order: 1;
+}
+.order-2 {
+  order: 2;
+}
+.order-3 {
+  order: 3;
+}
+.order-4 {
+  order: 4;
+}
+.order-5 {
+  order: 5;
+}
+.order-6 {
+  order: 6;
+}
+.order-7 {
+  order: 7;
+}
+.order-8 {
+  order: 8;
+}
+.order-9 {
+  order: 9;
+}
+.order-10 {
+  order: 10;
+}
+.order-11 {
+  order: 11;
+}
+.order-12 {
+  order: 12;
+}
+.order-13 {
+  order: 13;
+}
+.order-14 {
+  order: 14;
+}
+.order-15 {
+  order: 15;
+}
+.order-16 {
+  order: 16;
+}
+.order-17 {
+  order: 17;
+}
+
+/* ===================================
+     MOBILE LAYOUT ADJUSTMENTS - EXACT ORIGINAL
+     =================================== */
+
+@media screen and (max-width: 767px) {
+  /* Adjust title spacing */
+  .title_category {
+    margin-bottom: 16px;
+  }
+
+  /* Ensure proper spacing between mobile filter and content */
+  .mobile-filter-trigger + .main_container {
+    margin-top: 20px;
+  }
+
+  /* Alternative mobile filter button styling */
+  .mobile-filter-btn.outline {
+    background: white;
+    color: #013f44;
+    border: 2px solid #013f44;
+  }
+
+  .mobile-filter-btn.outline:hover {
+    background: #013f44;
+    color: white;
+  }
+}

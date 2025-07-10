@@ -4,11 +4,9 @@ import React, { useState, useEffect, useMemo } from "react";
 import { useFilterManager } from "./hooks/useFilterManager";
 import { useFilterConfig } from "./hooks/useFilterConfig";
 import { getFilterCategoryId } from "@/utils/filterRegistry";
-import VehicleFilters from "@/components/features/vehicles/components/VehicleFilters";
+import VehicleFilterBottomDrawer from "@/components/features/vehicles/components/VehicleFilterBottomDrawer";
 import ElectronicsFilterDrawer from "@/components/features/electronics/filters/ElectronicsFilterDrawer";
-import RealEstateFilterDrawer from "@/components/features/realestate/filters/RealEstateFilterDrawer";
-import JobsFilterDrawer from "@/components/features/jobs/filters/JobsFilterDrawer";
-import ServicesFilterDrawer from "@/components/features/services/filters/ServicesFilterDrawer";
+import UniversalFilterDrawer from "./UniversalFilterDrawer";
 import {
   Dropdown,
   FilterButtons,
@@ -24,7 +22,20 @@ import {
   PowerRangeFilter,
   EngineVolumeRangeFilter,
 } from "@/components/shared/filters";
-import "./styles/FilterManager.css";
+import {
+  CAR_BRANDS,
+  CAR_MODELS,
+  FUEL_TYPES,
+  BODY_TYPES,
+  TRANSMISSIONS,
+  DRIVETRAIN_TYPES,
+  COLORS,
+  SEAT_COUNTS,
+  CONDITION_OPTIONS,
+  PAYMENT_OPTIONS,
+  VEHICLE_EQUIPMENT,
+  EQUIPMENT_CATEGORIES,
+} from "@/components/features/vehicles/constants";
 
 const FilterManager = ({ category, onFiltersChange, initialFilters = {} }) => {
   // Map slug to actual category ID for filter components
@@ -36,317 +47,437 @@ const FilterManager = ({ category, onFiltersChange, initialFilters = {} }) => {
   // Get configuration for this category
   const config = useFilterConfig(actualCategory);
 
-  // Memoize initial filters to prevent constant re-initialization
-  const memoizedInitialFilters = useMemo(() => initialFilters, []);
+  // Filters state - exact original structure
+  const [filters, setFilters] = useState({
+    brand: "",
+    model: "",
+    priceMin: "",
+    priceMax: "",
+    color: "",
+    fuel: "",
+    bodyType: "",
+    volumeMin: "",
+    volumeMax: "",
+    yearMin: "",
+    yearMax: "",
+    transmission: "",
+    city: "",
+    condition: "all",
+    mileageMin: "",
+    mileageMax: "",
+    gearbox: "",
+    seatCount: "",
+    powerMin: "",
+    powerMax: "",
+    paymentOptions: [],
+    equipment: [],
+    showMoreFilters: false,
+    ...initialFilters,
+  });
 
-  // Use filter manager hook for universal categories
+  const handleFilterChange = (field, value) => {
+    setFilters((prev) => ({
+      ...prev,
+      [field]: value,
+      // Reset model when brand changes
+      ...(field === "brand" && { model: "" }),
+    }));
+
+    // Call onFiltersChange if provided
+    if (onFiltersChange) {
+      onFiltersChange({ ...filters, [field]: value });
+    }
+  };
+
+  const handleReset = () => {
+    const resetFilters = {
+      brand: "",
+      model: "",
+      priceMin: "",
+      priceMax: "",
+      color: "",
+      fuel: "",
+      bodyType: "",
+      volumeMin: "",
+      volumeMax: "",
+      yearMin: "",
+      yearMax: "",
+      transmission: "",
+      city: "",
+      condition: "all",
+      mileageMin: "",
+      mileageMax: "",
+      gearbox: "",
+      seatCount: "",
+      powerMin: "",
+      powerMax: "",
+      paymentOptions: [],
+      equipment: [],
+      showMoreFilters: false,
+    };
+    setFilters(resetFilters);
+  };
+
+  const handleShowResults = () => {
+    console.log("Showing results with filters:", filters);
+    // TODO: Implement actual filtering/search logic
+  };
+
+  const handleMobileFiltersApply = (newFilters) => {
+    setFilters(newFilters);
+    handleShowResults();
+    setIsMobileDrawerOpen(false);
+  };
+
+  const getModelOptions = () => {
+    return filters.brand ? CAR_MODELS[filters.brand] || [] : [];
+  };
+
+  const getEquipmentByCategory = (category) => {
+    return VEHICLE_EQUIPMENT.filter((item) => item.category === category);
+  };
+
+  // Count active filters for mobile button
+  const getActiveFiltersCount = () => {
+    return Object.values(filters).filter((value) => {
+      if (Array.isArray(value)) return value.length > 0;
+      return value !== "" && value !== false && value !== "all";
+    }).length;
+  };
+
+  // Render vehicles with exact original structure
+  if (actualCategory === "vehicles") {
+    return (
+      <>
+        {/* Mobile Filter Button - Exact Original Styling */}
+        <div className="mobile-filter-trigger">
+          <button
+            className="mobile-filter-btn"
+            onClick={() => setIsMobileDrawerOpen(true)}
+          >
+            <i className="fa-solid fa-filter"></i>
+            <span>Filter</span>
+            {getActiveFiltersCount() > 0 && (
+              <span className="filter-count-badge">
+                {getActiveFiltersCount()}
+              </span>
+            )}
+          </button>
+        </div>
+
+        {/* Desktop Filters - Exact Original Structure */}
+        <div className="main_container">
+          <div className="desctop_filters">
+            {/* Row 1: Brand, Model, Price, Color */}
+            <div className="form-group for_width20 grow-1 order-1">
+              <Dropdown
+                placeholder="Marka"
+                options={CAR_BRANDS}
+                value={filters.brand}
+                onChange={(value) => handleFilterChange("brand", value)}
+              />
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-2">
+              <Dropdown
+                placeholder="Model"
+                options={getModelOptions()}
+                value={filters.model}
+                onChange={(value) => handleFilterChange("model", value)}
+                disabled={!filters.brand}
+              />
+            </div>
+
+            <div className="form-group for_width_big grow-1 order-3">
+              <PriceRangeFilter
+                minValue={filters.priceMin}
+                maxValue={filters.priceMax}
+                onMinChange={(value) => handleFilterChange("priceMin", value)}
+                onMaxChange={(value) => handleFilterChange("priceMax", value)}
+              />
+            </div>
+
+            <div className="form-group for_width_small grow-1 order-4">
+              <Dropdown
+                placeholder="Rəng"
+                options={COLORS}
+                value={filters.color}
+                onChange={(value) => handleFilterChange("color", value)}
+              />
+            </div>
+
+            {/* Row 2: Fuel, Body Type, Engine Volume, Year */}
+            <div className="form-group for_width20 grow-1 order-5">
+              <Dropdown
+                placeholder="Yanacaq növü"
+                options={FUEL_TYPES}
+                value={filters.fuel}
+                onChange={(value) => handleFilterChange("fuel", value)}
+              />
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-6">
+              <Dropdown
+                placeholder="Ban növü"
+                options={BODY_TYPES}
+                value={filters.bodyType}
+                onChange={(value) => handleFilterChange("bodyType", value)}
+              />
+            </div>
+
+            <div className="form-group for_width_big grow-1 order-7">
+              <EngineVolumeRangeFilter
+                minValue={filters.volumeMin}
+                maxValue={filters.volumeMax}
+                onMinChange={(value) => handleFilterChange("volumeMin", value)}
+                onMaxChange={(value) => handleFilterChange("volumeMax", value)}
+              />
+            </div>
+
+            <div className="form-group for_width_small grow-1 order-8">
+              <YearRangeFilter
+                minValue={filters.yearMin}
+                maxValue={filters.yearMax}
+                onMinChange={(value) => handleFilterChange("yearMin", value)}
+                onMaxChange={(value) => handleFilterChange("yearMax", value)}
+              />
+            </div>
+
+            {/* Condition Row */}
+            <div className="form-group for_width_big grow-1 order-9">
+              <div className="condition-filters">
+                <label className="condition-label">Vəziyyəti</label>
+                <RadioGroup2
+                  options={CONDITION_OPTIONS}
+                  value={filters.condition}
+                  onChange={(value) => handleFilterChange("condition", value)}
+                  name="condition"
+                  layout="horizontal"
+                />
+              </div>
+            </div>
+
+            {/* More Filters Section */}
+            {filters.showMoreFilters && (
+              <>
+                {/* Row 3: Advanced Filters */}
+                <div className="form-group for_width20 grow-1 order-10">
+                  <Dropdown
+                    placeholder="Sürətlər qutusu"
+                    options={TRANSMISSIONS}
+                    value={filters.transmission}
+                    onChange={(value) =>
+                      handleFilterChange("transmission", value)
+                    }
+                  />
+                </div>
+
+                <div className="form-group for_width20 grow-1 order-11">
+                  <LocationFilter
+                    placeholder="Şəhər"
+                    value={filters.city}
+                    onChange={(value) => handleFilterChange("city", value)}
+                  />
+                </div>
+
+                <div className="form-group for_width_big grow-1 order-12">
+                  <MileageRangeFilter
+                    minValue={filters.mileageMin}
+                    maxValue={filters.mileageMax}
+                    onMinChange={(value) =>
+                      handleFilterChange("mileageMin", value)
+                    }
+                    onMaxChange={(value) =>
+                      handleFilterChange("mileageMax", value)
+                    }
+                  />
+                </div>
+
+                <div className="form-group for_width20 grow-1 order-13">
+                  <Dropdown
+                    placeholder="Ötürücü"
+                    options={DRIVETRAIN_TYPES}
+                    value={filters.gearbox}
+                    onChange={(value) => handleFilterChange("gearbox", value)}
+                  />
+                </div>
+
+                <div className="form-group for_width20 grow-1 order-14">
+                  <Dropdown
+                    placeholder="Oturacaq sayı"
+                    options={SEAT_COUNTS}
+                    value={filters.seatCount}
+                    onChange={(value) => handleFilterChange("seatCount", value)}
+                  />
+                </div>
+
+                <div className="form-group for_width_big grow-1 order-15">
+                  <PowerRangeFilter
+                    minValue={filters.powerMin}
+                    maxValue={filters.powerMax}
+                    onMinChange={(value) =>
+                      handleFilterChange("powerMin", value)
+                    }
+                    onMaxChange={(value) =>
+                      handleFilterChange("powerMax", value)
+                    }
+                  />
+                </div>
+
+                {/* Payment Options */}
+                <div className="form-group for_width_big grow-1 order-16">
+                  <div className="payment-options">
+                    <label className="payment-label">Ödəniş növü</label>
+                    <CheckboxGroup
+                      options={PAYMENT_OPTIONS}
+                      values={filters.paymentOptions}
+                      onChange={(values) =>
+                        handleFilterChange("paymentOptions", values)
+                      }
+                      name="paymentOptions"
+                      layout="horizontal"
+                      variant="default"
+                    />
+                  </div>
+                </div>
+
+                {/* Equipment Section - Exact Original Structure */}
+                <div className="additional_chekings_hero order-17">
+                  <div className="additional_chekings_title">Avadanlıq</div>
+                  <div className="additional_chekings">
+                    {EQUIPMENT_CATEGORIES.map((category) => {
+                      const categoryEquipment = getEquipmentByCategory(
+                        category.value
+                      );
+                      if (categoryEquipment.length === 0) return null;
+
+                      return (
+                        <div
+                          key={category.value}
+                          className="equipment-category"
+                        >
+                          <h4 className="equipment-category-title">
+                            {category.label}
+                          </h4>
+                          <CheckboxGroup
+                            options={categoryEquipment}
+                            values={filters.equipment}
+                            onChange={(values) =>
+                              handleFilterChange("equipment", values)
+                            }
+                            name={`equipment-${category.value}`}
+                            layout="horizontal"
+                            variant="default"
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* Filter Action Buttons - Exact Original */}
+          <div className="desc_filters_btns">
+            <FilterButtons
+              onReset={handleReset}
+              onToggleMoreFilters={() =>
+                handleFilterChange("showMoreFilters", !filters.showMoreFilters)
+              }
+              onShowResults={handleShowResults}
+              moreFiltersExpanded={filters.showMoreFilters}
+              resultsCount={0}
+              resetText="Sıfırla"
+              moreFiltersText="Daha çox filtr"
+              showResultsText="Elanları göstər"
+            />
+          </div>
+        </div>
+
+        {/* Mobile Bottom Drawer - Original VehicleFilterBottomDrawer */}
+        <VehicleFilterBottomDrawer
+          isOpen={isMobileDrawerOpen}
+          onClose={() => setIsMobileDrawerOpen(false)}
+          filters={filters}
+          onApplyFilters={handleMobileFiltersApply}
+          resultsCount={0}
+        />
+      </>
+    );
+  }
+
+  // For other categories, use the new universal system
   const {
-    filters,
+    filters: universalFilters,
     updateFilter,
     resetFilters,
     applyFilters,
     activeFilterCount,
   } = useFilterManager(config, {
     onFiltersChange,
-    initialFilters: memoizedInitialFilters,
+    initialFilters,
   });
 
-  // For vehicles category, use existing VehicleFilters component
-  if (actualCategory === "vehicles") {
-    return <VehicleFilters />;
-  }
-
-  // For other categories, check if we have configuration
-  if (!config) {
-    console.warn(
-      `FilterManager: No configuration found for category "${actualCategory}"`
-    );
-    return <div>Filter configuration not found for {actualCategory}</div>;
-  }
-
-  const handleFilterChange = (field, value) => {
-    updateFilter(field, value);
-  };
-
-  const handleShowResults = () => {
-    applyFilters();
-  };
-
-  const handleReset = () => {
-    resetFilters();
-  };
-
-  const handleMobileFiltersApply = (newFilters) => {
-    Object.keys(newFilters).forEach((key) => {
-      updateFilter(key, newFilters[key]);
-    });
-    applyFilters();
-  };
-
-  // Render desktop filters based on configuration
-  const renderDesktopFilters = () => {
-    return (
-      <div className="d-none d-md-block">
-        <div className="main_container">
-          <div className="desctop_filters">
-            {/* Basic Filters */}
-            {config.sections?.map((section, sectionIndex) => {
-              // Basic filters section
-              if (section.className === "basic-filters") {
-                return (
-                  <React.Fragment key={sectionIndex}>
-                    {section.filters.map((filter) => {
-                      return renderFilterComponent(filter);
-                    })}
-                  </React.Fragment>
-                );
-              }
-              return null;
-            })}
-
-            {/* Advanced Filters Section */}
-            {config.sections?.map((section, sectionIndex) => {
-              if (
-                section.className === "advanced-filters" &&
-                section.visible === "showMoreFilters" &&
-                filters.showMoreFilters
-              ) {
-                return (
-                  <div key={sectionIndex} className="advanced-filter-section">
-                    {section.filters.map((filter, filterIndex) => {
-                      return (
-                        <div key={filter.id} className="advanced-filter-row">
-                          <div className="advanced-filter-label">
-                            {getFilterLabel(filter)}
-                          </div>
-                          {renderAdvancedFilterComponent(filter)}
-                        </div>
-                      );
-                    })}
-                  </div>
-                );
-              }
-              return null;
-            })}
-
-            {/* Filter Action Buttons */}
-            <div className="desc_filters_btns">
-              <FilterButtons
-                onReset={handleReset}
-                onToggleMoreFilters={() =>
-                  handleFilterChange(
-                    "showMoreFilters",
-                    !filters.showMoreFilters
-                  )
-                }
-                onShowResults={handleShowResults}
-                moreFiltersExpanded={filters.showMoreFilters}
-                resultsCount={0}
-                resetText="Sıfırla"
-                moreFiltersText="Daha çox filtr"
-                showResultsText="Elanları göstər"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  // Get filter label for advanced filters
-  const getFilterLabel = (filter) => {
-    const labels = {
-      storage: "Yaddaş həcmi",
-      ram: "RAM",
-      os: "Əməliyyat sistemi",
-      screenSize: "Ekran ölçüsü",
-      connectivity: "Əlaqə",
-    };
-    return labels[filter.id] || filter.placeholder || filter.id;
-  };
-
-  // Render advanced filter components with proper styling
-  const renderAdvancedFilterComponent = (filter) => {
-    switch (filter.type) {
-      case "CheckboxGroup":
-        return (
-          <div
-            className={`checkbox-group-horizontal ${actualCategory}-${filter.id}-section`}
-          >
-            <CheckboxGroup2
-              key={filter.id}
-              options={filter.options || []}
-              values={filters[filter.id] || []}
-              onChange={(values) => handleFilterChange(filter.id, values)}
-              name={filter.id}
-              layout="horizontal"
-              variant={filter.variant || "default"}
-            />
-          </div>
-        );
-
-      case "RadioGroup":
-        return (
-          <div
-            className={`radio-group-horizontal ${actualCategory}-${filter.id}-section`}
-          >
-            <RadioGroup2
-              key={filter.id}
-              options={filter.options || []}
-              value={filters[filter.id] || ""}
-              onChange={(value) => handleFilterChange(filter.id, value)}
-              name={filter.id}
-              layout="horizontal"
-            />
-          </div>
-        );
-
-      default:
-        return renderFilterComponent(filter);
-    }
-  };
-
-  // Render individual filter components
-  const renderFilterComponent = (filter) => {
-    // ✅ Extract key separately from other props
-    const { key, ...componentProps } = {
-      key: filter.id,
-      value: filters[filter.id] || filter.defaultValue || "",
-      onChange: (value) => handleFilterChange(filter.id, value),
-      className: filter.className || "for_width20",
-    };
-
-    switch (filter.type) {
-      case "Dropdown":
-        return (
-          <Dropdown
-            key={key} // ✅ Pass key directly
-            {...componentProps} // ✅ Spread only the remaining props
-            options={filter.options || []}
-            placeholder={filter.placeholder}
-          />
-        );
-
-      case "PriceRangeFilter":
-        return (
-          <PriceRangeFilter
-            key={key} // ✅ Pass key directly
-            minValue={filters.priceMin || ""}
-            maxValue={filters.priceMax || ""}
-            onMinChange={(value) => handleFilterChange("priceMin", value)}
-            onMaxChange={(value) => handleFilterChange("priceMax", value)}
-            currency={filter.currency || "AZN"}
-            className={filter.className}
-          />
-        );
-
-      case "LocationFilter":
-        return (
-          <LocationFilter
-            key={key} // ✅ Pass key directly
-            {...componentProps}
-            options={filter.options || []}
-            placeholder={filter.placeholder || "Şəhər"}
-          />
-        );
-
-      case "YearRangeFilter":
-        return (
-          <YearRangeFilter
-            key={key} // ✅ Pass key directly
-            minValue={filters.yearMin || ""}
-            maxValue={filters.yearMax || ""}
-            onMinChange={(value) => handleFilterChange("yearMin", value)}
-            onMaxChange={(value) => handleFilterChange("yearMax", value)}
-            className={filter.className}
-          />
-        );
-
-      case "RadioGroup":
-        return (
-          <RadioGroup2
-            key={key} // ✅ Pass key directly
-            {...componentProps}
-            options={filter.options || []}
-            name={filter.id}
-            layout={filter.layout || "horizontal"}
-          />
-        );
-
-      case "CheckboxGroup":
-        return (
-          <CheckboxGroup
-            key={key} // ✅ Pass key directly
-            options={filter.options || []}
-            values={filters[filter.id] || []}
-            onChange={(values) => handleFilterChange(filter.id, values)}
-            name={filter.id}
-            layout={filter.layout || "horizontal"}
-            variant={filter.variant || "default"}
-          />
-        );
-
-      case "CustomComponent":
-        if (filter.component) {
-          const CustomComponent = filter.component;
-          return (
-            <CustomComponent
-              key={key} // ✅ Pass key directly
-              {...componentProps}
-              {...filter.componentProps}
-            />
-          );
-        }
-        return null;
-
-      default:
-        console.warn(`Unknown filter type: ${filter.type}`);
-        return null;
-    }
-  };
-
-  // Render mobile drawer based on category
   const renderMobileDrawer = () => {
     const drawerProps = {
       isOpen: isMobileDrawerOpen,
       onClose: () => setIsMobileDrawerOpen(false),
-      filters: filters,
-      onApplyFilters: handleMobileFiltersApply,
+      filters: universalFilters,
+      onApplyFilters: (newFilters) => {
+        Object.keys(newFilters).forEach((key) => {
+          updateFilter(key, newFilters[key]);
+        });
+        setIsMobileDrawerOpen(false);
+      },
       resultsCount: 0,
     };
 
     switch (actualCategory) {
       case "electronics":
         return <ElectronicsFilterDrawer {...drawerProps} />;
-      case "realestate":
-        return <RealEstateFilterDrawer {...drawerProps} />;
-      case "jobs":
-        return <JobsFilterDrawer {...drawerProps} />;
-      case "services":
-        return <ServicesFilterDrawer {...drawerProps} />;
       default:
-        return null;
+        return (
+          <UniversalFilterDrawer
+            {...drawerProps}
+            config={config}
+            onFilterChange={updateFilter}
+            activeFilterCount={activeFilterCount}
+          />
+        );
     }
   };
+
+  // For non-vehicle categories
+  if (!config) {
+    console.warn(
+      `FilterManager: No configuration found for category "${actualCategory}"`
+    );
+    return null;
+  }
 
   return (
     <>
       {/* Mobile Filter Trigger */}
-      <div className="desc_filters_btn_mobile d-md-none">
+      <div className="mobile-filter-trigger">
         <button
-          className="filter_btn_mobile"
+          className="mobile-filter-btn"
           onClick={() => setIsMobileDrawerOpen(true)}
         >
           <i className="fas fa-filter"></i>
           <span>Filtr</span>
           {activeFilterCount > 0 && (
-            <span className="filter_btn_count">{activeFilterCount}</span>
+            <span className="filter-count-badge">{activeFilterCount}</span>
           )}
         </button>
       </div>
 
-      {/* Desktop Filters */}
-      {renderDesktopFilters()}
+      {/* For other categories - basic desktop filters */}
+      <div className="main_container">
+        <div className="desctop_filters">
+          <div>Other categories coming soon...</div>
+        </div>
+      </div>
 
       {/* Mobile Drawer */}
       {renderMobileDrawer()}
