@@ -1,4 +1,5 @@
 import { Layout } from '@/components/layout'
+import Link from 'next/link'
 import React from 'react'
 
 const page = () => {
@@ -29,7 +30,7 @@ const page = () => {
                                         <div class="jumbotron__info">
                                             <p class="jumbotron__title">Bolbolda bol satış</p>
                                             <p class="mb-30">Ayda əlavə 3000 satış realdır, sadəcə bizə qoşulmaq kifayətdir!</p>
-                                            <a href="" class="btn btn--white">Mağaza qeydiyyatı</a>
+                                            <Link href="/store/register" class="btn btn--white">Mağaza qeydiyyatı</Link>
                                         </div>
                                         <div class="jumbotron__img">
                                             <img src="/img/store.png" alt="" class="img-fluid" />
@@ -135,7 +136,7 @@ const page = () => {
                                         <div class="jumbotron__info jumbotron__info--secondary">
                                             <p class="jumbotron__title">Pulsuz qeydiyyat</p>
                                             <p class="mb-30">Ayda əlavə 3000 satış realdır, sadəcə bizə qoşulmaq kifayətdir!</p>
-                                            <a href="" class="btn">Mağaza qeydiyyatı</a>
+                                            <Link href="/store/register" class="btn">Mağaza qeydiyyatı</Link>
                                         </div>
                                         <div class="jumbotron__img">
                                             <img src="/img/store2.png" alt="" class="img-fluid"/>

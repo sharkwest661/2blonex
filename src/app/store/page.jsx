@@ -1,11 +1,17 @@
+"use client"
 import { Layout } from '@/components/layout'
 import React from 'react'
 import './style.css'
-import StoreTab from '../components/store-tab'
+import StoreTab from './components/store-tab'
+import CheckStore from './components/check-store'
+import { useStoreStore } from '@/store/useStoreStore'
+import Link from 'next/link'
 
 const page = () => {
+    const { store } = useStoreStore();
     return (
         <Layout>
+            <CheckStore />
             <main className='store-page'>
                 <section class="pb-0 d-md-none">
                     <div class="container-fluid">
@@ -40,21 +46,21 @@ const page = () => {
                             </div>
                         </div>
                         <div class="profile__inner">
-                            <a class="btn profile__edit">
+                            <Link href={"/store/edit"} class="btn profile__edit">
                                 <img src="/img/edit-icon.svg" alt="" />
                                 Məlumatları dəyiş
-                            </a>
+                            </Link>
                             <div class="profile__info">
                                 <div class="store">
                                     <div class="store__logo">
                                         <img src="/img/example/store-logo.png" alt="" />
                                     </div>
                                     <div>
-                                        <p class="store__name store__name--large">World Telecom</p>
+                                        <p class="store__name store__name--large">{store?.name}</p>
                                         <div class="store__categories">
-                                            <span>Elektronika</span>
-                                            <span>Mobil telefonlar</span>
-                                            <span>Məişət texnikası</span>
+                                            {
+                                                store && store.branch?.map((brancName) =><span>{brancName}</span>)
+                                            }
                                         </div>
                                     </div>
                                 </div>
