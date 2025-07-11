@@ -176,20 +176,13 @@
   align-items: center;
   gap: 8px;
   padding: 12px 20px;
-  background: #fff;
-  border: 2px solid #007bff;
-  color: #007bff;
   border-radius: 25px;
   font-weight: 600;
-  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
   transition: all 0.2s ease;
 }
 
 .mobile-filter-trigger:hover {
-  background: #007bff;
-  color: #fff;
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 123, 255, 0.3);
 }
 
 .filter-badge {
