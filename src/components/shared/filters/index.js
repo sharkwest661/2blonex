@@ -5,3 +5,5 @@ export { YearRangeFilter } from "./YearRangeFilter";
 export { MileageRangeFilter } from "./MileageRangeFilter";
 export { PowerRangeFilter } from "./PowerRangeFilter";
 export { EngineVolumeRangeFilter } from "./EngineVolumeRangeFilter";
+export { AreaRangeFilter } from "./AreaRangeFilter";
+export { FloorRangeFilter } from "./FloorRangeFilter";

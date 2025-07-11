@@ -57,7 +57,7 @@ const MobileMenu = ({
       name: "Daşınmaz əmlak",
       icon: "🏠",
       count: "8,920",
-      url: "dasinmaz-emlak",
+      url: "emlak",
     },
     { name: "Elektronika", icon: "📱", count: "12,340", url: "elektronika" },
     {

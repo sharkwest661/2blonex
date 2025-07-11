@@ -46,9 +46,6 @@ import {
   SCREEN_SIZES,
   CONNECTIVITY_OPTIONS,
 } from "@/components/features/electronics/constants";
-
-// Add these imports to the top of FilterManager.js after the existing imports:
-
 import {
   ACTIVITY_FIELDS,
   WORK_SCHEDULES,
@@ -60,6 +57,20 @@ import {
   WORK_ENVIRONMENT,
 } from "@/components/features/jobs/constants";
 import JobsFilterDrawer from "@/components/features/jobs/filters/JobsFilterDrawer";
+import { AreaRangeFilter, FloorRangeFilter } from "@/components/shared/filters";
+
+import {
+  PROPERTY_TYPES,
+  TRANSACTION_TYPES,
+  ROOM_COUNTS,
+  PROPERTY_CONDITIONS,
+  HEATING_TYPES,
+  PROPERTY_AMENITIES,
+  PROPERTY_FEATURES,
+  METRO_STATIONS,
+  DISTRICTS,
+} from "@/components/features/realestate/constants";
+import RealEstateFilterDrawer from "@/components/features/realestate/filters/RealEstateFilterDrawer";
 
 const FilterManager = ({ category, onFiltersChange, initialFilters = {} }) => {
   // Map slug to actual category ID for filter components
@@ -116,6 +127,21 @@ const FilterManager = ({ category, onFiltersChange, initialFilters = {} }) => {
     benefits: [],
     workEnvironment: [],
 
+    // Real Estate filters
+    transactionType: "sale",
+    propertyType: "",
+    rooms: "",
+    areaMin: "",
+    areaMax: "",
+    floorMin: "",
+    floorMax: "",
+    renovation: "all",
+    metro: "",
+    district: "",
+    heating: "",
+    amenities: [],
+    features: [],
+
     // Common
     showMoreFilters: false,
     ...initialFilters,
@@ -137,6 +163,7 @@ const FilterManager = ({ category, onFiltersChange, initialFilters = {} }) => {
 
   const handleReset = () => {
     const resetFilters = {
+      // Vehicle filters
       brand: "",
       model: "",
       priceMin: "",
@@ -159,11 +186,47 @@ const FilterManager = ({ category, onFiltersChange, initialFilters = {} }) => {
       powerMax: "",
       paymentOptions: [],
       equipment: [],
+
+      // Electronics filters
+      category: "",
+      storage: [],
+      ram: [],
+      os: "",
+      screenSize: [],
+      connectivity: [],
+
+      // Jobs filters
+      activityField: "",
+      workSchedule: "all",
+      salaryMin: "",
+      salaryMax: "",
+      experience: "all",
+      education: "all",
+      jobType: "all",
+      companyType: "all",
+      benefits: [],
+      workEnvironment: [],
+
+      // Real Estate filters
+      transactionType: "sale",
+      propertyType: "",
+      rooms: "",
+      areaMin: "",
+      areaMax: "",
+      floorMin: "",
+      floorMax: "",
+      renovation: "all",
+      metro: "",
+      district: "",
+      heating: "",
+      amenities: [],
+      features: [],
+
+      // Common
       showMoreFilters: false,
     };
     setFilters(resetFilters);
   };
-
   const handleShowResults = () => {
     console.log("Showing results with filters:", filters);
     // TODO: Implement actual filtering/search logic
@@ -826,6 +889,228 @@ const FilterManager = ({ category, onFiltersChange, initialFilters = {} }) => {
           onApplyFilters={handleMobileFiltersApply}
           resultsCount={getActiveFiltersCount()}
         />
+      </>
+    );
+  }
+
+  // Real Estate category - EXACT same structure as vehicles/electronics/jobs
+  if (actualCategory === "realestate") {
+    return (
+      <>
+        {/* Mobile Filter Button - EXACT same as vehicles */}
+        <div className="mobile-filter-trigger">
+          <button
+            className="mobile-filter-btn"
+            onClick={() => setIsMobileDrawerOpen(true)}
+          >
+            <i className="fa-solid fa-filter"></i>
+            <span>Filter</span>
+            {getActiveFiltersCount() > 0 && (
+              <span className="filter-count-badge">
+                {getActiveFiltersCount()}
+              </span>
+            )}
+          </button>
+        </div>
+
+        {/* Desktop Filters - EXACT Vehicle Structure using PROPER components */}
+        <div className="main_container">
+          <div className="desctop_filters">
+            {/* Row 1: Transaction Type, Property Type, Price Range, City - SAME layout as vehicles */}
+            <div className="form-group for_width20 grow-1 order-1">
+              <RadioGroup2
+                options={TRANSACTION_TYPES}
+                value={filters.transactionType}
+                onChange={(value) =>
+                  handleFilterChange("transactionType", value)
+                }
+                name="transactionType"
+                layout="horizontal"
+                variant="default"
+              />
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-2">
+              <Dropdown
+                placeholder="Əmlak növü"
+                options={PROPERTY_TYPES}
+                value={filters.propertyType}
+                onChange={(value) => handleFilterChange("propertyType", value)}
+              />
+            </div>
+
+            <div className="form-group for_width_big grow-1 order-3">
+              <PriceRangeFilter
+                minValue={filters.priceMin}
+                maxValue={filters.priceMax}
+                onMinChange={(value) => handleFilterChange("priceMin", value)}
+                onMaxChange={(value) => handleFilterChange("priceMax", value)}
+                placeholder="Qiymət"
+                currency="AZN"
+              />
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-4">
+              <LocationFilter
+                value={filters.city}
+                onChange={(value) => handleFilterChange("city", value)}
+                placeholder="Şəhər"
+              />
+            </div>
+
+            {/* Row 2: Rooms, Area Range, Floor Range, Renovation - SAME 4-column layout using PROPER components */}
+            <div className="form-group for_width20 grow-1 order-5">
+              <Dropdown
+                placeholder="Otaq sayı"
+                options={ROOM_COUNTS}
+                value={filters.rooms}
+                onChange={(value) => handleFilterChange("rooms", value)}
+              />
+            </div>
+
+            {/* FIXED: Use proper AreaRangeFilter component like vehicles uses EngineVolumeRangeFilter */}
+            <div className="form-group for_width_big grow-1 order-6">
+              <AreaRangeFilter
+                minValue={filters.areaMin}
+                maxValue={filters.areaMax}
+                onMinChange={(value) => handleFilterChange("areaMin", value)}
+                onMaxChange={(value) => handleFilterChange("areaMax", value)}
+                placeholder="Sahə"
+              />
+            </div>
+
+            {/* FIXED: Use proper FloorRangeFilter component like vehicles uses YearRangeFilter */}
+            <div className="form-group for_width_small grow-1 order-7">
+              <FloorRangeFilter
+                minValue={filters.floorMin}
+                maxValue={filters.floorMax}
+                onMinChange={(value) => handleFilterChange("floorMin", value)}
+                onMaxChange={(value) => handleFilterChange("floorMax", value)}
+                placeholder="Mərtəbə"
+              />
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-8">
+              <RadioGroup2
+                options={PROPERTY_CONDITIONS}
+                value={filters.renovation}
+                onChange={(value) => handleFilterChange("renovation", value)}
+                name="renovation"
+                layout="horizontal"
+                variant="default"
+              />
+            </div>
+
+            {/* Row 3: Progressive Disclosure - "More Filters" - EXACT same as other categories */}
+            {filters.showMoreFilters && (
+              <>
+                <div className="more-filters-section">
+                  <div className="more-filters-row">
+                    <div className="form-group for_width20 grow-1 order-9">
+                      <Dropdown
+                        placeholder="Metro stansiyası"
+                        options={METRO_STATIONS}
+                        value={filters.metro}
+                        onChange={(value) => handleFilterChange("metro", value)}
+                      />
+                    </div>
+
+                    <div className="form-group for_width20 grow-1 order-10">
+                      <Dropdown
+                        placeholder="Rayon"
+                        options={DISTRICTS}
+                        value={filters.district}
+                        onChange={(value) =>
+                          handleFilterChange("district", value)
+                        }
+                      />
+                    </div>
+
+                    <div className="form-group for_width20 grow-1 order-11">
+                      <Dropdown
+                        placeholder="İstilik sistemi"
+                        options={HEATING_TYPES}
+                        value={filters.heating}
+                        onChange={(value) =>
+                          handleFilterChange("heating", value)
+                        }
+                      />
+                    </div>
+
+                    <div className="form-group for_width20 grow-1 order-12">
+                      {/* Placeholder for additional filter */}
+                    </div>
+                  </div>
+
+                  {/* Property Amenities Section - EXACT same structure as vehicles equipment */}
+                  <div className="additional_chekings_hero order-13">
+                    <h3 className="additional_chekings_title">
+                      Əmlak imkanları
+                    </h3>
+                    <div className="additional_chekings">
+                      <div className="form-group grow-1">
+                        <CheckboxGroup
+                          options={PROPERTY_AMENITIES}
+                          values={filters.amenities}
+                          onChange={(values) =>
+                            handleFilterChange("amenities", values)
+                          }
+                          layout="grid"
+                          columns={3}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Property Features Section - EXACT same structure as vehicles equipment */}
+                  <div className="additional_chekings_hero order-14">
+                    <h3 className="additional_chekings_title">
+                      Əlavə imkanlar
+                    </h3>
+                    <div className="additional_chekings">
+                      <div className="form-group grow-1">
+                        <CheckboxGroup
+                          options={PROPERTY_FEATURES}
+                          values={filters.features}
+                          onChange={(values) =>
+                            handleFilterChange("features", values)
+                          }
+                          layout="grid"
+                          columns={3}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* Mobile Bottom Drawer - Real Estate specific */}
+          <RealEstateFilterDrawer
+            isOpen={isMobileDrawerOpen}
+            onClose={() => setIsMobileDrawerOpen(false)}
+            filters={filters}
+            onApplyFilters={handleMobileFiltersApply}
+            resultsCount={0}
+          />
+
+          {/* Row 4: Filter Action Buttons - EXACT same as all other categories */}
+          <div className="desc_filters_btns">
+            <FilterButtons
+              onReset={handleReset}
+              onToggleMoreFilters={() =>
+                handleFilterChange("showMoreFilters", !filters.showMoreFilters)
+              }
+              onShowResults={handleShowResults}
+              moreFiltersExpanded={filters.showMoreFilters}
+              resultsCount={0}
+              resetText="Sıfırla"
+              moreFiltersText="Daha çox filtr"
+              showResultsText="Elanları göstər"
+            />
+          </div>
+        </div>
       </>
     );
   }
