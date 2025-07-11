@@ -47,6 +47,19 @@ import {
   CONNECTIVITY_OPTIONS,
 } from "@/components/features/electronics/constants";
 
+// Add these imports to the top of FilterManager.js after the existing imports:
+
+import {
+  ACTIVITY_FIELDS,
+  WORK_SCHEDULES,
+  WORK_EXPERIENCE,
+  EDUCATION_LEVELS,
+  JOB_TYPES,
+  COMPANY_TYPES,
+  JOB_BENEFITS,
+  WORK_ENVIRONMENT,
+} from "@/components/features/jobs/constants";
+
 const FilterManager = ({ category, onFiltersChange, initialFilters = {} }) => {
   // Map slug to actual category ID for filter components
   const actualCategory = getFilterCategoryId(category);
@@ -57,8 +70,8 @@ const FilterManager = ({ category, onFiltersChange, initialFilters = {} }) => {
   // Get configuration for this category
   const config = useFilterConfig(actualCategory);
 
-  // Filters state - exact original structure
   const [filters, setFilters] = useState({
+    // Vehicle filters
     brand: "",
     model: "",
     priceMin: "",
@@ -81,6 +94,28 @@ const FilterManager = ({ category, onFiltersChange, initialFilters = {} }) => {
     powerMax: "",
     paymentOptions: [],
     equipment: [],
+
+    // Electronics filters
+    category: "",
+    storage: [],
+    ram: [],
+    os: "",
+    screenSize: [],
+    connectivity: [],
+
+    // Jobs filters
+    activityField: "",
+    workSchedule: "all",
+    salaryMin: "",
+    salaryMax: "",
+    experience: "all",
+    education: "all",
+    jobType: "all",
+    companyType: "all",
+    benefits: [],
+    workEnvironment: [],
+
+    // Common
     showMoreFilters: false,
     ...initialFilters,
   });
@@ -616,6 +651,181 @@ const FilterManager = ({ category, onFiltersChange, initialFilters = {} }) => {
           filters={filters}
           onApplyFilters={handleMobileFiltersApply}
           resultsCount={0}
+        />
+      </>
+    );
+  }
+
+  // Jobs category - EXACT same structure as vehicles and electronics
+  if (actualCategory === "jobs") {
+    return (
+      <>
+        {/* Mobile Filter Button - EXACT same as vehicles */}
+        <div className="mobile-filter-trigger">
+          <button
+            className="mobile-filter-btn"
+            onClick={() => setIsMobileDrawerOpen(true)}
+          >
+            <i className="fa-solid fa-filter"></i>
+            <span>Filter</span>
+            {getActiveFiltersCount() > 0 && (
+              <span className="filter-count-badge">
+                {getActiveFiltersCount()}
+              </span>
+            )}
+          </button>
+        </div>
+
+        {/* Desktop Filters - EXACT Vehicle Structure for Jobs */}
+        <div className="main_container">
+          <div className="desctop_filters">
+            {/* Row 1: Activity Field, Work Schedule, Salary Range, City - SAME layout as vehicles */}
+            <div className="form-group for_width20 grow-1 order-1">
+              <Dropdown
+                placeholder="Fəaliyyət sahəsi"
+                options={ACTIVITY_FIELDS}
+                value={filters.activityField}
+                onChange={(value) => handleFilterChange("activityField", value)}
+              />
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-2">
+              <Dropdown
+                placeholder="İş qrafiki"
+                options={WORK_SCHEDULES}
+                value={filters.workSchedule}
+                onChange={(value) => handleFilterChange("workSchedule", value)}
+              />
+            </div>
+
+            <div className="form-group for_width_big grow-1 order-3">
+              <PriceRangeFilter
+                minValue={filters.salaryMin}
+                maxValue={filters.salaryMax}
+                onMinChange={(value) => handleFilterChange("salaryMin", value)}
+                onMaxChange={(value) => handleFilterChange("salaryMax", value)}
+                placeholder={{ min: "Min maaş", max: "Max maaş" }}
+                currency="AZN"
+              />
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-4">
+              <LocationFilter
+                value={filters.city}
+                onChange={(value) => handleFilterChange("city", value)}
+                placeholder="Şəhər"
+              />
+            </div>
+
+            {/* Row 2: Experience, Education, Job Type, Company Type - SAME layout */}
+            <div className="form-group for_width20 grow-1 order-5">
+              <Dropdown
+                placeholder="İş təcrübəsi"
+                options={WORK_EXPERIENCE}
+                value={filters.experience}
+                onChange={(value) => handleFilterChange("experience", value)}
+              />
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-6">
+              <Dropdown
+                placeholder="Təhsil"
+                options={EDUCATION_LEVELS}
+                value={filters.education}
+                onChange={(value) => handleFilterChange("education", value)}
+              />
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-7">
+              <Dropdown
+                placeholder="İş növü"
+                options={JOB_TYPES}
+                value={filters.jobType}
+                onChange={(value) => handleFilterChange("jobType", value)}
+              />
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-8">
+              <Dropdown
+                placeholder="Şirkət növü"
+                options={COMPANY_TYPES}
+                value={filters.companyType}
+                onChange={(value) => handleFilterChange("companyType", value)}
+              />
+            </div>
+
+            {/* Advanced Filters Section - SAME as vehicles equipment section */}
+            {filters.showMoreFilters && (
+              <>
+                {/* Job Benefits - SAME structure as vehicle equipment */}
+                <div className="additional_chekings_hero order-9">
+                  <div className="additional_chekings_title">
+                    Təklif olunan imkanlar
+                  </div>
+                  <div className="additional_chekings">
+                    <div className="equipment-category">
+                      <div className="equipment-category-title">
+                        Sosial paket
+                      </div>
+                      <CheckboxGroup
+                        options={JOB_BENEFITS}
+                        values={filters.benefits}
+                        onChange={(values) =>
+                          handleFilterChange("benefits", values)
+                        }
+                        name="benefits"
+                        layout="horizontal"
+                        variant="default"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Work Environment - SAME structure as vehicle equipment */}
+                <div className="additional_chekings_hero order-10">
+                  <div className="additional_chekings_title">İş mühiti</div>
+                  <div className="additional_chekings">
+                    <div className="equipment-category">
+                      <CheckboxGroup
+                        options={WORK_ENVIRONMENT}
+                        values={filters.workEnvironment}
+                        onChange={(values) =>
+                          handleFilterChange("workEnvironment", values)
+                        }
+                        name="workEnvironment"
+                        layout="horizontal"
+                        variant="default"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* Filter Action Buttons - EXACT same as vehicles */}
+          <div className="desc_filters_btns">
+            <FilterButtons
+              onReset={handleReset}
+              onToggleMoreFilters={() =>
+                handleFilterChange("showMoreFilters", !filters.showMoreFilters)
+              }
+              onShowResults={handleShowResults}
+              moreFiltersVisible={filters.showMoreFilters}
+              activeFiltersCount={getActiveFiltersCount()}
+            />
+          </div>
+        </div>
+
+        {/* Mobile Filter Drawer - Same pattern as vehicles */}
+        <UniversalFilterDrawer
+          isOpen={isMobileDrawerOpen}
+          onClose={() => setIsMobileDrawerOpen(false)}
+          filters={filters}
+          onApplyFilters={handleMobileFiltersApply}
+          resultsCount={0}
+          category="jobs"
+          title="İş Elanları Filtrləri"
         />
       </>
     );

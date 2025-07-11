@@ -5,19 +5,19 @@ import {
   Dropdown,
   FilterButtons,
   RadioGroup2,
-  CheckboxGroup2,
+  CheckboxGroup,
 } from "@/components/ui/forms";
 import { PriceRangeFilter, LocationFilter } from "@/components/shared/filters";
 import {
-  JOB_CATEGORIES,
-  EMPLOYMENT_TYPES,
-  EXPERIENCE_LEVELS,
+  ACTIVITY_FIELDS,
+  WORK_SCHEDULES,
+  WORK_EXPERIENCE,
   EDUCATION_LEVELS,
-  COMPANY_SIZES,
+  JOB_TYPES,
+  COMPANY_TYPES,
   JOB_BENEFITS,
-  WORK_ARRANGEMENTS,
+  WORK_ENVIRONMENT,
 } from "../constants";
-import "../styles/JobsFilters.css";
 
 const JobsFilterDrawer = ({
   isOpen,
@@ -32,23 +32,22 @@ const JobsFilterDrawer = ({
     setLocalFilters((prev) => ({
       ...prev,
       [field]: value,
-      // Reset experience when category changes
-      ...(field === "category" && { experienceLevel: "all" }),
     }));
   };
 
   const handleReset = () => {
     const resetFilters = {
-      category: "all",
-      employmentType: [],
+      activityField: "",
+      workSchedule: "all",
       salaryMin: "",
       salaryMax: "",
+      experience: "all",
+      education: "all",
+      jobType: "all",
+      companyType: "all",
       city: "",
-      experienceLevel: "all",
-      education: [],
-      companySize: "",
-      workArrangement: [],
       benefits: [],
+      workEnvironment: [],
       showMoreFilters: false,
     };
     setLocalFilters(resetFilters);
@@ -66,142 +65,155 @@ const JobsFilterDrawer = ({
       <div className="drawer-overlay" onClick={onClose}></div>
       <div className="drawer-content">
         <div className="drawer-header">
-          <h3>Filtr</h3>
+          <h3>İş Elanları Filtrləri</h3>
           <button className="close-btn" onClick={onClose}>
-            <i className="fas fa-times"></i>
+            <i className="fa-solid fa-times"></i>
           </button>
         </div>
 
         <div className="drawer-body">
-          {/* Basic Filters */}
-          <div className="filter-section">
-            <h4>Əsas filtrlər</h4>
+          {/* Activity Field */}
+          <div className="filter-group">
+            <label>Fəaliyyət sahəsi</label>
+            <Dropdown
+              placeholder="Fəaliyyət sahəsi seçin"
+              options={ACTIVITY_FIELDS}
+              value={localFilters.activityField}
+              onChange={(value) => handleFilterChange("activityField", value)}
+            />
+          </div>
 
-            <div className="filter-group">
-              <label>Kateqoriya</label>
-              <Dropdown
-                options={JOB_CATEGORIES}
-                value={localFilters.category || "all"}
-                onChange={(value) => handleFilterChange("category", value)}
-                placeholder="Kateqoriya"
-              />
-            </div>
+          {/* Work Schedule */}
+          <div className="filter-group">
+            <label>İş qrafiki</label>
+            <Dropdown
+              placeholder="İş qrafiki seçin"
+              options={WORK_SCHEDULES}
+              value={localFilters.workSchedule}
+              onChange={(value) => handleFilterChange("workSchedule", value)}
+            />
+          </div>
 
-            <div className="filter-group">
-              <label>Məşğulluq növü</label>
-              <CheckboxGroup2
-                options={EMPLOYMENT_TYPES}
-                values={localFilters.employmentType || []}
-                onChange={(values) =>
-                  handleFilterChange("employmentType", values)
-                }
-                name="employmentType"
-                layout="vertical"
-              />
-            </div>
+          {/* Salary Range */}
+          <div className="filter-group">
+            <label>Maaş</label>
+            <PriceRangeFilter
+              minValue={localFilters.salaryMin}
+              maxValue={localFilters.salaryMax}
+              onMinChange={(value) => handleFilterChange("salaryMin", value)}
+              onMaxChange={(value) => handleFilterChange("salaryMax", value)}
+              placeholder={{ min: "Min maaş", max: "Max maaş" }}
+              currency="AZN"
+            />
+          </div>
 
-            <div className="filter-group">
-              <label>Maaş</label>
-              <PriceRangeFilter
-                minValue={localFilters.salaryMin || ""}
-                maxValue={localFilters.salaryMax || ""}
-                onMinChange={(value) => handleFilterChange("salaryMin", value)}
-                onMaxChange={(value) => handleFilterChange("salaryMax", value)}
-                currency="AZN"
-              />
-            </div>
+          {/* Location */}
+          <div className="filter-group">
+            <label>Şəhər</label>
+            <LocationFilter
+              value={localFilters.city}
+              onChange={(value) => handleFilterChange("city", value)}
+              placeholder="Şəhər seçin"
+            />
+          </div>
 
-            <div className="filter-group">
-              <label>Şəhər</label>
-              <LocationFilter
-                value={localFilters.city || ""}
-                onChange={(value) => handleFilterChange("city", value)}
-                placeholder="Şəhər"
-              />
-            </div>
+          {/* Experience */}
+          <div className="filter-group">
+            <label>İş təcrübəsi</label>
+            <Dropdown
+              placeholder="İş təcrübəsi seçin"
+              options={WORK_EXPERIENCE}
+              value={localFilters.experience}
+              onChange={(value) => handleFilterChange("experience", value)}
+            />
+          </div>
 
-            <div className="filter-group">
-              <label>Təcrübə</label>
-              <Dropdown
-                options={EXPERIENCE_LEVELS}
-                value={localFilters.experienceLevel || "all"}
-                onChange={(value) =>
-                  handleFilterChange("experienceLevel", value)
-                }
-                placeholder="Təcrübə"
-              />
-            </div>
+          {/* Education */}
+          <div className="filter-group">
+            <label>Təhsil</label>
+            <Dropdown
+              placeholder="Təhsil səviyyəsi seçin"
+              options={EDUCATION_LEVELS}
+              value={localFilters.education}
+              onChange={(value) => handleFilterChange("education", value)}
+            />
+          </div>
+
+          {/* Job Type */}
+          <div className="filter-group">
+            <label>İş növü</label>
+            <Dropdown
+              placeholder="İş növü seçin"
+              options={JOB_TYPES}
+              value={localFilters.jobType}
+              onChange={(value) => handleFilterChange("jobType", value)}
+            />
+          </div>
+
+          {/* Company Type */}
+          <div className="filter-group">
+            <label>Şirkət növü</label>
+            <Dropdown
+              placeholder="Şirkət növü seçin"
+              options={COMPANY_TYPES}
+              value={localFilters.companyType}
+              onChange={(value) => handleFilterChange("companyType", value)}
+            />
+          </div>
+
+          {/* Advanced Filters Toggle */}
+          <div className="filter-group">
+            <button
+              className="toggle-more-filters"
+              onClick={() =>
+                handleFilterChange(
+                  "showMoreFilters",
+                  !localFilters.showMoreFilters
+                )
+              }
+            >
+              {localFilters.showMoreFilters ? "Az filtr" : "Daha çox filtr"}
+            </button>
           </div>
 
           {/* Advanced Filters */}
           {localFilters.showMoreFilters && (
-            <div className="filter-section">
-              <h4>Əlavə filtrlər</h4>
-
+            <>
+              {/* Job Benefits */}
               <div className="filter-group">
-                <label>Təhsil</label>
-                <CheckboxGroup2
-                  options={EDUCATION_LEVELS}
-                  values={localFilters.education || []}
-                  onChange={(values) => handleFilterChange("education", values)}
-                  name="education"
-                  layout="vertical"
-                />
-              </div>
-
-              <div className="filter-group">
-                <label>Şirkət ölçüsü</label>
-                <RadioGroup2
-                  options={COMPANY_SIZES}
-                  value={localFilters.companySize || ""}
-                  onChange={(value) => handleFilterChange("companySize", value)}
-                  name="companySize"
-                  layout="vertical"
-                />
-              </div>
-
-              <div className="filter-group">
-                <label>İş formatı</label>
-                <CheckboxGroup2
-                  options={WORK_ARRANGEMENTS}
-                  values={localFilters.workArrangement || []}
-                  onChange={(values) =>
-                    handleFilterChange("workArrangement", values)
-                  }
-                  name="workArrangement"
-                  layout="vertical"
-                />
-              </div>
-
-              <div className="filter-group">
-                <label>Müavinətlər</label>
-                <CheckboxGroup2
+                <label>Təklif olunan imkanlar</label>
+                <CheckboxGroup
                   options={JOB_BENEFITS}
-                  values={localFilters.benefits || []}
+                  values={localFilters.benefits}
                   onChange={(values) => handleFilterChange("benefits", values)}
                   name="benefits"
                   layout="vertical"
                 />
               </div>
-            </div>
+
+              {/* Work Environment */}
+              <div className="filter-group">
+                <label>İş mühiti</label>
+                <CheckboxGroup
+                  options={WORK_ENVIRONMENT}
+                  values={localFilters.workEnvironment}
+                  onChange={(values) =>
+                    handleFilterChange("workEnvironment", values)
+                  }
+                  name="workEnvironment"
+                  layout="vertical"
+                />
+              </div>
+            </>
           )}
         </div>
 
         <div className="drawer-footer">
           <FilterButtons
             onReset={handleReset}
-            onToggleMoreFilters={() =>
-              handleFilterChange(
-                "showMoreFilters",
-                !localFilters.showMoreFilters
-              )
-            }
-            onShowResults={handleApply}
-            moreFiltersExpanded={localFilters.showMoreFilters}
+            onApply={handleApply}
             resultsCount={resultsCount}
-            resetText="Sıfırla"
-            moreFiltersText="Daha çox filtr"
-            showResultsText="Nəticələri göstər"
+            showResults={true}
           />
         </div>
       </div>
