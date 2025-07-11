@@ -59,6 +59,7 @@ import {
   JOB_BENEFITS,
   WORK_ENVIRONMENT,
 } from "@/components/features/jobs/constants";
+import JobsFilterDrawer from "@/components/features/jobs/filters/JobsFilterDrawer";
 
 const FilterManager = ({ category, onFiltersChange, initialFilters = {} }) => {
   // Map slug to actual category ID for filter components
@@ -818,14 +819,12 @@ const FilterManager = ({ category, onFiltersChange, initialFilters = {} }) => {
         </div>
 
         {/* Mobile Filter Drawer - Same pattern as vehicles */}
-        <UniversalFilterDrawer
+        <JobsFilterDrawer
           isOpen={isMobileDrawerOpen}
           onClose={() => setIsMobileDrawerOpen(false)}
           filters={filters}
           onApplyFilters={handleMobileFiltersApply}
-          resultsCount={0}
-          category="jobs"
-          title="İş Elanları Filtrləri"
+          resultsCount={getActiveFiltersCount()}
         />
       </>
     );
