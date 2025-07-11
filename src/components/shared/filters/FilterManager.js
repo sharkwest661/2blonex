@@ -69,6 +69,11 @@ import {
   PROPERTY_FEATURES,
   METRO_STATIONS,
   DISTRICTS,
+  ROOM_OPTIONS,
+  RENOVATION_CONDITIONS,
+  getMetroStationsForCity,
+  getDistrictsForCity,
+  BUILDING_FEATURES,
 } from "@/components/features/realestate/constants";
 import RealEstateFilterDrawer from "@/components/features/realestate/filters/RealEstateFilterDrawer";
 
@@ -913,18 +918,19 @@ const FilterManager = ({ category, onFiltersChange, initialFilters = {} }) => {
           </button>
         </div>
 
-        {/* Desktop Filters - EXACT Vehicle Structure using PROPER components */}
+        {/* Desktop Filters - EXACT Vehicle Structure */}
         <div className="main_container">
           <div className="desctop_filters">
-            {/* Row 1: Transaction Type, Property Type, Price Range, City - SAME layout as vehicles */}
+            {/* Row 1: Deal Type, Property Type, Price Range, City - SAME as vehicles row 1 */}
             <div className="form-group for_width20 grow-1 order-1">
               <RadioGroup2
-                options={TRANSACTION_TYPES}
-                value={filters.transactionType}
-                onChange={(value) =>
-                  handleFilterChange("transactionType", value)
-                }
-                name="transactionType"
+                options={[
+                  { value: "sale", label: "Alış" },
+                  { value: "rent", label: "Kirayə" },
+                ]}
+                value={filters.dealType || "sale"}
+                onChange={(value) => handleFilterChange("dealType", value)}
+                name="dealType"
                 layout="horizontal"
                 variant="default"
               />
@@ -945,8 +951,9 @@ const FilterManager = ({ category, onFiltersChange, initialFilters = {} }) => {
                 maxValue={filters.priceMax}
                 onMinChange={(value) => handleFilterChange("priceMin", value)}
                 onMaxChange={(value) => handleFilterChange("priceMax", value)}
-                placeholder="Qiymət"
                 currency="AZN"
+                minPlaceholder="Min qiymət"
+                maxPlaceholder="Max qiymət"
               />
             </div>
 
@@ -958,144 +965,191 @@ const FilterManager = ({ category, onFiltersChange, initialFilters = {} }) => {
               />
             </div>
 
-            {/* Row 2: Rooms, Area Range, Floor Range, Renovation - SAME 4-column layout using PROPER components */}
+            {/* Row 2: Rooms, Area Range, Floor Range, Condition - SAME as vehicles row 2 */}
             <div className="form-group for_width20 grow-1 order-5">
               <Dropdown
                 placeholder="Otaq sayı"
-                options={ROOM_COUNTS}
+                options={ROOM_OPTIONS}
                 value={filters.rooms}
                 onChange={(value) => handleFilterChange("rooms", value)}
               />
             </div>
 
-            {/* FIXED: Use proper AreaRangeFilter component like vehicles uses EngineVolumeRangeFilter */}
             <div className="form-group for_width_big grow-1 order-6">
-              <AreaRangeFilter
+              <PriceRangeFilter
                 minValue={filters.areaMin}
                 maxValue={filters.areaMax}
                 onMinChange={(value) => handleFilterChange("areaMin", value)}
                 onMaxChange={(value) => handleFilterChange("areaMax", value)}
-                placeholder="Sahə"
+                currency="m²"
+                minPlaceholder="Min sahə"
+                maxPlaceholder="Max sahə"
               />
             </div>
 
-            {/* FIXED: Use proper FloorRangeFilter component like vehicles uses YearRangeFilter */}
-            <div className="form-group for_width_small grow-1 order-7">
-              <FloorRangeFilter
+            <div className="form-group for_width_big grow-1 order-7">
+              <PriceRangeFilter
                 minValue={filters.floorMin}
-                maxValue={filters.floorMax}
+                maxValue={filters.totalFloors}
                 onMinChange={(value) => handleFilterChange("floorMin", value)}
-                onMaxChange={(value) => handleFilterChange("floorMax", value)}
-                placeholder="Mərtəbə"
+                onMaxChange={(value) =>
+                  handleFilterChange("totalFloors", value)
+                }
+                currency=""
+                minPlaceholder="Mərtəbə"
+                maxPlaceholder="Ümumi mərtəbə"
               />
             </div>
 
             <div className="form-group for_width20 grow-1 order-8">
-              <RadioGroup2
-                options={PROPERTY_CONDITIONS}
-                value={filters.renovation}
-                onChange={(value) => handleFilterChange("renovation", value)}
-                name="renovation"
-                layout="horizontal"
-                variant="default"
+              <Dropdown
+                placeholder="Təmir vəziyyəti"
+                options={RENOVATION_CONDITIONS}
+                value={filters.condition}
+                onChange={(value) => handleFilterChange("condition", value)}
               />
             </div>
 
-            {/* Row 3: Progressive Disclosure - "More Filters" - EXACT same as other categories */}
+            {/* Row 3: Progressive disclosure "More Filters" - EXACT same pattern as vehicles */}
             {filters.showMoreFilters && (
-              <>
-                <div className="more-filters-section">
-                  <div className="more-filters-row">
-                    <div className="form-group for_width20 grow-1 order-9">
-                      <Dropdown
-                        placeholder="Metro stansiyası"
-                        options={METRO_STATIONS}
-                        value={filters.metro}
-                        onChange={(value) => handleFilterChange("metro", value)}
-                      />
-                    </div>
-
-                    <div className="form-group for_width20 grow-1 order-10">
-                      <Dropdown
-                        placeholder="Rayon"
-                        options={DISTRICTS}
-                        value={filters.district}
-                        onChange={(value) =>
-                          handleFilterChange("district", value)
-                        }
-                      />
-                    </div>
-
-                    <div className="form-group for_width20 grow-1 order-11">
-                      <Dropdown
-                        placeholder="İstilik sistemi"
-                        options={HEATING_TYPES}
-                        value={filters.heating}
-                        onChange={(value) =>
-                          handleFilterChange("heating", value)
-                        }
-                      />
-                    </div>
-
-                    <div className="form-group for_width20 grow-1 order-12">
-                      {/* Placeholder for additional filter */}
-                    </div>
+              <div className="form-group for_width_full grow-1 order-9">
+                <div className="additional_chekings_hero">
+                  <div className="additional_chekings_title">
+                    Əlavə filtrlər
                   </div>
-
-                  {/* Property Amenities Section - EXACT same structure as vehicles equipment */}
-                  <div className="additional_chekings_hero order-13">
-                    <h3 className="additional_chekings_title">
-                      Əmlak imkanları
-                    </h3>
-                    <div className="additional_chekings">
-                      <div className="form-group grow-1">
-                        <CheckboxGroup
-                          options={PROPERTY_AMENITIES}
-                          values={filters.amenities}
-                          onChange={(values) =>
-                            handleFilterChange("amenities", values)
+                  <div className="additional_chekings">
+                    {/* Location Hierarchy */}
+                    <div className="advanced-filters-row">
+                      <div className="form-group for_width20">
+                        <Dropdown
+                          placeholder="Metro stansiyası"
+                          options={getMetroStationsForCity(
+                            filters.city || "baku"
+                          )}
+                          value={filters.metro}
+                          onChange={(value) =>
+                            handleFilterChange("metro", value)
                           }
-                          layout="grid"
-                          columns={3}
+                        />
+                      </div>
+                      <div className="form-group for_width20">
+                        <Dropdown
+                          placeholder="Rayon"
+                          options={getDistrictsForCity(filters.city || "baku")}
+                          value={filters.district}
+                          onChange={(value) =>
+                            handleFilterChange("district", value)
+                          }
                         />
                       </div>
                     </div>
-                  </div>
 
-                  {/* Property Features Section - EXACT same structure as vehicles equipment */}
-                  <div className="additional_chekings_hero order-14">
-                    <h3 className="additional_chekings_title">
-                      Əlavə imkanlar
-                    </h3>
-                    <div className="additional_chekings">
-                      <div className="form-group grow-1">
-                        <CheckboxGroup
-                          options={PROPERTY_FEATURES}
-                          values={filters.features}
-                          onChange={(values) =>
-                            handleFilterChange("features", values)
-                          }
-                          layout="grid"
-                          columns={3}
-                        />
+                    {/* Building Type */}
+                    <div className="advanced-filters-row">
+                      <div className="form-group for_width_full">
+                        <div className="condition-filters">
+                          <label className="condition-label">Bina növü</label>
+                          <RadioGroup2
+                            options={[
+                              { value: "all", label: "Hamısı" },
+                              { value: "new", label: "Yeni tikili" },
+                              { value: "old", label: "Köhnə tikili" },
+                            ]}
+                            value={filters.buildingType || "all"}
+                            onChange={(value) =>
+                              handleFilterChange("buildingType", value)
+                            }
+                            name="buildingType"
+                            layout="horizontal"
+                            variant="default"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Property Features */}
+                    <div className="equipment-categories">
+                      <div className="equipment-category">
+                        <div className="equipment-category-title">
+                          Əmlak xüsusiyyətləri
+                        </div>
+                        <div className="checkbox-group-horizontal">
+                          {PROPERTY_AMENITIES.map((amenity) => (
+                            <div
+                              key={amenity.value}
+                              className="checkbox-group-item"
+                            >
+                              <label>
+                                <input
+                                  type="checkbox"
+                                  checked={(filters.amenities || []).includes(
+                                    amenity.value
+                                  )}
+                                  onChange={(e) => {
+                                    const currentAmenities =
+                                      filters.amenities || [];
+                                    const newAmenities = e.target.checked
+                                      ? [...currentAmenities, amenity.value]
+                                      : currentAmenities.filter(
+                                          (item) => item !== amenity.value
+                                        );
+                                    handleFilterChange(
+                                      "amenities",
+                                      newAmenities
+                                    );
+                                  }}
+                                />
+                                {amenity.label}
+                              </label>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="equipment-category">
+                        <div className="equipment-category-title">
+                          Bina xüsusiyyətləri
+                        </div>
+                        <div className="checkbox-group-horizontal">
+                          {BUILDING_FEATURES.map((feature) => (
+                            <div
+                              key={feature.value}
+                              className="checkbox-group-item"
+                            >
+                              <label>
+                                <input
+                                  type="checkbox"
+                                  checked={(
+                                    filters.buildingFeatures || []
+                                  ).includes(feature.value)}
+                                  onChange={(e) => {
+                                    const currentFeatures =
+                                      filters.buildingFeatures || [];
+                                    const newFeatures = e.target.checked
+                                      ? [...currentFeatures, feature.value]
+                                      : currentFeatures.filter(
+                                          (item) => item !== feature.value
+                                        );
+                                    handleFilterChange(
+                                      "buildingFeatures",
+                                      newFeatures
+                                    );
+                                  }}
+                                />
+                                {feature.label}
+                              </label>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </>
+              </div>
             )}
           </div>
 
-          {/* Mobile Bottom Drawer - Real Estate specific */}
-          <RealEstateFilterDrawer
-            isOpen={isMobileDrawerOpen}
-            onClose={() => setIsMobileDrawerOpen(false)}
-            filters={filters}
-            onApplyFilters={handleMobileFiltersApply}
-            resultsCount={0}
-          />
-
-          {/* Row 4: Filter Action Buttons - EXACT same as all other categories */}
+          {/* Filter Action Buttons - OUTSIDE desctop_filters, EXACT same as vehicles */}
           <div className="desc_filters_btns">
             <FilterButtons
               onReset={handleReset}
@@ -1111,6 +1165,15 @@ const FilterManager = ({ category, onFiltersChange, initialFilters = {} }) => {
             />
           </div>
         </div>
+
+        {/* Mobile Bottom Drawer - Real Estate specific */}
+        <RealEstateFilterDrawer
+          isOpen={isMobileDrawerOpen}
+          onClose={() => setIsMobileDrawerOpen(false)}
+          filters={filters}
+          onApplyFilters={handleMobileFiltersApply}
+          resultsCount={0}
+        />
       </>
     );
   }
