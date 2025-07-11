@@ -1010,142 +1010,133 @@ const FilterManager = ({ category, onFiltersChange, initialFilters = {} }) => {
               />
             </div>
 
-            {/* Row 3: Progressive disclosure "More Filters" - EXACT same pattern as vehicles */}
+            {/* Row 3: Progressive disclosure "More Filters" - Each filter gets its own column */}
             {filters.showMoreFilters && (
-              <div className="form-group for_width_full grow-1 order-9">
-                <div className="additional_chekings_hero">
-                  <div className="additional_chekings_title">
-                    Əlavə filtrlər
-                  </div>
-                  <div className="additional_chekings">
-                    {/* Location Hierarchy */}
-                    <div className="advanced-filters-row">
-                      <div className="form-group for_width20">
-                        <Dropdown
-                          placeholder="Metro stansiyası"
-                          options={getMetroStationsForCity(
-                            filters.city || "baku"
-                          )}
-                          value={filters.metro}
-                          onChange={(value) =>
-                            handleFilterChange("metro", value)
-                          }
-                        />
-                      </div>
-                      <div className="form-group for_width20">
-                        <Dropdown
-                          placeholder="Rayon"
-                          options={getDistrictsForCity(filters.city || "baku")}
-                          value={filters.district}
-                          onChange={(value) =>
-                            handleFilterChange("district", value)
-                          }
-                        />
-                      </div>
+              <>
+                {/* Metro Station */}
+                <div className="form-group for_width20 grow-1 order-9">
+                  <Dropdown
+                    placeholder="Metro stansiyası"
+                    options={getMetroStationsForCity(filters.city || "baku")}
+                    value={filters.metro}
+                    onChange={(value) => handleFilterChange("metro", value)}
+                  />
+                </div>
+
+                {/* District */}
+                <div className="form-group for_width20 grow-1 order-10">
+                  <Dropdown
+                    placeholder="Rayon"
+                    options={getDistrictsForCity(filters.city || "baku")}
+                    value={filters.district}
+                    onChange={(value) => handleFilterChange("district", value)}
+                  />
+                </div>
+
+                {/* Building Type */}
+                <div className="form-group for_width20 grow-1 order-11">
+                  <RadioGroup2
+                    options={[
+                      { value: "all", label: "Hamısı" },
+                      { value: "new", label: "Yeni tikili" },
+                      { value: "old", label: "Köhnə tikili" },
+                    ]}
+                    value={filters.buildingType || "all"}
+                    onChange={(value) =>
+                      handleFilterChange("buildingType", value)
+                    }
+                    name="buildingType"
+                    layout="horizontal"
+                    variant="default"
+                  />
+                </div>
+
+                {/* Property Features - Full width row */}
+                <div className="form-group for_width_full grow-1 order-12">
+                  <div className="additional_chekings_hero">
+                    <div className="additional_chekings_title">
+                      Əmlak xüsusiyyətləri
                     </div>
+                    <div className="additional_chekings">
+                      <div className="equipment-categories">
+                        <div className="equipment-category">
+                          <div className="equipment-category-title">
+                            Əmlak xüsusiyyətləri
+                          </div>
+                          <div className="checkbox-group-horizontal">
+                            {PROPERTY_AMENITIES.map((amenity) => (
+                              <div
+                                key={amenity.value}
+                                className="checkbox-group-item"
+                              >
+                                <label>
+                                  <input
+                                    type="checkbox"
+                                    checked={(filters.amenities || []).includes(
+                                      amenity.value
+                                    )}
+                                    onChange={(e) => {
+                                      const currentAmenities =
+                                        filters.amenities || [];
+                                      const newAmenities = e.target.checked
+                                        ? [...currentAmenities, amenity.value]
+                                        : currentAmenities.filter(
+                                            (item) => item !== amenity.value
+                                          );
+                                      handleFilterChange(
+                                        "amenities",
+                                        newAmenities
+                                      );
+                                    }}
+                                  />
+                                  {amenity.label}
+                                </label>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
 
-                    {/* Building Type */}
-                    <div className="advanced-filters-row">
-                      <div className="form-group for_width_full">
-                        <div className="condition-filters">
-                          <label className="condition-label">Bina növü</label>
-                          <RadioGroup2
-                            options={[
-                              { value: "all", label: "Hamısı" },
-                              { value: "new", label: "Yeni tikili" },
-                              { value: "old", label: "Köhnə tikili" },
-                            ]}
-                            value={filters.buildingType || "all"}
-                            onChange={(value) =>
-                              handleFilterChange("buildingType", value)
-                            }
-                            name="buildingType"
-                            layout="horizontal"
-                            variant="default"
-                          />
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Property Features */}
-                    <div className="equipment-categories">
-                      <div className="equipment-category">
-                        <div className="equipment-category-title">
-                          Əmlak xüsusiyyətləri
-                        </div>
-                        <div className="checkbox-group-horizontal">
-                          {PROPERTY_AMENITIES.map((amenity) => (
-                            <div
-                              key={amenity.value}
-                              className="checkbox-group-item"
-                            >
-                              <label>
-                                <input
-                                  type="checkbox"
-                                  checked={(filters.amenities || []).includes(
-                                    amenity.value
-                                  )}
-                                  onChange={(e) => {
-                                    const currentAmenities =
-                                      filters.amenities || [];
-                                    const newAmenities = e.target.checked
-                                      ? [...currentAmenities, amenity.value]
-                                      : currentAmenities.filter(
-                                          (item) => item !== amenity.value
-                                        );
-                                    handleFilterChange(
-                                      "amenities",
-                                      newAmenities
-                                    );
-                                  }}
-                                />
-                                {amenity.label}
-                              </label>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-
-                      <div className="equipment-category">
-                        <div className="equipment-category-title">
-                          Bina xüsusiyyətləri
-                        </div>
-                        <div className="checkbox-group-horizontal">
-                          {BUILDING_FEATURES.map((feature) => (
-                            <div
-                              key={feature.value}
-                              className="checkbox-group-item"
-                            >
-                              <label>
-                                <input
-                                  type="checkbox"
-                                  checked={(
-                                    filters.buildingFeatures || []
-                                  ).includes(feature.value)}
-                                  onChange={(e) => {
-                                    const currentFeatures =
-                                      filters.buildingFeatures || [];
-                                    const newFeatures = e.target.checked
-                                      ? [...currentFeatures, feature.value]
-                                      : currentFeatures.filter(
-                                          (item) => item !== feature.value
-                                        );
-                                    handleFilterChange(
-                                      "buildingFeatures",
-                                      newFeatures
-                                    );
-                                  }}
-                                />
-                                {feature.label}
-                              </label>
-                            </div>
-                          ))}
+                        <div className="equipment-category">
+                          <div className="equipment-category-title">
+                            Bina xüsusiyyətləri
+                          </div>
+                          <div className="checkbox-group-horizontal">
+                            {BUILDING_FEATURES.map((feature) => (
+                              <div
+                                key={feature.value}
+                                className="checkbox-group-item"
+                              >
+                                <label>
+                                  <input
+                                    type="checkbox"
+                                    checked={(
+                                      filters.buildingFeatures || []
+                                    ).includes(feature.value)}
+                                    onChange={(e) => {
+                                      const currentFeatures =
+                                        filters.buildingFeatures || [];
+                                      const newFeatures = e.target.checked
+                                        ? [...currentFeatures, feature.value]
+                                        : currentFeatures.filter(
+                                            (item) => item !== feature.value
+                                          );
+                                      handleFilterChange(
+                                        "buildingFeatures",
+                                        newFeatures
+                                      );
+                                    }}
+                                  />
+                                  {feature.label}
+                                </label>
+                              </div>
+                            ))}
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              </>
             )}
           </div>
 
