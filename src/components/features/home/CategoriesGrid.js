@@ -16,7 +16,7 @@ const CategoriesGrid = () => {
       name: "Nəqliyyat",
     },
     {
-      href: "/dasinmaz-emlak",
+      href: "/emlak",
       icon: "img/category-icons/bolbol_icons_daşınmaz_əmlak.svg",
       name: "Daşınmaz Əmlak",
     },

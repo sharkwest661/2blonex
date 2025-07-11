@@ -2239,3 +2239,240 @@
     color: white;
   }
 }
+
+/* Add this CSS to your FilterManager.css or main CSS file to fix Real Estate styling */
+
+/* ===== REAL ESTATE SPECIFIC STYLING ===== */
+
+/* Range Filter Styling - Match other categories */
+.range-filter-wrapper {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  position: relative;
+}
+
+.range-inputs {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.range-input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  background: #fff;
+  transition: border-color 0.2s ease;
+}
+
+.range-input:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.range-input::placeholder {
+  color: #999;
+  font-size: 13px;
+}
+
+.range-separator {
+  margin: 0 8px;
+  color: #666;
+  font-weight: 500;
+}
+
+.range-unit {
+  margin-left: 8px;
+  font-size: 12px;
+  color: #666;
+  font-weight: 500;
+}
+
+/* Property Type Carousel - Real Estate Specific */
+.emlak_checks_carusel {
+  display: flex;
+  overflow-x: auto;
+  gap: 12px;
+  padding: 15px 0;
+  margin-bottom: 10px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+.emlak_checks_carusel::-webkit-scrollbar {
+  height: 4px;
+}
+
+.emlak_checks_carusel::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 2px;
+}
+
+.emlak_checks_carusel::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 2px;
+}
+
+.property-type-card {
+  flex: 0 0 auto;
+  min-width: 85px;
+  padding: 12px 8px;
+  text-align: center;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.property-type-card.active {
+  border-color: #007bff;
+  background: #f0f8ff;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 123, 255, 0.2);
+}
+
+.property-type-card:hover {
+  border-color: #007bff;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.property-type-icon {
+  font-size: 24px;
+  margin-bottom: 6px;
+  display: block;
+  line-height: 1;
+}
+
+.property-type-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #333;
+  line-height: 1.2;
+}
+
+.property-type-card.active .property-type-label {
+  color: #007bff;
+}
+
+/* Mobile Range Filter Styling */
+.filter-range-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.filter-range-input {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  background: #fff;
+  transition: border-color 0.2s ease;
+}
+
+.filter-range-input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.filter-range-input::placeholder {
+  color: #999;
+}
+
+/* Ensure mobile filter items have proper spacing */
+.mobile-filter-item h4 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+/* Transaction Type Radio Buttons - Match other categories */
+.filter-radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.filter-radio-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  cursor: pointer;
+}
+
+.filter-radio-item input[type="radio"] {
+  margin: 0;
+  transform: scale(1.2);
+  accent-color: #007bff;
+}
+
+.filter-radio-label {
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+}
+
+/* Desktop form group styling consistency */
+.form-group .range-filter-wrapper {
+  height: 40px; /* Match other form controls */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .property-type-card {
+    min-width: 75px;
+    padding: 10px 6px;
+  }
+
+  .property-type-icon {
+    font-size: 20px;
+    margin-bottom: 4px;
+  }
+
+  .property-type-label {
+    font-size: 10px;
+  }
+
+  .range-filter-group {
+    gap: 8px;
+  }
+
+  .filter-range-input {
+    padding: 10px;
+    font-size: 13px;
+  }
+}
+
+/* Ensure consistency with other category styling */
+.desctop_filters .form-group .range-filter-wrapper {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+}
+
+.desctop_filters .form-group .range-input {
+  border: none;
+  padding: 0;
+  background: transparent;
+}
+
+.desctop_filters .form-group .range-input:focus {
+  border: none;
+  box-shadow: none;
+}

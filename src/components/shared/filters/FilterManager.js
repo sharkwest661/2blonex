@@ -46,9 +46,6 @@ import {
   SCREEN_SIZES,
   CONNECTIVITY_OPTIONS,
 } from "@/components/features/electronics/constants";
-
-// Add these imports to the top of FilterManager.js after the existing imports:
-
 import {
   ACTIVITY_FIELDS,
   WORK_SCHEDULES,
@@ -60,6 +57,25 @@ import {
   WORK_ENVIRONMENT,
 } from "@/components/features/jobs/constants";
 import JobsFilterDrawer from "@/components/features/jobs/filters/JobsFilterDrawer";
+import { AreaRangeFilter, FloorRangeFilter } from "@/components/shared/filters";
+
+import {
+  PROPERTY_TYPES,
+  TRANSACTION_TYPES,
+  ROOM_COUNTS,
+  PROPERTY_CONDITIONS,
+  HEATING_TYPES,
+  PROPERTY_AMENITIES,
+  PROPERTY_FEATURES,
+  METRO_STATIONS,
+  DISTRICTS,
+  ROOM_OPTIONS,
+  RENOVATION_CONDITIONS,
+  getMetroStationsForCity,
+  getDistrictsForCity,
+  BUILDING_FEATURES,
+} from "@/components/features/realestate/constants";
+import RealEstateFilterDrawer from "@/components/features/realestate/filters/RealEstateFilterDrawer";
 
 const FilterManager = ({ category, onFiltersChange, initialFilters = {} }) => {
   // Map slug to actual category ID for filter components
@@ -116,6 +132,21 @@ const FilterManager = ({ category, onFiltersChange, initialFilters = {} }) => {
     benefits: [],
     workEnvironment: [],
 
+    // Real Estate filters
+    transactionType: "sale",
+    propertyType: "",
+    rooms: "",
+    areaMin: "",
+    areaMax: "",
+    floorMin: "",
+    floorMax: "",
+    renovation: "all",
+    metro: "",
+    district: "",
+    heating: "",
+    amenities: [],
+    features: [],
+
     // Common
     showMoreFilters: false,
     ...initialFilters,
@@ -137,6 +168,7 @@ const FilterManager = ({ category, onFiltersChange, initialFilters = {} }) => {
 
   const handleReset = () => {
     const resetFilters = {
+      // Vehicle filters
       brand: "",
       model: "",
       priceMin: "",
@@ -159,11 +191,47 @@ const FilterManager = ({ category, onFiltersChange, initialFilters = {} }) => {
       powerMax: "",
       paymentOptions: [],
       equipment: [],
+
+      // Electronics filters
+      category: "",
+      storage: [],
+      ram: [],
+      os: "",
+      screenSize: [],
+      connectivity: [],
+
+      // Jobs filters
+      activityField: "",
+      workSchedule: "all",
+      salaryMin: "",
+      salaryMax: "",
+      experience: "all",
+      education: "all",
+      jobType: "all",
+      companyType: "all",
+      benefits: [],
+      workEnvironment: [],
+
+      // Real Estate filters
+      transactionType: "sale",
+      propertyType: "",
+      rooms: "",
+      areaMin: "",
+      areaMax: "",
+      floorMin: "",
+      floorMax: "",
+      renovation: "all",
+      metro: "",
+      district: "",
+      heating: "",
+      amenities: [],
+      features: [],
+
+      // Common
       showMoreFilters: false,
     };
     setFilters(resetFilters);
   };
-
   const handleShowResults = () => {
     console.log("Showing results with filters:", filters);
     // TODO: Implement actual filtering/search logic
@@ -825,6 +893,277 @@ const FilterManager = ({ category, onFiltersChange, initialFilters = {} }) => {
           filters={filters}
           onApplyFilters={handleMobileFiltersApply}
           resultsCount={getActiveFiltersCount()}
+        />
+      </>
+    );
+  }
+
+  // Real Estate category - EXACT same structure as vehicles/electronics/jobs
+  if (actualCategory === "realestate") {
+    return (
+      <>
+        {/* Mobile Filter Button - EXACT same as vehicles */}
+        <div className="mobile-filter-trigger">
+          <button
+            className="mobile-filter-btn"
+            onClick={() => setIsMobileDrawerOpen(true)}
+          >
+            <i className="fa-solid fa-filter"></i>
+            <span>Filter</span>
+            {getActiveFiltersCount() > 0 && (
+              <span className="filter-count-badge">
+                {getActiveFiltersCount()}
+              </span>
+            )}
+          </button>
+        </div>
+
+        {/* Desktop Filters - EXACT Vehicle Structure */}
+        <div className="main_container">
+          <div className="desctop_filters">
+            {/* Row 1: Deal Type, Property Type, Price Range, City - SAME as vehicles row 1 */}
+            <div className="form-group for_width20 grow-1 order-1">
+              <RadioGroup2
+                options={[
+                  { value: "sale", label: "Alış" },
+                  { value: "rent", label: "Kirayə" },
+                ]}
+                value={filters.dealType || "sale"}
+                onChange={(value) => handleFilterChange("dealType", value)}
+                name="dealType"
+                layout="horizontal"
+                variant="default"
+              />
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-2">
+              <Dropdown
+                placeholder="Əmlak növü"
+                options={PROPERTY_TYPES}
+                value={filters.propertyType}
+                onChange={(value) => handleFilterChange("propertyType", value)}
+              />
+            </div>
+
+            <div className="form-group for_width_big grow-1 order-3">
+              <PriceRangeFilter
+                minValue={filters.priceMin}
+                maxValue={filters.priceMax}
+                onMinChange={(value) => handleFilterChange("priceMin", value)}
+                onMaxChange={(value) => handleFilterChange("priceMax", value)}
+                currency="AZN"
+                minPlaceholder="Min qiymət"
+                maxPlaceholder="Max qiymət"
+              />
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-4">
+              <LocationFilter
+                value={filters.city}
+                onChange={(value) => handleFilterChange("city", value)}
+                placeholder="Şəhər"
+              />
+            </div>
+
+            {/* Row 2: Rooms, Area Range, Floor Range, Condition - SAME as vehicles row 2 */}
+            <div className="form-group for_width20 grow-1 order-5">
+              <Dropdown
+                placeholder="Otaq sayı"
+                options={ROOM_OPTIONS}
+                value={filters.rooms}
+                onChange={(value) => handleFilterChange("rooms", value)}
+              />
+            </div>
+
+            <div className="form-group for_width_big grow-1 order-6">
+              <PriceRangeFilter
+                minValue={filters.areaMin}
+                maxValue={filters.areaMax}
+                onMinChange={(value) => handleFilterChange("areaMin", value)}
+                onMaxChange={(value) => handleFilterChange("areaMax", value)}
+                currency="m²"
+                minPlaceholder="Min sahə"
+                maxPlaceholder="Max sahə"
+              />
+            </div>
+
+            <div className="form-group for_width_big grow-1 order-7">
+              <PriceRangeFilter
+                minValue={filters.floorMin}
+                maxValue={filters.totalFloors}
+                onMinChange={(value) => handleFilterChange("floorMin", value)}
+                onMaxChange={(value) =>
+                  handleFilterChange("totalFloors", value)
+                }
+                currency=""
+                minPlaceholder="Mərtəbə"
+                maxPlaceholder="Ümumi mərtəbə"
+              />
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-8">
+              <Dropdown
+                placeholder="Təmir vəziyyəti"
+                options={RENOVATION_CONDITIONS}
+                value={filters.condition}
+                onChange={(value) => handleFilterChange("condition", value)}
+              />
+            </div>
+
+            {/* Row 3: Progressive disclosure "More Filters" - Each filter gets its own column */}
+            {filters.showMoreFilters && (
+              <>
+                {/* Metro Station */}
+                <div className="form-group for_width20 grow-1 order-9">
+                  <Dropdown
+                    placeholder="Metro stansiyası"
+                    options={getMetroStationsForCity(filters.city || "baku")}
+                    value={filters.metro}
+                    onChange={(value) => handleFilterChange("metro", value)}
+                  />
+                </div>
+
+                {/* District */}
+                <div className="form-group for_width20 grow-1 order-10">
+                  <Dropdown
+                    placeholder="Rayon"
+                    options={getDistrictsForCity(filters.city || "baku")}
+                    value={filters.district}
+                    onChange={(value) => handleFilterChange("district", value)}
+                  />
+                </div>
+
+                {/* Building Type */}
+                <div className="form-group for_width20 grow-1 order-11">
+                  <RadioGroup2
+                    options={[
+                      { value: "all", label: "Hamısı" },
+                      { value: "new", label: "Yeni tikili" },
+                      { value: "old", label: "Köhnə tikili" },
+                    ]}
+                    value={filters.buildingType || "all"}
+                    onChange={(value) =>
+                      handleFilterChange("buildingType", value)
+                    }
+                    name="buildingType"
+                    layout="horizontal"
+                    variant="default"
+                  />
+                </div>
+
+                {/* Property Features - Full width row */}
+                <div className="form-group for_width_full grow-1 order-12">
+                  <div className="additional_chekings_hero">
+                    <div className="additional_chekings_title">
+                      Əmlak xüsusiyyətləri
+                    </div>
+                    <div className="additional_chekings">
+                      <div className="equipment-categories">
+                        <div className="equipment-category">
+                          <div className="equipment-category-title">
+                            Əmlak xüsusiyyətləri
+                          </div>
+                          <div className="checkbox-group-horizontal">
+                            {PROPERTY_AMENITIES.map((amenity) => (
+                              <div
+                                key={amenity.value}
+                                className="checkbox-group-item"
+                              >
+                                <label>
+                                  <input
+                                    type="checkbox"
+                                    checked={(filters.amenities || []).includes(
+                                      amenity.value
+                                    )}
+                                    onChange={(e) => {
+                                      const currentAmenities =
+                                        filters.amenities || [];
+                                      const newAmenities = e.target.checked
+                                        ? [...currentAmenities, amenity.value]
+                                        : currentAmenities.filter(
+                                            (item) => item !== amenity.value
+                                          );
+                                      handleFilterChange(
+                                        "amenities",
+                                        newAmenities
+                                      );
+                                    }}
+                                  />
+                                  {amenity.label}
+                                </label>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div className="equipment-category">
+                          <div className="equipment-category-title">
+                            Bina xüsusiyyətləri
+                          </div>
+                          <div className="checkbox-group-horizontal">
+                            {BUILDING_FEATURES.map((feature) => (
+                              <div
+                                key={feature.value}
+                                className="checkbox-group-item"
+                              >
+                                <label>
+                                  <input
+                                    type="checkbox"
+                                    checked={(
+                                      filters.buildingFeatures || []
+                                    ).includes(feature.value)}
+                                    onChange={(e) => {
+                                      const currentFeatures =
+                                        filters.buildingFeatures || [];
+                                      const newFeatures = e.target.checked
+                                        ? [...currentFeatures, feature.value]
+                                        : currentFeatures.filter(
+                                            (item) => item !== feature.value
+                                          );
+                                      handleFilterChange(
+                                        "buildingFeatures",
+                                        newFeatures
+                                      );
+                                    }}
+                                  />
+                                  {feature.label}
+                                </label>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* Filter Action Buttons - OUTSIDE desctop_filters, EXACT same as vehicles */}
+          <div className="desc_filters_btns">
+            <FilterButtons
+              onReset={handleReset}
+              onToggleMoreFilters={() =>
+                handleFilterChange("showMoreFilters", !filters.showMoreFilters)
+              }
+              onShowResults={handleShowResults}
+              moreFiltersExpanded={filters.showMoreFilters}
+              resultsCount={0}
+              resetText="Sıfırla"
+              moreFiltersText="Daha çox filtr"
+              showResultsText="Elanları göstər"
+            />
+          </div>
+        </div>
+
+        {/* Mobile Bottom Drawer - Real Estate specific */}
+        <RealEstateFilterDrawer
+          isOpen={isMobileDrawerOpen}
+          onClose={() => setIsMobileDrawerOpen(false)}
+          filters={filters}
+          onApplyFilters={handleMobileFiltersApply}
+          resultsCount={0}
         />
       </>
     );
