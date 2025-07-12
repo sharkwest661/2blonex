@@ -149,7 +149,7 @@ export const CATEGORIES = [
     ],
   },
   {
-    id: "children",
+    id: "kids",
     name: "Uşaq aləmi",
     slug: "usaq-alemi",
     icon: "https://bolbol.az/media/2021/08/04/categories/Group_9638_1.svg",

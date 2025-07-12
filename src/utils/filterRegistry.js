@@ -1,110 +1,79 @@
-// src/utils/filterRegistry.js
-import { CATEGORIES } from "./constants";
+// src/utils/filterRegistry.js - COMPLETE UPDATE
 
-// Mapping from URL slugs to filter category IDs
-const SLUG_TO_CATEGORY_MAPPING = {
+/**
+ * Complete filter registry with all 14 categories
+ */
+
+// Category slug to internal ID mapping
+const CATEGORY_MAPPING = {
+  // ✅ Completed Categories
   neqliyyat: "vehicles",
   emlak: "realestate",
-  elektronika: "electronics",
   "is-elanlari": "jobs",
+  elektronika: "electronics",
+  geyim: "clothing",
+
+  // 🚀 NEW Categories to implement today
   xidmetler: "services",
-  geyim: "clothing", // ADD THIS LINE
-  // Add more mappings as needed
+  "usaq-alemi": "kids",
+  kosmetika: "cosmetics",
+  "ev-ve-bag": "home-garden",
+  erzaq: "food",
+  heyvanlar: "animals",
+  "idman-hobbi": "sports",
+  diger: "other",
+  pulsuz: "free",
+
+  vehicles: "vehicles", // For direct access
+  realestate: "realestate",
+  jobs: "jobs",
+  electronics: "electronics",
+  clothing: "clothing",
+  services: "services",
+  kids: "kids",
+  cosmetics: "cosmetics",
+  "home-garden": "home-garden",
+  food: "food",
+  animals: "animals",
+  sports: "sports",
+  other: "other",
+  free: "free",
 };
 
 /**
- * Maps URL slug to internal category ID for filter components
- * @param {string} slug - URL slug (e.g., "neqliyyat")
- * @returns {string} - Internal category ID (e.g., "vehicles")
+ * Convert category slug to internal category ID
+ * @param {string} slug - URL slug (e.g., "neqliyyat", "xidmetler")
+ * @returns {string} - Internal category ID (e.g., "vehicles", "services")
  */
 export const getFilterCategoryId = (slug) => {
-  return SLUG_TO_CATEGORY_MAPPING[slug] || slug;
+  return CATEGORY_MAPPING[slug]; // Default fallback
 };
 
 /**
- * Get category configuration by slug
- * @param {string} slug - URL slug
- * @returns {object} - Category configuration
+ * Get all valid category slugs
+ * @returns {string[]} - Array of valid slugs for routing
  */
-export const getCategoryConfig = (slug) => {
-  const category = getCategoryBySlug(slug);
-  if (!category) return null;
-
-  return {
-    ...category,
-    filterCategoryId: getFilterCategoryId(slug),
-  };
+export const getValidCategorySlugs = () => {
+  return Object.keys(CATEGORY_MAPPING);
 };
 
 /**
- * Find category by slug
- * @param {string} slug - URL slug
- * @returns {object|null} - Category object or null
+ * Check if a category slug is valid
+ * @param {string} slug - Category slug to validate
+ * @returns {boolean} - Whether slug is valid
  */
-export const getCategoryBySlug = (slug) => {
-  return CATEGORIES.find((category) => category.slug === slug) || null;
+export const isValidCategorySlug = (slug) => {
+  return CATEGORY_MAPPING.hasOwnProperty(slug);
 };
 
 /**
- * Get typing keywords for search section based on category
- * @param {string} category - Category slug or ID
- * @returns {array} - Array of typing keywords
- */
-export const getCategoryTypingKeywords = (category) => {
-  const keywords = {
-    vehicles: [
-      "Mercedes E220",
-      "BMW X5",
-      "Toyota Camry",
-      "Hyundai Elantra",
-      "Kia Sportage",
-      "VAZ 2107",
-    ],
-    electronics: [
-      "iPhone 15 Pro",
-      "Samsung Galaxy S24",
-      "MacBook Pro",
-      "PlayStation 5",
-      "AirPods Pro",
-      "Dell XPS",
-    ],
-    realestate: [
-      "3 otaqlı mənzil",
-      "Villa satılır",
-      "Ofis icarəsi",
-      "Yasamal rayonu",
-      "Binəqədi villa",
-      "Sabunçu torpaq",
-    ],
-    jobs: [
-      "Frontend developer",
-      "Satış meneceri",
-      "Mühasib vakansiya",
-      "İnsan resursları",
-      "Marketinq mütəxəssisi",
-      "İT mühəndis",
-    ],
-    services: [
-      "Təmizlik xidməti",
-      "Avtomobil təmiri",
-      "İngiliscə dərsi",
-      "Fotoqraf xidməti",
-      "Məsləhət xidməti",
-      "Texniki dəstək",
-    ],
-  };
-
-  const categoryId = getFilterCategoryId(category);
-  return keywords[categoryId] || keywords.vehicles;
-};
-
-/**
- * Get metadata for category pages
+ * Get category metadata for SEO and breadcrumbs
  * @param {string} category - Category slug or ID
  * @returns {object} - Metadata object
  */
 export const getCategoryMetadata = (category) => {
   const metadata = {
+    // ✅ Existing Categories
     vehicles: {
       title: "Nəqliyyat - Avtomobil alqı-satqısı",
       description:
@@ -112,15 +81,6 @@ export const getCategoryMetadata = (category) => {
       breadcrumbs: [
         { label: "Ana səhifə", href: "/" },
         { label: "Nəqliyyat", href: "/neqliyyat" },
-      ],
-    },
-    electronics: {
-      title: "Elektronika - Telefon, kompüter, texnika",
-      description:
-        "Telefon, kompüter, texnika və elektronika elanları Azərbaycanda",
-      breadcrumbs: [
-        { label: "Ana səhifə", href: "/" },
-        { label: "Elektronika", href: "/elektronika" },
       ],
     },
     realestate: {
@@ -140,6 +100,25 @@ export const getCategoryMetadata = (category) => {
         { label: "İş elanları", href: "/is-elanlari" },
       ],
     },
+    electronics: {
+      title: "Elektronika - Telefon, kompüter, texnika",
+      description:
+        "Telefon, kompüter, texnika və elektronika elanları Azərbaycanda",
+      breadcrumbs: [
+        { label: "Ana səhifə", href: "/" },
+        { label: "Elektronika", href: "/elektronika" },
+      ],
+    },
+    clothing: {
+      title: "Geyim - Kişi, qadın və uşaq geyimləri",
+      description: "Kişi, qadın və uşaq geyimləri, ayaqqabı və aksesuarlar",
+      breadcrumbs: [
+        { label: "Ana səhifə", href: "/" },
+        { label: "Geyim", href: "/geyim" },
+      ],
+    },
+
+    // 🚀 NEW Categories
     services: {
       title: "Xidmətlər - Müxtəlif xidmət növləri",
       description:
@@ -149,10 +128,263 @@ export const getCategoryMetadata = (category) => {
         { label: "Xidmətlər", href: "/xidmetler" },
       ],
     },
+    kids: {
+      title: "Uşaq aləmi - Oyuncaq, geyim, mebel",
+      description:
+        "Uşaq oyuncaqları, geyimləri, mebelləri və digər uşaq məhsulları",
+      breadcrumbs: [
+        { label: "Ana səhifə", href: "/" },
+        { label: "Uşaq aləmi", href: "/usaq-alemi" },
+      ],
+    },
+    cosmetics: {
+      title: "Kosmetika - Gözəllik və baxım məhsulları",
+      description: "Kosmetika, parfümeriya və şəxsi baxım məhsulları",
+      breadcrumbs: [
+        { label: "Ana səhifə", href: "/" },
+        { label: "Kosmetika", href: "/kosmetika" },
+      ],
+    },
+    "home-garden": {
+      title: "Ev və bağ - Mebel, texnika, bağ ləvazimatı",
+      description:
+        "Ev mebelləri, texnikası, bağ ləvazimatları və ev üçün hər şey",
+      breadcrumbs: [
+        { label: "Ana səhifə", href: "/" },
+        { label: "Ev və bağ", href: "/ev-ve-bag" },
+      ],
+    },
+    food: {
+      title: "Ərzaq - Qida məhsulları",
+      description: "Təzə məhsullar, konservlər və digər qida məhsulları",
+      breadcrumbs: [
+        { label: "Ana səhifə", href: "/" },
+        { label: "Ərzaq", href: "/erzaq" },
+      ],
+    },
+    animals: {
+      title: "Heyvanlar - Ev heyvanları və ləvazimatlar",
+      description: "Ev heyvanları, heyvan ləvazimatları və baxım məhsulları",
+      breadcrumbs: [
+        { label: "Ana səhifə", href: "/" },
+        { label: "Heyvanlar", href: "/heyvanlar" },
+      ],
+    },
+    sports: {
+      title: "İdman və hobbi - İdman ləvazimatı və hobbi",
+      description:
+        "İdman ləvazimatları, fitness avadanlıqları və hobbi məhsulları",
+      breadcrumbs: [
+        { label: "Ana səhifə", href: "/" },
+        { label: "İdman və hobbi", href: "/idman-hobbi" },
+      ],
+    },
+    other: {
+      title: "Digər - Müxtəlif məhsullar",
+      description: "Digər kateqoriyalara aid olmayan müxtəlif məhsullar",
+      breadcrumbs: [
+        { label: "Ana səhifə", href: "/" },
+        { label: "Digər", href: "/diger" },
+      ],
+    },
+    free: {
+      title: "Pulsuz - Pulsuz elanlar",
+      description: "Pulsuz verilən məhsullar və xidmətlər",
+      breadcrumbs: [
+        { label: "Ana səhifə", href: "/" },
+        { label: "Pulsuz", href: "/pulsuz" },
+      ],
+    },
   };
 
   const categoryId = getFilterCategoryId(category);
   return metadata[categoryId] || metadata.vehicles;
+};
+
+// Update your getDefaultFilters function in FilterManager.js:
+// const getDefaultFilters = (category) => {
+//   const categoryId = getFilterCategoryId(category);
+
+//   // Import from registry
+//   return getDefaultFilters(categoryId);
+// };
+
+// OR if you prefer to keep it simple, replace with this static version:
+export const getDefaultFilters = (category) => {
+  const categoryId = getFilterCategoryId(category);
+
+  const defaults = {
+    vehicles: {
+      brand: "",
+      model: "",
+      priceMin: "",
+      priceMax: "",
+      city: "",
+      color: "",
+      fuel: "",
+      bodyType: "",
+      yearMin: "",
+      yearMax: "",
+      transmission: "",
+      condition: "",
+      mileageMax: "",
+      engineVolumeMin: "",
+      engineVolumeMax: "",
+      equipment: [],
+      showMoreFilters: false,
+    },
+    electronics: {
+      itemType: "",
+      brand: "",
+      priceMin: "",
+      priceMax: "",
+      city: "",
+      condition: "",
+      category: "",
+      specifications: "",
+      warranty: "",
+      showMoreFilters: false,
+    },
+    jobs: {
+      activityField: "",
+      workSchedule: "",
+      salaryMin: "",
+      salaryMax: "",
+      city: "",
+      experience: "",
+      education: "",
+      jobType: "",
+      benefits: "",
+      showMoreFilters: false,
+    },
+    clothing: {
+      clothingType: "",
+      brand: "",
+      priceMin: "",
+      priceMax: "",
+      city: "",
+      size: "",
+      color: "",
+      condition: "",
+      gender: "",
+      material: "",
+      season: "",
+      delivery: "",
+      showMoreFilters: false,
+    },
+    realestate: {
+      propertyType: "",
+      transactionType: "",
+      priceMin: "",
+      priceMax: "",
+      city: "",
+      rooms: "",
+      area: "",
+      condition: "",
+      floor: "",
+      totalFloors: "",
+      features: [],
+      showMoreFilters: false,
+    },
+    services: {
+      serviceType: "",
+      serviceCategory: "",
+      priceMin: "",
+      priceMax: "",
+      city: "",
+      experience: "",
+      availability: "",
+      schedule: "",
+      serviceArea: "",
+      showMoreFilters: false,
+    },
+    kids: {
+      productType: "",
+      brand: "",
+      priceMin: "",
+      priceMax: "",
+      city: "",
+      ageGroup: "",
+      condition: "",
+      gender: "",
+      category: "",
+      size: "",
+      showMoreFilters: false,
+    },
+    cosmetics: {
+      productType: "",
+      brand: "",
+      priceMin: "",
+      priceMax: "",
+      city: "",
+      condition: "",
+      category: "",
+      skinType: "",
+      size: "",
+      showMoreFilters: false,
+    },
+    "home-garden": {
+      productType: "",
+      brand: "",
+      priceMin: "",
+      priceMax: "",
+      city: "",
+      condition: "",
+      category: "",
+      room: "",
+      material: "",
+      showMoreFilters: false,
+    },
+    food: {
+      category: "",
+      priceMin: "",
+      priceMax: "",
+      city: "",
+      condition: "",
+      showMoreFilters: false,
+    },
+    animals: {
+      animalType: "",
+      breed: "",
+      priceMin: "",
+      priceMax: "",
+      city: "",
+      age: "",
+      gender: "",
+      condition: "",
+      purpose: "",
+      category: "",
+      showMoreFilters: false,
+    },
+    sports: {
+      sportCategory: "",
+      productType: "",
+      brand: "",
+      priceMin: "",
+      priceMax: "",
+      city: "",
+      condition: "",
+      size: "",
+      sportType: "",
+      showMoreFilters: false,
+    },
+    other: {
+      category: "",
+      priceMin: "",
+      priceMax: "",
+      city: "",
+      condition: "",
+      showMoreFilters: false,
+    },
+    free: {
+      category: "",
+      city: "",
+      condition: "",
+      showMoreFilters: false,
+    },
+  };
+
+  return defaults[categoryId] || defaults.vehicles;
 };
 
 /**
@@ -163,161 +395,88 @@ export const getCategoryMetadata = (category) => {
 export const hasAdvancedFilters = (category) => {
   const categoryId = getFilterCategoryId(category);
 
-  // Categories with advanced/complex filtering
-  const advancedCategories = ["vehicles", "realestate", "electronics"];
+  // Categories with complex filtering (Template A + Vehicles/Real Estate)
+  const advancedCategories = [
+    "vehicles",
+    "realestate",
+    "electronics",
+    "clothing",
+    "services",
+    "kids",
+    "cosmetics",
+    "home-garden",
+    "animals",
+    "sports",
+  ];
 
   return advancedCategories.includes(categoryId);
 };
 
 /**
- * Get filter validation rules for a category
+ * Get filter complexity level for development purposes
  * @param {string} category - Category slug or ID
- * @returns {object} - Validation rules
+ * @returns {string} - Complexity level: "complex", "medium", "simple"
  */
-export const getFilterValidationRules = (category) => {
+export const getFilterComplexity = (category) => {
   const categoryId = getFilterCategoryId(category);
 
-  const rules = {
-    vehicles: {
-      priceMin: { min: 0, max: 1000000 },
-      priceMax: { min: 0, max: 1000000 },
-      yearMin: { min: 1990, max: new Date().getFullYear() },
-      yearMax: { min: 1990, max: new Date().getFullYear() },
-      mileageMax: { min: 0, max: 1000000 },
-    },
-    electronics: {
-      priceMin: { min: 0, max: 50000 },
-      priceMax: { min: 0, max: 50000 },
-      yearMin: { min: 2010, max: new Date().getFullYear() },
-      yearMax: { min: 2010, max: new Date().getFullYear() },
-    },
-    realestate: {
-      priceMin: { min: 0, max: 10000000 },
-      priceMax: { min: 0, max: 10000000 },
-      areaMin: { min: 1, max: 10000 },
-      areaMax: { min: 1, max: 10000 },
-      floor: { min: 1, max: 100 },
-      totalFloors: { min: 1, max: 100 },
-    },
-    jobs: {
-      salaryMin: { min: 0, max: 50000 },
-      salaryMax: { min: 0, max: 50000 },
-    },
-    services: {
-      priceMin: { min: 0, max: 10000 },
-      priceMax: { min: 0, max: 10000 },
-    },
+  const complexity = {
+    // Complex (Original patterns)
+    vehicles: "complex",
+    realestate: "complex",
+
+    // Medium (Template A - Product categories)
+    electronics: "medium",
+    clothing: "medium",
+    kids: "medium",
+    cosmetics: "medium",
+    "home-garden": "medium",
+    animals: "medium",
+    sports: "medium",
+
+    // Medium (Template B - Service categories)
+    jobs: "medium",
+    services: "medium",
+
+    // Simple (Template C - Minimal categories)
+    food: "simple",
+    other: "simple",
+    free: "simple",
   };
 
-  return rules[categoryId] || {};
+  return complexity[categoryId] || "medium";
 };
 
 /**
- * Generate URL parameters from filter state
- * @param {object} filters - Filter state object
- * @returns {string} - URL query string
- */
-export const generateFilterURL = (filters) => {
-  const params = new URLSearchParams();
-
-  Object.entries(filters).forEach(([key, value]) => {
-    if (value && value !== "" && value !== "all") {
-      if (Array.isArray(value) && value.length > 0) {
-        params.set(key, value.join(","));
-      } else if (typeof value === "string" || typeof value === "number") {
-        params.set(key, value.toString());
-      }
-    }
-  });
-
-  return params.toString();
-};
-
-/**
- * Parse URL parameters to filter state
- * @param {string} searchParams - URL search parameters
- * @returns {object} - Filter state object
- */
-export const parseFilterURL = (searchParams) => {
-  const filters = {};
-  const params = new URLSearchParams(searchParams);
-
-  params.forEach((value, key) => {
-    // Handle array values (comma-separated)
-    if (value.includes(",")) {
-      filters[key] = value.split(",");
-    } else {
-      filters[key] = value;
-    }
-  });
-
-  return filters;
-};
-
-/**
- * Get default filters for a category
+ * Get implementation pattern for development
  * @param {string} category - Category slug or ID
- * @returns {object} - Default filter state
+ * @returns {string} - Pattern: "original", "copy-electronics", "copy-jobs", "minimal"
  */
-export const getDefaultFilters = (category) => {
+export const getImplementationPattern = (category) => {
   const categoryId = getFilterCategoryId(category);
 
-  const defaults = {
-    vehicles: {
-      brand: "",
-      model: "",
-      priceMin: "",
-      priceMax: "",
-      yearMin: "",
-      yearMax: "",
-      condition: "all",
-      city: "",
-      showMoreFilters: false,
-    },
-    electronics: {
-      category: "all",
-      brand: "",
-      priceMin: "",
-      priceMax: "",
-      condition: "all",
-      city: "",
-      storage: [],
-      ram: [],
-      os: "",
-      showMoreFilters: false,
-    },
-    realestate: {
-      propertyType: "all",
-      transactionType: "",
-      priceMin: "",
-      priceMax: "",
-      city: "",
-      roomCount: "all",
-      areaMin: "",
-      areaMax: "",
-      showMoreFilters: false,
-    },
-    jobs: {
-      category: "all",
-      employmentType: [],
-      salaryMin: "",
-      salaryMax: "",
-      city: "",
-      experienceLevel: "all",
-      education: [],
-      showMoreFilters: false,
-    },
-    services: {
-      category: "all",
-      serviceType: "",
-      priceMin: "",
-      priceMax: "",
-      city: "",
-      providerType: "",
-      availability: [],
-      showMoreFilters: false,
-    },
+  const patterns = {
+    vehicles: "original",
+    realestate: "original",
+
+    // Template A: Copy electronics pattern
+    electronics: "original",
+    clothing: "copy-electronics",
+    kids: "copy-electronics",
+    cosmetics: "copy-electronics",
+    "home-garden": "copy-electronics",
+    animals: "copy-electronics",
+    sports: "copy-electronics",
+
+    // Template B: Copy jobs pattern
+    jobs: "original",
+    services: "copy-jobs",
+
+    // Template C: Minimal implementation
+    food: "minimal",
+    other: "minimal",
+    free: "minimal",
   };
 
-  return defaults[categoryId] || defaults.vehicles;
+  return patterns[categoryId] || "copy-electronics";
 };

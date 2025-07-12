@@ -1,12 +1,12 @@
 // src/components/shared/filters/FilterManager.js
 "use client";
-import React, { useState, useEffect, useMemo } from "react";
-import { useFilterManager } from "./hooks/useFilterManager";
-import { useFilterConfig } from "./hooks/useFilterConfig";
-import { getFilterCategoryId } from "@/utils/filterRegistry";
-import VehicleFilterBottomDrawer from "@/components/features/vehicles/components/VehicleFilterBottomDrawer";
-import ElectronicsFilterDrawer from "@/components/features/electronics/filters/ElectronicsFilterDrawer";
-import UniversalFilterDrawer from "./UniversalFilterDrawer";
+import React, { useState, useEffect } from "react";
+import {
+  getFilterCategoryId,
+  getDefaultFilters,
+} from "../../../utils/filterRegistry";
+
+// Shared UI Components
 import {
   Dropdown,
   FilterButtons,
@@ -21,7 +21,15 @@ import {
   MileageRangeFilter,
   PowerRangeFilter,
   EngineVolumeRangeFilter,
+  AreaRangeFilter,
+  FloorRangeFilter,
 } from "@/components/shared/filters";
+
+// ============================================================================
+// EXISTING CATEGORY CONSTANTS (Keep your existing imports)
+// ============================================================================
+
+// Vehicle Constants
 import {
   CAR_BRANDS,
   CAR_MODELS,
@@ -36,6 +44,8 @@ import {
   VEHICLE_EQUIPMENT,
   EQUIPMENT_CATEGORIES,
 } from "@/components/features/vehicles/constants";
+
+// Electronics Constants
 import {
   ELECTRONICS_CATEGORIES,
   ELECTRONICS_BRANDS,
@@ -46,6 +56,8 @@ import {
   SCREEN_SIZES,
   CONNECTIVITY_OPTIONS,
 } from "@/components/features/electronics/constants";
+
+// Jobs Constants
 import {
   ACTIVITY_FIELDS,
   WORK_SCHEDULES,
@@ -56,9 +68,8 @@ import {
   JOB_BENEFITS,
   WORK_ENVIRONMENT,
 } from "@/components/features/jobs/constants";
-import JobsFilterDrawer from "@/components/features/jobs/filters/JobsFilterDrawer";
-import { AreaRangeFilter, FloorRangeFilter } from "@/components/shared/filters";
 
+// Real Estate Constants
 import {
   PROPERTY_TYPES,
   TRANSACTION_TYPES,
@@ -75,8 +86,8 @@ import {
   getDistrictsForCity,
   BUILDING_FEATURES,
 } from "@/components/features/realestate/constants";
-import RealEstateFilterDrawer from "@/components/features/realestate/filters/RealEstateFilterDrawer";
-// Add to existing imports
+
+// Clothing Constants
 import {
   CLOTHING_TYPES,
   CLOTHING_BRANDS,
@@ -86,243 +97,253 @@ import {
   CLOTHING_CONDITIONS,
   CLOTHING_MATERIALS,
   CLOTHING_SEASONS,
-  CLOTHING_DEFAULT_FILTERS,
 } from "../../../utils/constants/clothingConstants";
+
+// ============================================================================
+// NEW CATEGORY CONSTANTS
+// ============================================================================
+
+// Services Constants
+import {
+  SERVICES_TYPES,
+  SERVICES_CATEGORIES,
+  SERVICES_EXPERIENCE,
+  SERVICES_AVAILABILITY,
+  SERVICES_SCHEDULE,
+  SERVICES_AREA,
+} from "../../../utils/constants/servicesConstants";
+
+// Kids Constants
+import {
+  KIDS_PRODUCT_TYPES,
+  KIDS_BRANDS,
+  KIDS_AGE_GROUPS,
+  KIDS_CONDITIONS,
+  KIDS_GENDER,
+  KIDS_SIZES,
+  KIDS_CATEGORIES,
+} from "../../../utils/constants/kidsConstants";
+
+// Cosmetics Constants
+import {
+  COSMETICS_PRODUCT_TYPES,
+  COSMETICS_BRANDS,
+  COSMETICS_CONDITIONS,
+  COSMETICS_CATEGORIES,
+  COSMETICS_SKIN_TYPES,
+  COSMETICS_SIZES,
+} from "../../../utils/constants/cosmeticsConstants";
+
+// Home Garden Constants
+import {
+  HOME_GARDEN_TYPES,
+  HOME_GARDEN_BRANDS,
+  HOME_GARDEN_CONDITIONS,
+  HOME_GARDEN_CATEGORIES,
+  HOME_GARDEN_ROOMS,
+  HOME_GARDEN_MATERIALS,
+} from "../../../utils/constants/homeGardenConstants";
+
+// Animals Constants
+import {
+  ANIMAL_TYPES,
+  ANIMAL_BREEDS,
+  ANIMAL_AGES,
+  ANIMAL_GENDERS,
+  ANIMAL_CONDITIONS,
+  ANIMAL_PURPOSES,
+  ANIMAL_CATEGORIES,
+} from "../../../utils/constants/animalsConstants";
+
+// Sports Constants
+import {
+  SPORTS_CATEGORIES,
+  SPORTS_PRODUCT_TYPES,
+  SPORTS_BRANDS,
+  SPORTS_CONDITIONS,
+  SPORTS_SIZES,
+  SPORTS_TYPES,
+  HOBBY_CATEGORIES,
+} from "../../../utils/constants/sportsConstants";
+
+// Minimal Category Constants
+import {
+  FOOD_CATEGORIES,
+  FOOD_CONDITIONS,
+} from "../../../utils/constants/foodConstants";
+
+import {
+  OTHER_CATEGORIES,
+  OTHER_CONDITIONS,
+} from "../../../utils/constants/otherConstants";
+
+import {
+  FREE_CATEGORIES,
+  FREE_CONDITIONS,
+} from "../../../utils/constants/freeConstants";
+
+// ============================================================================
+// MOBILE DRAWER COMPONENTS
+// ============================================================================
+
+// Existing Mobile Drawers
+import VehicleFilterBottomDrawer from "@/components/features/vehicles/components/VehicleFilterBottomDrawer";
+import ElectronicsFilterDrawer from "@/components/features/electronics/filters/ElectronicsFilterDrawer";
+import JobsFilterDrawer from "@/components/features/jobs/filters/JobsFilterDrawer";
+import RealEstateFilterDrawer from "@/components/features/realestate/filters/RealEstateFilterDrawer";
 import ClothingFilterDrawer from "../../features/clothing/filters/ClothingFilterDrawer";
 
+// New Mobile Drawers
+import ServicesFilterDrawer from "./mobile/ServicesFilterDrawer";
+import KidsFilterDrawer from "./mobile/KidsFilterDrawer";
+import CosmeticsFilterDrawer from "./mobile/CosmeticsFilterDrawer";
+import HomeGardenFilterDrawer from "./mobile/HomeGardenFilterDrawer";
+import AnimalsFilterDrawer from "./mobile/AnimalsFilterDrawer";
+import SportsFilterDrawer from "./mobile/SportsFilterDrawer";
+import FoodFilterDrawer from "./mobile/FoodFilterDrawer";
+import OtherFilterDrawer from "./mobile/OtherFilterDrawer";
+import FreeFilterDrawer from "./mobile/FreeFilterDrawer";
+
+// ============================================================================
+// MAIN FILTERMANAGER COMPONENT
+// ============================================================================
+
 const FilterManager = ({ category, onFiltersChange, initialFilters = {} }) => {
+  // ✅ DEBUG: Log what we receive
+  console.log("=== FILTER MANAGER DEBUG ===");
+  console.log("1. Raw category prop:", category);
+  console.log("2. Type of category:", typeof category);
+  console.log(
+    "3. Current URL:",
+    typeof window !== "undefined" ? window.location.pathname : "SSR"
+  );
+
   // Map slug to actual category ID for filter components
   const actualCategory = getFilterCategoryId(category);
+  console.log("4. Mapped actualCategory:", actualCategory);
+
+  // ✅ Initialize filters based on actual category
+  const [filters, setFilters] = useState(() => {
+    const defaultFilters = getDefaultFilters(actualCategory);
+    console.log("5. Default filters keys:", Object.keys(defaultFilters));
+    console.log("==========================");
+    return { ...defaultFilters, ...initialFilters };
+  });
 
   // Mobile drawer state
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
 
-  // Get configuration for this category
-  const config = useFilterConfig(actualCategory);
+  // ✅ Update filters when category changes
+  useEffect(() => {
+    const defaultFilters = getDefaultFilters(actualCategory);
+    setFilters({ ...defaultFilters, ...initialFilters });
+  }, [actualCategory, initialFilters]);
 
-  const [filters, setFilters] = useState({
-    // Vehicle filters
-    brand: "",
-    model: "",
-    priceMin: "",
-    priceMax: "",
-    color: "",
-    fuel: "",
-    bodyType: "",
-    volumeMin: "",
-    volumeMax: "",
-    yearMin: "",
-    yearMax: "",
-    transmission: "",
-    city: "",
-    condition: "all",
-    mileageMin: "",
-    mileageMax: "",
-    gearbox: "",
-    seatCount: "",
-    powerMin: "",
-    powerMax: "",
-    paymentOptions: [],
-    equipment: [],
+  // Calculate active filter count
+  const activeFilterCount = Object.entries(filters).filter(([key, value]) => {
+    if (key === "showMoreFilters") return false;
+    if (Array.isArray(value)) return value.length > 0;
+    return value !== "" && value !== false && value !== "all";
+  }).length;
 
-    // Electronics filters
-    category: "",
-    storage: [],
-    ram: [],
-    os: "",
-    screenSize: [],
-    connectivity: [],
-
-    // Jobs filters
-    activityField: "",
-    workSchedule: "all",
-    salaryMin: "",
-    salaryMax: "",
-    experience: "all",
-    education: "all",
-    jobType: "all",
-    companyType: "all",
-    benefits: [],
-    workEnvironment: [],
-
-    // Real Estate filters
-    transactionType: "sale",
-    propertyType: "",
-    rooms: "",
-    areaMin: "",
-    areaMax: "",
-    floorMin: "",
-    floorMax: "",
-    renovation: "all",
-    metro: "",
-    district: "",
-    heating: "",
-    amenities: [],
-    features: [],
-
-    // Common
-    showMoreFilters: false,
-    ...initialFilters,
-  });
-
-  // For other categories, use the new universal system
-  const {
-    filters: universalFilters,
-    updateFilter,
-    resetFilters,
-    applyFilters,
-    activeFilterCount,
-  } = useFilterManager(config, {
-    onFiltersChange,
-    initialFilters,
-  });
+  // ============================================================================
+  // FILTER EVENT HANDLERS
+  // ============================================================================
 
   const handleFilterChange = (field, value) => {
-    setFilters((prev) => ({
-      ...prev,
-      [field]: value,
-      // Reset model when brand changes
-      ...(field === "brand" && { model: "" }),
-    }));
+    setFilters((prev) => {
+      const newFilters = {
+        ...prev,
+        [field]: value,
+        // Reset model when brand changes (for vehicles)
+        ...(field === "brand" &&
+          actualCategory === "vehicles" && { model: "" }),
+      };
 
-    // Call onFiltersChange if provided
-    if (onFiltersChange) {
-      onFiltersChange({ ...filters, [field]: value });
-    }
+      // Call onFiltersChange if provided
+      if (onFiltersChange) {
+        onFiltersChange(newFilters);
+      }
+
+      return newFilters;
+    });
   };
 
   const handleReset = () => {
-    const resetFilters = {
-      // Vehicle filters
-      brand: "",
-      model: "",
-      priceMin: "",
-      priceMax: "",
-      color: "",
-      fuel: "",
-      bodyType: "",
-      volumeMin: "",
-      volumeMax: "",
-      yearMin: "",
-      yearMax: "",
-      transmission: "",
-      city: "",
-      condition: "all",
-      mileageMin: "",
-      mileageMax: "",
-      gearbox: "",
-      seatCount: "",
-      powerMin: "",
-      powerMax: "",
-      paymentOptions: [],
-      equipment: [],
-
-      // Electronics filters
-      category: "",
-      storage: [],
-      ram: [],
-      os: "",
-      screenSize: [],
-      connectivity: [],
-
-      // Jobs filters
-      activityField: "",
-      workSchedule: "all",
-      salaryMin: "",
-      salaryMax: "",
-      experience: "all",
-      education: "all",
-      jobType: "all",
-      companyType: "all",
-      benefits: [],
-      workEnvironment: [],
-
-      // Real Estate filters
-      transactionType: "sale",
-      propertyType: "",
-      rooms: "",
-      areaMin: "",
-      areaMax: "",
-      floorMin: "",
-      floorMax: "",
-      renovation: "all",
-      metro: "",
-      district: "",
-      heating: "",
-      amenities: [],
-      features: [],
-
-      // Common
-      showMoreFilters: false,
-    };
+    const resetFilters = getDefaultFilters(actualCategory);
     setFilters(resetFilters);
+
+    if (onFiltersChange) {
+      onFiltersChange(resetFilters);
+    }
   };
+
   const handleShowResults = () => {
-    console.log("Showing results with filters:", filters);
-    // TODO: Implement actual filtering/search logic
+    if (onFiltersChange) {
+      onFiltersChange(filters);
+    }
   };
 
   const handleMobileFiltersApply = (newFilters) => {
     setFilters(newFilters);
-    handleShowResults();
+    if (onFiltersChange) {
+      onFiltersChange(newFilters);
+    }
     setIsMobileDrawerOpen(false);
   };
 
-  const getModelOptions = () => {
-    return filters.brand ? CAR_MODELS[filters.brand] || [] : [];
+  // Helper function to get models for selected brand
+  const getModelsForBrand = (brandValue) => {
+    return CAR_MODELS[brandValue] || [];
   };
 
+  // Helper function to get equipment by category
   const getEquipmentByCategory = (category) => {
-    return VEHICLE_EQUIPMENT.filter((item) => item.category === category);
+    return VEHICLE_EQUIPMENT[category] || [];
   };
 
-  // Count active filters for mobile button
-  const getActiveFiltersCount = () => {
-    return Object.values(filters).filter((value) => {
-      if (Array.isArray(value)) return value.length > 0;
-      return value !== "" && value !== false && value !== "all";
-    }).length;
-  };
+  // ============================================================================
+  // CATEGORY IMPLEMENTATIONS
+  // ============================================================================
 
-  // Render vehicles with exact original structure
+  // VEHICLES CATEGORY (ORIGINAL)
   if (actualCategory === "vehicles") {
     return (
       <>
-        {/* Mobile Filter Button - Exact Original Styling */}
+        {/* Mobile Filter Button */}
         <div className="mobile-filter-trigger">
           <button
             className="mobile-filter-btn"
             onClick={() => setIsMobileDrawerOpen(true)}
           >
             <i className="fa-solid fa-filter"></i>
-            <span>Filter</span>
-            {getActiveFiltersCount() > 0 && (
-              <span className="filter-count-badge">
-                {getActiveFiltersCount()}
-              </span>
+            <span>Filtrlər</span>
+            {activeFilterCount > 0 && (
+              <span className="filter-count">{activeFilterCount}</span>
             )}
           </button>
         </div>
 
-        {/* Desktop Filters - Exact Original Structure */}
         <div className="main_container">
           <div className="desctop_filters">
-            {/* Row 1: Brand, Model, Price, Color */}
+            {/* Row 1: Brand, Model, Price, City */}
             <div className="form-group for_width20 grow-1 order-1">
               <Dropdown
-                placeholder="Marka"
+                placeholder="Marka seçin"
                 options={CAR_BRANDS}
                 value={filters.brand}
                 onChange={(value) => handleFilterChange("brand", value)}
+                icon="fa-solid fa-car"
               />
             </div>
 
             <div className="form-group for_width20 grow-1 order-2">
               <Dropdown
-                placeholder="Model"
-                options={getModelOptions()}
+                placeholder="Model seçin"
+                options={getModelsForBrand(filters.brand)}
                 value={filters.model}
                 onChange={(value) => handleFilterChange("model", value)}
+                icon="fa-solid fa-car-side"
                 disabled={!filters.brand}
               />
             </div>
@@ -333,155 +354,118 @@ const FilterManager = ({ category, onFiltersChange, initialFilters = {} }) => {
                 maxValue={filters.priceMax}
                 onMinChange={(value) => handleFilterChange("priceMin", value)}
                 onMaxChange={(value) => handleFilterChange("priceMax", value)}
+                currency="₼"
+                placeholder="Qiymət aralığı"
               />
             </div>
 
-            <div className="form-group for_width_small grow-1 order-4">
+            <div className="form-group for_width20 grow-1 order-4">
+              <LocationFilter
+                value={filters.city}
+                onChange={(value) => handleFilterChange("city", value)}
+                placeholder="Şəhər seçin"
+              />
+            </div>
+
+            {/* Row 2: Color, Fuel, Body Type, Year */}
+            <div className="form-group for_width20 grow-1 order-5">
               <Dropdown
-                placeholder="Rəng"
+                placeholder="Rəng seçin"
                 options={COLORS}
                 value={filters.color}
                 onChange={(value) => handleFilterChange("color", value)}
-              />
-            </div>
-
-            {/* Row 2: Fuel, Body Type, Engine Volume, Year */}
-            <div className="form-group for_width20 grow-1 order-5">
-              <Dropdown
-                placeholder="Yanacaq növü"
-                options={FUEL_TYPES}
-                value={filters.fuel}
-                onChange={(value) => handleFilterChange("fuel", value)}
+                icon="fa-solid fa-palette"
               />
             </div>
 
             <div className="form-group for_width20 grow-1 order-6">
               <Dropdown
-                placeholder="Ban növü"
+                placeholder="Yanacaq növü"
+                options={FUEL_TYPES}
+                value={filters.fuel}
+                onChange={(value) => handleFilterChange("fuel", value)}
+                icon="fa-solid fa-gas-pump"
+              />
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-7">
+              <Dropdown
+                placeholder="Kuzov növü"
                 options={BODY_TYPES}
                 value={filters.bodyType}
                 onChange={(value) => handleFilterChange("bodyType", value)}
+                icon="fa-solid fa-car"
               />
             </div>
 
-            <div className="form-group for_width_big grow-1 order-7">
-              <EngineVolumeRangeFilter
-                minValue={filters.volumeMin}
-                maxValue={filters.volumeMax}
-                onMinChange={(value) => handleFilterChange("volumeMin", value)}
-                onMaxChange={(value) => handleFilterChange("volumeMax", value)}
-              />
-            </div>
-
-            <div className="form-group for_width_small grow-1 order-8">
+            <div className="form-group for_width20 grow-1 order-8">
               <YearRangeFilter
                 minValue={filters.yearMin}
                 maxValue={filters.yearMax}
                 onMinChange={(value) => handleFilterChange("yearMin", value)}
                 onMaxChange={(value) => handleFilterChange("yearMax", value)}
+                placeholder="İl aralığı"
               />
             </div>
 
-            {/* Condition Row */}
-            <div className="form-group for_width_big grow-1 order-9">
-              <div className="condition-filters">
-                <label className="condition-label">Vəziyyəti</label>
-                <RadioGroup2
-                  options={CONDITION_OPTIONS}
-                  value={filters.condition}
-                  onChange={(value) => handleFilterChange("condition", value)}
-                  name="condition"
-                  layout="horizontal"
-                />
-              </div>
-            </div>
-
-            {/* More Filters Section */}
+            {/* Row 3: More Filters */}
             {filters.showMoreFilters && (
               <>
-                {/* Row 3: Advanced Filters */}
-                <div className="form-group for_width20 grow-1 order-10">
+                {/* Transmission, Condition, Mileage, Engine */}
+                <div className="form-group for_width20 grow-1 order-9">
                   <Dropdown
-                    placeholder="Sürətlər qutusu"
+                    placeholder="Sürət qutusu"
                     options={TRANSMISSIONS}
                     value={filters.transmission}
                     onChange={(value) =>
                       handleFilterChange("transmission", value)
                     }
+                    icon="fa-solid fa-gears"
                   />
                 </div>
 
-                <div className="form-group for_width20 grow-1 order-11">
-                  <LocationFilter
-                    placeholder="Şəhər"
-                    value={filters.city}
-                    onChange={(value) => handleFilterChange("city", value)}
-                  />
-                </div>
-
-                <div className="form-group for_width_big grow-1 order-12">
-                  <MileageRangeFilter
-                    minValue={filters.mileageMin}
-                    maxValue={filters.mileageMax}
-                    onMinChange={(value) =>
-                      handleFilterChange("mileageMin", value)
-                    }
-                    onMaxChange={(value) =>
-                      handleFilterChange("mileageMax", value)
-                    }
-                  />
-                </div>
-
-                <div className="form-group for_width20 grow-1 order-13">
-                  <Dropdown
-                    placeholder="Ötürücü"
-                    options={DRIVETRAIN_TYPES}
-                    value={filters.gearbox}
-                    onChange={(value) => handleFilterChange("gearbox", value)}
-                  />
-                </div>
-
-                <div className="form-group for_width20 grow-1 order-14">
-                  <Dropdown
-                    placeholder="Oturacaq sayı"
-                    options={SEAT_COUNTS}
-                    value={filters.seatCount}
-                    onChange={(value) => handleFilterChange("seatCount", value)}
-                  />
-                </div>
-
-                <div className="form-group for_width_big grow-1 order-15">
-                  <PowerRangeFilter
-                    minValue={filters.powerMin}
-                    maxValue={filters.powerMax}
-                    onMinChange={(value) =>
-                      handleFilterChange("powerMin", value)
-                    }
-                    onMaxChange={(value) =>
-                      handleFilterChange("powerMax", value)
-                    }
-                  />
-                </div>
-
-                {/* Payment Options */}
-                <div className="form-group for_width_big grow-1 order-16">
-                  <div className="payment-options">
-                    <label className="payment-label">Ödəniş növü</label>
-                    <CheckboxGroup
-                      options={PAYMENT_OPTIONS}
-                      values={filters.paymentOptions}
-                      onChange={(values) =>
-                        handleFilterChange("paymentOptions", values)
+                <div className="form-group for_width20 grow-1 order-10">
+                  <div className="condition-filter">
+                    <div className="condition-label">Vəziyyət</div>
+                    <RadioGroup2
+                      options={CONDITION_OPTIONS}
+                      value={filters.condition}
+                      onChange={(value) =>
+                        handleFilterChange("condition", value)
                       }
-                      name="paymentOptions"
+                      name="condition"
                       layout="horizontal"
                       variant="default"
                     />
                   </div>
                 </div>
 
-                {/* Equipment Section - Exact Original Structure */}
-                <div className="additional_chekings_hero order-17">
+                <div className="form-group for_width20 grow-1 order-11">
+                  <MileageRangeFilter
+                    maxValue={filters.mileageMax}
+                    onMaxChange={(value) =>
+                      handleFilterChange("mileageMax", value)
+                    }
+                    placeholder="Maksimum yürüş"
+                  />
+                </div>
+
+                <div className="form-group for_width20 grow-1 order-12">
+                  <EngineVolumeRangeFilter
+                    minValue={filters.engineVolumeMin}
+                    maxValue={filters.engineVolumeMax}
+                    onMinChange={(value) =>
+                      handleFilterChange("engineVolumeMin", value)
+                    }
+                    onMaxChange={(value) =>
+                      handleFilterChange("engineVolumeMax", value)
+                    }
+                    placeholder="Mühərrik həcmi"
+                  />
+                </div>
+
+                {/* Equipment Section */}
+                <div className="additional_chekings_section">
                   <div className="additional_chekings_title">Avadanlıq</div>
                   <div className="additional_chekings">
                     {EQUIPMENT_CATEGORIES.map((category) => {
@@ -515,76 +499,77 @@ const FilterManager = ({ category, onFiltersChange, initialFilters = {} }) => {
                 </div>
               </>
             )}
+
+            {/* Row 4: Filter Action Buttons */}
+            <div className="desc_filters_btns">
+              <FilterButtons
+                onReset={handleReset}
+                onToggleMoreFilters={() =>
+                  handleFilterChange(
+                    "showMoreFilters",
+                    !filters.showMoreFilters
+                  )
+                }
+                onShowResults={handleShowResults}
+                moreFiltersExpanded={filters.showMoreFilters}
+                resultsCount={0}
+                resetText="Sıfırla"
+                moreFiltersText="Daha çox filtr"
+                showResultsText="Elanları göstər"
+              />
+            </div>
           </div>
 
-          {/* Filter Action Buttons - Exact Original */}
-          <div className="desc_filters_btns">
-            <FilterButtons
-              onReset={handleReset}
-              onToggleMoreFilters={() =>
-                handleFilterChange("showMoreFilters", !filters.showMoreFilters)
-              }
-              onShowResults={handleShowResults}
-              moreFiltersExpanded={filters.showMoreFilters}
-              resultsCount={0}
-              resetText="Sıfırla"
-              moreFiltersText="Daha çox filtr"
-              showResultsText="Elanları göstər"
-            />
-          </div>
+          {/* Mobile Bottom Drawer */}
+          <VehicleFilterBottomDrawer
+            isOpen={isMobileDrawerOpen}
+            onClose={() => setIsMobileDrawerOpen(false)}
+            filters={filters}
+            onApplyFilters={handleMobileFiltersApply}
+            resultsCount={0}
+          />
         </div>
-
-        {/* Mobile Bottom Drawer - Original VehicleFilterBottomDrawer */}
-        <VehicleFilterBottomDrawer
-          isOpen={isMobileDrawerOpen}
-          onClose={() => setIsMobileDrawerOpen(false)}
-          filters={filters}
-          onApplyFilters={handleMobileFiltersApply}
-          resultsCount={0}
-        />
       </>
     );
   }
 
-  // Electronics category with EXACT vehicle structure
+  // ELECTRONICS CATEGORY
   if (actualCategory === "electronics") {
     return (
       <>
-        {/* Mobile Filter Button - EXACT same as vehicles */}
         <div className="mobile-filter-trigger">
           <button
             className="mobile-filter-btn"
             onClick={() => setIsMobileDrawerOpen(true)}
           >
             <i className="fa-solid fa-filter"></i>
-            <span>Filter</span>
-            {getActiveFiltersCount() > 0 && (
-              <span className="filter-count-badge">
-                {getActiveFiltersCount()}
-              </span>
+            <span>Filtrlər</span>
+            {activeFilterCount > 0 && (
+              <span className="filter-count">{activeFilterCount}</span>
             )}
           </button>
         </div>
 
-        {/* Desktop Filters - EXACT Vehicle Structure */}
         <div className="main_container">
           <div className="desctop_filters">
-            {/* Row 1: Category, Brand, Price, Condition - SAME as vehicles row 1 */}
+            {/* Row 1: Item Type, Brand, Price, City */}
             <div className="form-group for_width20 grow-1 order-1">
               <Dropdown
-                placeholder="Malın tipi"
+                placeholder="Növ seçin"
                 options={ELECTRONICS_CATEGORIES}
-                value={filters.category}
-                onChange={(value) => handleFilterChange("category", value)}
+                value={filters.itemType}
+                onChange={(value) => handleFilterChange("itemType", value)}
+                icon="fa-solid fa-mobile-alt"
               />
             </div>
 
             <div className="form-group for_width20 grow-1 order-2">
               <Dropdown
-                placeholder="Marka"
+                placeholder="Marka seçin"
                 options={ELECTRONICS_BRANDS}
                 value={filters.brand}
                 onChange={(value) => handleFilterChange("brand", value)}
+                icon="fa-solid fa-tag"
               />
             </div>
 
@@ -594,192 +579,128 @@ const FilterManager = ({ category, onFiltersChange, initialFilters = {} }) => {
                 maxValue={filters.priceMax}
                 onMinChange={(value) => handleFilterChange("priceMin", value)}
                 onMaxChange={(value) => handleFilterChange("priceMax", value)}
+                currency="₼"
+                placeholder="Qiymət aralığı"
               />
             </div>
 
-            <div className="form-group for_width_small grow-1 order-4">
-              <Dropdown
-                placeholder="Vəziyyət"
-                options={ELECTRONICS_CONDITIONS}
-                value={filters.condition}
-                onChange={(value) => handleFilterChange("condition", value)}
-              />
-            </div>
-
-            {/* Row 2: City only - like vehicles row 2 */}
-            <div className="form-group for_width20 grow-1 order-5">
+            <div className="form-group for_width20 grow-1 order-4">
               <LocationFilter
-                placeholder="Şəhər"
                 value={filters.city}
                 onChange={(value) => handleFilterChange("city", value)}
+                placeholder="Şəhər seçin"
               />
             </div>
 
-            {/* Çatdırılma Section - EXACT same as vehicle condition */}
-            <div className="form-group for_width_big grow-1 order-6">
-              <div className="condition-filters">
-                <label className="condition-label">Çatdırılma?</label>
+            {/* Row 2: Condition, Category, Specifications, Warranty */}
+            <div className="form-group for_width20 grow-1 order-5">
+              <div className="condition-filter">
+                <div className="condition-label">Vəziyyət</div>
                 <RadioGroup2
-                  options={[
-                    { value: "all", label: "Hamısı" },
-                    { value: "yes", label: "Bəli" },
-                    { value: "no", label: "Xeyr" },
-                  ]}
-                  value={filters.delivery || "all"}
-                  onChange={(value) => handleFilterChange("delivery", value)}
-                  name="delivery"
+                  options={ELECTRONICS_CONDITIONS}
+                  value={filters.condition}
+                  onChange={(value) => handleFilterChange("condition", value)}
+                  name="condition"
                   layout="horizontal"
+                  variant="default"
                 />
               </div>
             </div>
 
-            {/* More Filters Section - EXACT same structure as vehicles */}
-            {filters.showMoreFilters && (
-              <>
-                {/* Storage Options */}
-                <div className="form-group for_width_big grow-1 order-7">
-                  <div className="payment-options">
-                    <label className="payment-label">Yaddaş həcmi</label>
-                    <CheckboxGroup
-                      options={STORAGE_OPTIONS}
-                      values={filters.storage}
-                      onChange={(values) =>
-                        handleFilterChange("storage", values)
-                      }
-                      name="storage"
-                      layout="horizontal"
-                      variant="default"
-                    />
-                  </div>
-                </div>
+            <div className="form-group for_width20 grow-1 order-6">
+              <Dropdown
+                placeholder="Kateqoriya seçin"
+                options={ELECTRONICS_CATEGORIES}
+                value={filters.category}
+                onChange={(value) => handleFilterChange("category", value)}
+                icon="fa-solid fa-list"
+              />
+            </div>
 
-                {/* RAM Options */}
-                <div className="form-group for_width_big grow-1 order-8">
-                  <div className="payment-options">
-                    <label className="payment-label">RAM</label>
-                    <CheckboxGroup
-                      options={RAM_OPTIONS}
-                      values={filters.ram}
-                      onChange={(values) => handleFilterChange("ram", values)}
-                      name="ram"
-                      layout="horizontal"
-                      variant="default"
-                    />
-                  </div>
-                </div>
+            <div className="form-group for_width20 grow-1 order-7">
+              <Dropdown
+                placeholder="Xüsusiyyətlər"
+                options={SCREEN_SIZES}
+                value={filters.specifications}
+                onChange={(value) =>
+                  handleFilterChange("specifications", value)
+                }
+                icon="fa-solid fa-cog"
+              />
+            </div>
 
-                {/* Operating System */}
-                <div className="form-group for_width_big grow-1 order-9">
-                  <div className="condition-filters">
-                    <label className="condition-label">Əməliyyat sistemi</label>
-                    <RadioGroup2
-                      options={OPERATING_SYSTEMS}
-                      value={filters.os}
-                      onChange={(value) => handleFilterChange("os", value)}
-                      name="os"
-                      layout="horizontal"
-                    />
-                  </div>
-                </div>
+            <div className="form-group for_width20 grow-1 order-8">
+              <Dropdown
+                placeholder="Zəmanət"
+                options={[
+                  { value: "yes", label: "Zəmanətli" },
+                  { value: "no", label: "Zəmanətsiz" },
+                ]}
+                value={filters.warranty}
+                onChange={(value) => handleFilterChange("warranty", value)}
+                icon="fa-solid fa-shield-alt"
+              />
+            </div>
 
-                {/* Screen Size */}
-                <div className="form-group for_width_big grow-1 order-10">
-                  <div className="payment-options">
-                    <label className="payment-label">Ekran ölçüsü</label>
-                    <CheckboxGroup
-                      options={SCREEN_SIZES}
-                      values={filters.screenSize}
-                      onChange={(values) =>
-                        handleFilterChange("screenSize", values)
-                      }
-                      name="screenSize"
-                      layout="horizontal"
-                      variant="default"
-                    />
-                  </div>
-                </div>
-
-                {/* Connectivity - SAME as vehicles equipment section */}
-                <div className="additional_chekings_hero order-11">
-                  <div className="additional_chekings_title">Əlaqə</div>
-                  <div className="additional_chekings">
-                    <div className="equipment-category">
-                      <CheckboxGroup
-                        options={CONNECTIVITY_OPTIONS}
-                        values={filters.connectivity}
-                        onChange={(values) =>
-                          handleFilterChange("connectivity", values)
-                        }
-                        name="connectivity"
-                        layout="horizontal"
-                        variant="default"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </>
-            )}
+            {/* Row 4: Filter Action Buttons */}
+            <div className="desc_filters_btns">
+              <FilterButtons
+                onReset={handleReset}
+                onToggleMoreFilters={() =>
+                  handleFilterChange(
+                    "showMoreFilters",
+                    !filters.showMoreFilters
+                  )
+                }
+                onShowResults={handleShowResults}
+                moreFiltersExpanded={filters.showMoreFilters}
+                resultsCount={0}
+                resetText="Sıfırla"
+                moreFiltersText="Daha çox filtr"
+                showResultsText="Elanları göstər"
+              />
+            </div>
           </div>
 
-          {/* Filter Action Buttons - EXACT same as vehicles */}
-          <div className="desc_filters_btns">
-            <FilterButtons
-              onReset={handleReset}
-              onToggleMoreFilters={() =>
-                handleFilterChange("showMoreFilters", !filters.showMoreFilters)
-              }
-              onShowResults={handleShowResults}
-              moreFiltersExpanded={filters.showMoreFilters}
-              resultsCount={0}
-              resetText="Sıfırla"
-              moreFiltersText="Daha çox filtr"
-              showResultsText="Elanları göstər"
-            />
-          </div>
+          <ElectronicsFilterDrawer
+            isOpen={isMobileDrawerOpen}
+            onClose={() => setIsMobileDrawerOpen(false)}
+            filters={filters}
+            onApplyFilters={handleMobileFiltersApply}
+            resultsCount={0}
+          />
         </div>
-
-        {/* Mobile Bottom Drawer - Electronics specific */}
-        <ElectronicsFilterDrawer
-          isOpen={isMobileDrawerOpen}
-          onClose={() => setIsMobileDrawerOpen(false)}
-          filters={filters}
-          onApplyFilters={handleMobileFiltersApply}
-          resultsCount={0}
-        />
       </>
     );
   }
 
-  // Jobs category - EXACT same structure as vehicles and electronics
+  // JOBS CATEGORY
   if (actualCategory === "jobs") {
     return (
       <>
-        {/* Mobile Filter Button - EXACT same as vehicles */}
         <div className="mobile-filter-trigger">
           <button
             className="mobile-filter-btn"
             onClick={() => setIsMobileDrawerOpen(true)}
           >
             <i className="fa-solid fa-filter"></i>
-            <span>Filter</span>
-            {getActiveFiltersCount() > 0 && (
-              <span className="filter-count-badge">
-                {getActiveFiltersCount()}
-              </span>
+            <span>Filtrlər</span>
+            {activeFilterCount > 0 && (
+              <span className="filter-count">{activeFilterCount}</span>
             )}
           </button>
         </div>
 
-        {/* Desktop Filters - EXACT Vehicle Structure for Jobs */}
         <div className="main_container">
           <div className="desctop_filters">
-            {/* Row 1: Activity Field, Work Schedule, Salary Range, City - SAME layout as vehicles */}
+            {/* Row 1: Activity Field, Work Schedule, Salary, City */}
             <div className="form-group for_width20 grow-1 order-1">
               <Dropdown
                 placeholder="Fəaliyyət sahəsi"
                 options={ACTIVITY_FIELDS}
                 value={filters.activityField}
                 onChange={(value) => handleFilterChange("activityField", value)}
+                icon="fa-solid fa-briefcase"
               />
             </div>
 
@@ -789,6 +710,7 @@ const FilterManager = ({ category, onFiltersChange, initialFilters = {} }) => {
                 options={WORK_SCHEDULES}
                 value={filters.workSchedule}
                 onChange={(value) => handleFilterChange("workSchedule", value)}
+                icon="fa-solid fa-clock"
               />
             </div>
 
@@ -798,8 +720,8 @@ const FilterManager = ({ category, onFiltersChange, initialFilters = {} }) => {
                 maxValue={filters.salaryMax}
                 onMinChange={(value) => handleFilterChange("salaryMin", value)}
                 onMaxChange={(value) => handleFilterChange("salaryMax", value)}
-                placeholder={{ min: "Min maaş", max: "Max maaş" }}
-                currency="AZN"
+                currency="₼"
+                placeholder="Maaş aralığı"
               />
             </div>
 
@@ -807,17 +729,18 @@ const FilterManager = ({ category, onFiltersChange, initialFilters = {} }) => {
               <LocationFilter
                 value={filters.city}
                 onChange={(value) => handleFilterChange("city", value)}
-                placeholder="Şəhər"
+                placeholder="Şəhər seçin"
               />
             </div>
 
-            {/* Row 2: Experience, Education, Job Type, Company Type - SAME layout */}
+            {/* Row 2: Experience, Education, Job Type, Benefits */}
             <div className="form-group for_width20 grow-1 order-5">
               <Dropdown
-                placeholder="İş təcrübəsi"
+                placeholder="Təcrübə"
                 options={WORK_EXPERIENCE}
                 value={filters.experience}
                 onChange={(value) => handleFilterChange("experience", value)}
+                icon="fa-solid fa-star"
               />
             </div>
 
@@ -827,6 +750,7 @@ const FilterManager = ({ category, onFiltersChange, initialFilters = {} }) => {
                 options={EDUCATION_LEVELS}
                 value={filters.education}
                 onChange={(value) => handleFilterChange("education", value)}
+                icon="fa-solid fa-graduation-cap"
               />
             </div>
 
@@ -836,138 +760,103 @@ const FilterManager = ({ category, onFiltersChange, initialFilters = {} }) => {
                 options={JOB_TYPES}
                 value={filters.jobType}
                 onChange={(value) => handleFilterChange("jobType", value)}
+                icon="fa-solid fa-building"
               />
             </div>
 
             <div className="form-group for_width20 grow-1 order-8">
               <Dropdown
-                placeholder="Şirkət növü"
-                options={COMPANY_TYPES}
-                value={filters.companyType}
-                onChange={(value) => handleFilterChange("companyType", value)}
+                placeholder="Üstünlüklər"
+                options={JOB_BENEFITS}
+                value={filters.benefits}
+                onChange={(value) => handleFilterChange("benefits", value)}
+                icon="fa-solid fa-gift"
               />
             </div>
 
-            {/* Advanced Filters Section - SAME as vehicles equipment section */}
-            {filters.showMoreFilters && (
-              <>
-                {/* Job Benefits - SAME structure as vehicle equipment */}
-                <div className="additional_chekings_hero order-9">
-                  <div className="additional_chekings_title">
-                    Təklif olunan imkanlar
-                  </div>
-                  <div className="additional_chekings">
-                    <div className="equipment-category">
-                      <div className="equipment-category-title">
-                        Sosial paket
-                      </div>
-                      <CheckboxGroup
-                        options={JOB_BENEFITS}
-                        values={filters.benefits}
-                        onChange={(values) =>
-                          handleFilterChange("benefits", values)
-                        }
-                        name="benefits"
-                        layout="horizontal"
-                        variant="default"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Work Environment - SAME structure as vehicle equipment */}
-                <div className="additional_chekings_hero order-10">
-                  <div className="additional_chekings_title">İş mühiti</div>
-                  <div className="additional_chekings">
-                    <div className="equipment-category">
-                      <CheckboxGroup
-                        options={WORK_ENVIRONMENT}
-                        values={filters.workEnvironment}
-                        onChange={(values) =>
-                          handleFilterChange("workEnvironment", values)
-                        }
-                        name="workEnvironment"
-                        layout="horizontal"
-                        variant="default"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </>
-            )}
+            {/* Row 4: Filter Action Buttons */}
+            <div className="desc_filters_btns">
+              <FilterButtons
+                onReset={handleReset}
+                onToggleMoreFilters={() =>
+                  handleFilterChange(
+                    "showMoreFilters",
+                    !filters.showMoreFilters
+                  )
+                }
+                onShowResults={handleShowResults}
+                moreFiltersExpanded={filters.showMoreFilters}
+                resultsCount={0}
+                resetText="Sıfırla"
+                moreFiltersText="Daha çox filtr"
+                showResultsText="Elanları göstər"
+              />
+            </div>
           </div>
 
-          {/* Filter Action Buttons - EXACT same as vehicles */}
-          <div className="desc_filters_btns">
-            <FilterButtons
-              onReset={handleReset}
-              onToggleMoreFilters={() =>
-                handleFilterChange("showMoreFilters", !filters.showMoreFilters)
-              }
-              onShowResults={handleShowResults}
-              moreFiltersVisible={filters.showMoreFilters}
-              activeFiltersCount={getActiveFiltersCount()}
-            />
-          </div>
+          <JobsFilterDrawer
+            isOpen={isMobileDrawerOpen}
+            onClose={() => setIsMobileDrawerOpen(false)}
+            filters={filters}
+            onApplyFilters={handleMobileFiltersApply}
+            resultsCount={0}
+          />
         </div>
-
-        {/* Mobile Filter Drawer - Same pattern as vehicles */}
-        <JobsFilterDrawer
-          isOpen={isMobileDrawerOpen}
-          onClose={() => setIsMobileDrawerOpen(false)}
-          filters={filters}
-          onApplyFilters={handleMobileFiltersApply}
-          resultsCount={getActiveFiltersCount()}
-        />
       </>
     );
   }
 
-  // Real Estate category - EXACT same structure as vehicles/electronics/jobs
+  // REAL ESTATE CATEGORY
   if (actualCategory === "realestate") {
     return (
       <>
-        {/* Mobile Filter Button - EXACT same as vehicles */}
         <div className="mobile-filter-trigger">
           <button
             className="mobile-filter-btn"
             onClick={() => setIsMobileDrawerOpen(true)}
           >
             <i className="fa-solid fa-filter"></i>
-            <span>Filter</span>
-            {getActiveFiltersCount() > 0 && (
-              <span className="filter-count-badge">
-                {getActiveFiltersCount()}
-              </span>
+            <span>Filtrlər</span>
+            {activeFilterCount > 0 && (
+              <span className="filter-count">{activeFilterCount}</span>
             )}
           </button>
         </div>
 
-        {/* Desktop Filters - EXACT Vehicle Structure */}
         <div className="main_container">
           <div className="desctop_filters">
-            {/* Row 1: Deal Type, Property Type, Price Range, City - SAME as vehicles row 1 */}
+            {/* Row 1: Property Type, Transaction Type, Price, City */}
             <div className="form-group for_width20 grow-1 order-1">
-              <RadioGroup2
-                options={[
-                  { value: "sale", label: "Alış" },
-                  { value: "rent", label: "Kirayə" },
-                ]}
-                value={filters.dealType || "sale"}
-                onChange={(value) => handleFilterChange("dealType", value)}
-                name="dealType"
-                layout="horizontal"
-                variant="default"
-              />
-            </div>
-
-            <div className="form-group for_width20 grow-1 order-2">
               <Dropdown
                 placeholder="Əmlak növü"
                 options={PROPERTY_TYPES}
                 value={filters.propertyType}
                 onChange={(value) => handleFilterChange("propertyType", value)}
+                icon="fa-solid fa-home"
               />
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-2">
+              <div className="transaction-toggle">
+                <div className="toggle-buttons">
+                  <button
+                    className={`toggle-btn ${filters.transactionType === "sale" ? "active" : ""}`}
+                    onClick={() =>
+                      handleFilterChange("transactionType", "sale")
+                    }
+                  >
+                    Satış
+                  </button>
+                  <button
+                    className={`toggle-btn ${filters.transactionType === "rent" ? "active" : ""}`}
+                    onClick={() =>
+                      handleFilterChange("transactionType", "rent")
+                    }
+                  >
+                    İcarə
+                  </button>
+                </div>
+              </div>
             </div>
 
             <div className="form-group for_width_big grow-1 order-3">
@@ -976,9 +865,8 @@ const FilterManager = ({ category, onFiltersChange, initialFilters = {} }) => {
                 maxValue={filters.priceMax}
                 onMinChange={(value) => handleFilterChange("priceMin", value)}
                 onMaxChange={(value) => handleFilterChange("priceMax", value)}
-                currency="AZN"
-                minPlaceholder="Min qiymət"
-                maxPlaceholder="Max qiymət"
+                currency="₼"
+                placeholder="Qiymət aralığı"
               />
             </div>
 
@@ -986,235 +874,106 @@ const FilterManager = ({ category, onFiltersChange, initialFilters = {} }) => {
               <LocationFilter
                 value={filters.city}
                 onChange={(value) => handleFilterChange("city", value)}
-                placeholder="Şəhər"
+                placeholder="Şəhər seçin"
               />
             </div>
 
-            {/* Row 2: Rooms, Area Range, Floor Range, Condition - SAME as vehicles row 2 */}
+            {/* Row 2: Rooms, Area, Condition, Floor */}
             <div className="form-group for_width20 grow-1 order-5">
               <Dropdown
                 placeholder="Otaq sayı"
-                options={ROOM_OPTIONS}
+                options={ROOM_COUNTS}
                 value={filters.rooms}
                 onChange={(value) => handleFilterChange("rooms", value)}
+                icon="fa-solid fa-bed"
               />
             </div>
 
-            <div className="form-group for_width_big grow-1 order-6">
-              <PriceRangeFilter
+            <div className="form-group for_width20 grow-1 order-6">
+              <AreaRangeFilter
                 minValue={filters.areaMin}
                 maxValue={filters.areaMax}
                 onMinChange={(value) => handleFilterChange("areaMin", value)}
                 onMaxChange={(value) => handleFilterChange("areaMax", value)}
-                currency="m²"
-                minPlaceholder="Min sahə"
-                maxPlaceholder="Max sahə"
+                placeholder="Sahə (m²)"
               />
             </div>
 
-            <div className="form-group for_width_big grow-1 order-7">
-              <PriceRangeFilter
-                minValue={filters.floorMin}
-                maxValue={filters.totalFloors}
-                onMinChange={(value) => handleFilterChange("floorMin", value)}
-                onMaxChange={(value) =>
-                  handleFilterChange("totalFloors", value)
-                }
-                currency=""
-                minPlaceholder="Mərtəbə"
-                maxPlaceholder="Ümumi mərtəbə"
-              />
+            <div className="form-group for_width20 grow-1 order-7">
+              <div className="condition-filter">
+                <div className="condition-label">Vəziyyət</div>
+                <RadioGroup2
+                  options={PROPERTY_CONDITIONS}
+                  value={filters.condition}
+                  onChange={(value) => handleFilterChange("condition", value)}
+                  name="condition"
+                  layout="horizontal"
+                  variant="default"
+                />
+              </div>
             </div>
 
             <div className="form-group for_width20 grow-1 order-8">
-              <Dropdown
-                placeholder="Təmir vəziyyəti"
-                options={RENOVATION_CONDITIONS}
-                value={filters.condition}
-                onChange={(value) => handleFilterChange("condition", value)}
+              <FloorRangeFilter
+                floorValue={filters.floor}
+                totalFloorsValue={filters.totalFloors}
+                onFloorChange={(value) => handleFilterChange("floor", value)}
+                onTotalFloorsChange={(value) =>
+                  handleFilterChange("totalFloors", value)
+                }
+                placeholder="Mərtəbə"
               />
             </div>
 
-            {/* Row 3: Progressive disclosure "More Filters" - Each filter gets its own column */}
-            {filters.showMoreFilters && (
-              <>
-                {/* Metro Station */}
-                <div className="form-group for_width20 grow-1 order-9">
-                  <Dropdown
-                    placeholder="Metro stansiyası"
-                    options={getMetroStationsForCity(filters.city || "baku")}
-                    value={filters.metro}
-                    onChange={(value) => handleFilterChange("metro", value)}
-                  />
-                </div>
-
-                {/* District */}
-                <div className="form-group for_width20 grow-1 order-10">
-                  <Dropdown
-                    placeholder="Rayon"
-                    options={getDistrictsForCity(filters.city || "baku")}
-                    value={filters.district}
-                    onChange={(value) => handleFilterChange("district", value)}
-                  />
-                </div>
-
-                {/* Building Type */}
-                <div className="form-group for_width20 grow-1 order-11">
-                  <RadioGroup2
-                    options={[
-                      { value: "all", label: "Hamısı" },
-                      { value: "new", label: "Yeni tikili" },
-                      { value: "old", label: "Köhnə tikili" },
-                    ]}
-                    value={filters.buildingType || "all"}
-                    onChange={(value) =>
-                      handleFilterChange("buildingType", value)
-                    }
-                    name="buildingType"
-                    layout="horizontal"
-                    variant="default"
-                  />
-                </div>
-
-                {/* Property Features - Full width row */}
-                <div className="form-group for_width_full grow-1 order-12">
-                  <div className="additional_chekings_hero">
-                    <div className="additional_chekings_title">
-                      Əmlak xüsusiyyətləri
-                    </div>
-                    <div className="additional_chekings">
-                      <div className="equipment-categories">
-                        <div className="equipment-category">
-                          <div className="equipment-category-title">
-                            Əmlak xüsusiyyətləri
-                          </div>
-                          <div className="checkbox-group-horizontal">
-                            {PROPERTY_AMENITIES.map((amenity) => (
-                              <div
-                                key={amenity.value}
-                                className="checkbox-group-item"
-                              >
-                                <label>
-                                  <input
-                                    type="checkbox"
-                                    checked={(filters.amenities || []).includes(
-                                      amenity.value
-                                    )}
-                                    onChange={(e) => {
-                                      const currentAmenities =
-                                        filters.amenities || [];
-                                      const newAmenities = e.target.checked
-                                        ? [...currentAmenities, amenity.value]
-                                        : currentAmenities.filter(
-                                            (item) => item !== amenity.value
-                                          );
-                                      handleFilterChange(
-                                        "amenities",
-                                        newAmenities
-                                      );
-                                    }}
-                                  />
-                                  {amenity.label}
-                                </label>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-
-                        <div className="equipment-category">
-                          <div className="equipment-category-title">
-                            Bina xüsusiyyətləri
-                          </div>
-                          <div className="checkbox-group-horizontal">
-                            {BUILDING_FEATURES.map((feature) => (
-                              <div
-                                key={feature.value}
-                                className="checkbox-group-item"
-                              >
-                                <label>
-                                  <input
-                                    type="checkbox"
-                                    checked={(
-                                      filters.buildingFeatures || []
-                                    ).includes(feature.value)}
-                                    onChange={(e) => {
-                                      const currentFeatures =
-                                        filters.buildingFeatures || [];
-                                      const newFeatures = e.target.checked
-                                        ? [...currentFeatures, feature.value]
-                                        : currentFeatures.filter(
-                                            (item) => item !== feature.value
-                                          );
-                                      handleFilterChange(
-                                        "buildingFeatures",
-                                        newFeatures
-                                      );
-                                    }}
-                                  />
-                                  {feature.label}
-                                </label>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </>
-            )}
+            {/* Row 4: Filter Action Buttons */}
+            <div className="desc_filters_btns">
+              <FilterButtons
+                onReset={handleReset}
+                onToggleMoreFilters={() =>
+                  handleFilterChange(
+                    "showMoreFilters",
+                    !filters.showMoreFilters
+                  )
+                }
+                onShowResults={handleShowResults}
+                moreFiltersExpanded={filters.showMoreFilters}
+                resultsCount={0}
+                resetText="Sıfırla"
+                moreFiltersText="Daha çox filtr"
+                showResultsText="Elanları göstər"
+              />
+            </div>
           </div>
 
-          {/* Filter Action Buttons - OUTSIDE desctop_filters, EXACT same as vehicles */}
-          <div className="desc_filters_btns">
-            <FilterButtons
-              onReset={handleReset}
-              onToggleMoreFilters={() =>
-                handleFilterChange("showMoreFilters", !filters.showMoreFilters)
-              }
-              onShowResults={handleShowResults}
-              moreFiltersExpanded={filters.showMoreFilters}
-              resultsCount={0}
-              resetText="Sıfırla"
-              moreFiltersText="Daha çox filtr"
-              showResultsText="Elanları göstər"
-            />
-          </div>
+          <RealEstateFilterDrawer
+            isOpen={isMobileDrawerOpen}
+            onClose={() => setIsMobileDrawerOpen(false)}
+            filters={filters}
+            onApplyFilters={handleMobileFiltersApply}
+            resultsCount={0}
+          />
         </div>
-
-        {/* Mobile Bottom Drawer - Real Estate specific */}
-        <RealEstateFilterDrawer
-          isOpen={isMobileDrawerOpen}
-          onClose={() => setIsMobileDrawerOpen(false)}
-          filters={filters}
-          onApplyFilters={handleMobileFiltersApply}
-          resultsCount={0}
-        />
       </>
     );
   }
 
-  // Clothing category - EXACT same structure as electronics and jobs
+  // CLOTHING CATEGORY
   if (actualCategory === "clothing") {
     return (
       <>
-        {/* Mobile Filter Button - EXACT same as other categories */}
         <div className="mobile-filter-trigger">
           <button
             className="mobile-filter-btn"
             onClick={() => setIsMobileDrawerOpen(true)}
           >
             <i className="fa-solid fa-filter"></i>
-            <span>Filter</span>
-            {getActiveFiltersCount() > 0 && (
-              <span className="filter-count-badge">
-                {getActiveFiltersCount()}
-              </span>
+            <span>Filtrlər</span>
+            {activeFilterCount > 0 && (
+              <span className="filter-count">{activeFilterCount}</span>
             )}
           </button>
         </div>
 
-        {/* Desktop Filters Container */}
         <div className="main_container">
           <div className="desctop_filters">
             {/* Row 1: Clothing Type, Brand, Price, City */}
@@ -1224,7 +983,7 @@ const FilterManager = ({ category, onFiltersChange, initialFilters = {} }) => {
                 options={CLOTHING_TYPES}
                 value={filters.clothingType}
                 onChange={(value) => handleFilterChange("clothingType", value)}
-                icon="fa-solid fa-shirt"
+                icon="fa-solid fa-tshirt"
               />
             </div>
 
@@ -1244,8 +1003,8 @@ const FilterManager = ({ category, onFiltersChange, initialFilters = {} }) => {
                 maxValue={filters.priceMax}
                 onMinChange={(value) => handleFilterChange("priceMin", value)}
                 onMaxChange={(value) => handleFilterChange("priceMax", value)}
-                placeholder={{ min: "Min qiymət", max: "Max qiymət" }}
                 currency="₼"
+                placeholder="Qiymət aralığı"
               />
             </div>
 
@@ -1302,17 +1061,16 @@ const FilterManager = ({ category, onFiltersChange, initialFilters = {} }) => {
               />
             </div>
 
-            {/* Row 3: More Filters Section */}
+            {/* Row 3: More Filters */}
             {filters.showMoreFilters && (
               <>
-                {/* Material and Season Filters */}
                 <div className="form-group for_width20 grow-1 order-9">
                   <Dropdown
                     placeholder="Material seçin"
                     options={CLOTHING_MATERIALS}
                     value={filters.material}
                     onChange={(value) => handleFilterChange("material", value)}
-                    icon="fa-solid fa-scroll"
+                    icon="fa-solid fa-leaf"
                   />
                 </div>
 
@@ -1322,129 +1080,1167 @@ const FilterManager = ({ category, onFiltersChange, initialFilters = {} }) => {
                     options={CLOTHING_SEASONS}
                     value={filters.season}
                     onChange={(value) => handleFilterChange("season", value)}
-                    icon="fa-solid fa-calendar"
+                    icon="fa-solid fa-sun"
                   />
                 </div>
-
-                {/* Delivery Option */}
-                <div className="form-group for_width20 grow-1 order-11">
-                  <div className="delivery-filter">
-                    <div className="delivery-label">Çatdırılma</div>
-                    <RadioGroup2
-                      options={[
-                        { value: "yes", label: "Bəli" },
-                        { value: "no", label: "Xeyr" },
-                        { value: "all", label: "Hamısı" },
-                      ]}
-                      value={filters.delivery}
-                      onChange={(value) =>
-                        handleFilterChange("delivery", value)
-                      }
-                      name="delivery"
-                      layout="horizontal"
-                      variant="default"
-                    />
-                  </div>
-                </div>
-
-                {/* Empty slot for symmetry */}
-                <div className="form-group for_width20 grow-1 order-12"></div>
               </>
             )}
+
+            {/* Row 4: Filter Action Buttons */}
+            <div className="desc_filters_btns">
+              <FilterButtons
+                onReset={handleReset}
+                onToggleMoreFilters={() =>
+                  handleFilterChange(
+                    "showMoreFilters",
+                    !filters.showMoreFilters
+                  )
+                }
+                onShowResults={handleShowResults}
+                moreFiltersExpanded={filters.showMoreFilters}
+                resultsCount={0}
+                resetText="Sıfırla"
+                moreFiltersText="Daha çox filtr"
+                showResultsText="Elanları göstər"
+              />
+            </div>
           </div>
 
-          {/* Filter Action Buttons - EXACT same as other categories */}
-          <div className="desc_filters_btns">
-            <FilterButtons
-              onReset={handleReset}
-              onToggleMoreFilters={() =>
-                handleFilterChange("showMoreFilters", !filters.showMoreFilters)
-              }
-              onShowResults={handleShowResults}
-              moreFiltersExpanded={filters.showMoreFilters}
-              resultsCount={0}
-              resetText="Sıfırla"
-              moreFiltersText="Daha çox filtr"
-              showResultsText="Elanları göstər"
-            />
-          </div>
+          <ClothingFilterDrawer
+            isOpen={isMobileDrawerOpen}
+            onClose={() => setIsMobileDrawerOpen(false)}
+            filters={filters}
+            onApplyFilters={handleMobileFiltersApply}
+            resultsCount={0}
+          />
         </div>
-
-        {/* Mobile Bottom Drawer - Clothing specific */}
-        <ClothingFilterDrawer
-          isOpen={isMobileDrawerOpen}
-          onClose={() => setIsMobileDrawerOpen(false)}
-          filters={filters}
-          onApplyFilters={handleMobileFiltersApply}
-          resultsCount={0}
-        />
       </>
     );
   }
 
-  const renderMobileDrawer = () => {
-    const drawerProps = {
-      isOpen: isMobileDrawerOpen,
-      onClose: () => setIsMobileDrawerOpen(false),
-      filters: universalFilters,
-      onApplyFilters: (newFilters) => {
-        Object.keys(newFilters).forEach((key) => {
-          updateFilter(key, newFilters[key]);
-        });
-        setIsMobileDrawerOpen(false);
-      },
-      resultsCount: 0,
-    };
+  // SERVICES CATEGORY (Template B - Copy Jobs Pattern)
+  if (actualCategory === "services") {
+    return (
+      <>
+        <div className="mobile-filter-trigger">
+          <button
+            className="mobile-filter-btn"
+            onClick={() => setIsMobileDrawerOpen(true)}
+          >
+            <i className="fa-solid fa-filter"></i>
+            <span>Filtrlər</span>
+            {activeFilterCount > 0 && (
+              <span className="filter-count">{activeFilterCount}</span>
+            )}
+          </button>
+        </div>
 
-    switch (actualCategory) {
-      case "electronics":
-        return <ElectronicsFilterDrawer {...drawerProps} />;
-      default:
-        return (
-          <UniversalFilterDrawer
-            {...drawerProps}
-            config={config}
-            onFilterChange={updateFilter}
-            activeFilterCount={activeFilterCount}
+        <div className="main_container">
+          <div className="desctop_filters">
+            {/* Row 1: Service Type, Category, Price, City */}
+            <div className="form-group for_width20 grow-1 order-1">
+              <Dropdown
+                placeholder="Xidmət növü seçin"
+                options={SERVICES_TYPES}
+                value={filters.serviceType}
+                onChange={(value) => handleFilterChange("serviceType", value)}
+                icon="fa-solid fa-wrench"
+              />
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-2">
+              <Dropdown
+                placeholder="Kateqoriya seçin"
+                options={SERVICES_CATEGORIES}
+                value={filters.serviceCategory}
+                onChange={(value) =>
+                  handleFilterChange("serviceCategory", value)
+                }
+                icon="fa-solid fa-list"
+              />
+            </div>
+
+            <div className="form-group for_width_big grow-1 order-3">
+              <PriceRangeFilter
+                minValue={filters.priceMin}
+                maxValue={filters.priceMax}
+                onMinChange={(value) => handleFilterChange("priceMin", value)}
+                onMaxChange={(value) => handleFilterChange("priceMax", value)}
+                currency="₼"
+                placeholder="Qiymət aralığı"
+              />
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-4">
+              <LocationFilter
+                value={filters.city}
+                onChange={(value) => handleFilterChange("city", value)}
+                placeholder="Şəhər seçin"
+              />
+            </div>
+
+            {/* Row 2: Experience, Availability, Schedule, Service Area */}
+            <div className="form-group for_width20 grow-1 order-5">
+              <Dropdown
+                placeholder="Təcrübə seçin"
+                options={SERVICES_EXPERIENCE}
+                value={filters.experience}
+                onChange={(value) => handleFilterChange("experience", value)}
+                icon="fa-solid fa-star"
+              />
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-6">
+              <Dropdown
+                placeholder="Mövcudluq seçin"
+                options={SERVICES_AVAILABILITY}
+                value={filters.availability}
+                onChange={(value) => handleFilterChange("availability", value)}
+                icon="fa-solid fa-calendar"
+              />
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-7">
+              <Dropdown
+                placeholder="Qrafik seçin"
+                options={SERVICES_SCHEDULE}
+                value={filters.schedule}
+                onChange={(value) => handleFilterChange("schedule", value)}
+                icon="fa-solid fa-clock"
+              />
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-8">
+              <Dropdown
+                placeholder="Xidmət sahəsi"
+                options={SERVICES_AREA}
+                value={filters.serviceArea}
+                onChange={(value) => handleFilterChange("serviceArea", value)}
+                icon="fa-solid fa-location-dot"
+              />
+            </div>
+
+            {/* Row 4: Filter Action Buttons */}
+            <div className="desc_filters_btns">
+              <FilterButtons
+                onReset={handleReset}
+                onToggleMoreFilters={() =>
+                  handleFilterChange(
+                    "showMoreFilters",
+                    !filters.showMoreFilters
+                  )
+                }
+                onShowResults={handleShowResults}
+                moreFiltersExpanded={filters.showMoreFilters}
+                resultsCount={0}
+                resetText="Sıfırla"
+                moreFiltersText="Daha çox filtr"
+                showResultsText="Elanları göstər"
+              />
+            </div>
+          </div>
+
+          <ServicesFilterDrawer
+            isOpen={isMobileDrawerOpen}
+            onClose={() => setIsMobileDrawerOpen(false)}
+            filters={filters}
+            onApplyFilters={handleMobileFiltersApply}
+            resultsCount={0}
           />
-        );
-    }
-  };
-
-  // For non-vehicle categories
-  if (!config) {
-    console.warn(
-      `FilterManager: No configuration found for category "${actualCategory}"`
+        </div>
+      </>
     );
-    return null;
   }
 
-  return (
-    <>
-      {/* Mobile Filter Trigger */}
-      <div className="mobile-filter-trigger">
-        <button
-          className="mobile-filter-btn"
-          onClick={() => setIsMobileDrawerOpen(true)}
-        >
-          <i className="fas fa-filter"></i>
-          <span>Filtr</span>
-          {activeFilterCount > 0 && (
-            <span className="filter-count-badge">{activeFilterCount}</span>
-          )}
-        </button>
-      </div>
-
-      {/* For other categories - basic desktop filters */}
-      <div className="main_container">
-        <div className="desctop_filters">
-          <div>Other categories coming soon...</div>
+  // KIDS CATEGORY (Template A - Copy Electronics Pattern)
+  if (actualCategory === "kids") {
+    return (
+      <>
+        <div className="mobile-filter-trigger">
+          <button
+            className="mobile-filter-btn"
+            onClick={() => setIsMobileDrawerOpen(true)}
+          >
+            <i className="fa-solid fa-filter"></i>
+            <span>Filtrlər</span>
+            {activeFilterCount > 0 && (
+              <span className="filter-count">{activeFilterCount}</span>
+            )}
+          </button>
         </div>
-      </div>
 
-      {/* Mobile Drawer */}
-      {renderMobileDrawer()}
-    </>
+        <div className="main_container">
+          <div className="desctop_filters">
+            {/* Row 1: Product Type, Brand, Price, City */}
+            <div className="form-group for_width20 grow-1 order-1">
+              <Dropdown
+                placeholder="Məhsul növü seçin"
+                options={KIDS_PRODUCT_TYPES}
+                value={filters.productType}
+                onChange={(value) => handleFilterChange("productType", value)}
+                icon="fa-solid fa-baby"
+              />
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-2">
+              <Dropdown
+                placeholder="Marka seçin"
+                options={KIDS_BRANDS}
+                value={filters.brand}
+                onChange={(value) => handleFilterChange("brand", value)}
+                icon="fa-solid fa-tag"
+              />
+            </div>
+
+            <div className="form-group for_width_big grow-1 order-3">
+              <PriceRangeFilter
+                minValue={filters.priceMin}
+                maxValue={filters.priceMax}
+                onMinChange={(value) => handleFilterChange("priceMin", value)}
+                onMaxChange={(value) => handleFilterChange("priceMax", value)}
+                currency="₼"
+                placeholder="Qiymət aralığı"
+              />
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-4">
+              <LocationFilter
+                value={filters.city}
+                onChange={(value) => handleFilterChange("city", value)}
+                placeholder="Şəhər seçin"
+              />
+            </div>
+
+            {/* Row 2: Age Group, Condition, Gender, Category */}
+            <div className="form-group for_width20 grow-1 order-5">
+              <Dropdown
+                placeholder="Yaş qrupu seçin"
+                options={KIDS_AGE_GROUPS}
+                value={filters.ageGroup}
+                onChange={(value) => handleFilterChange("ageGroup", value)}
+                icon="fa-solid fa-child"
+              />
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-6">
+              <div className="condition-filter">
+                <div className="condition-label">Vəziyyət</div>
+                <RadioGroup2
+                  options={KIDS_CONDITIONS}
+                  value={filters.condition}
+                  onChange={(value) => handleFilterChange("condition", value)}
+                  name="condition"
+                  layout="horizontal"
+                  variant="default"
+                />
+              </div>
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-7">
+              <Dropdown
+                placeholder="Cins seçin"
+                options={KIDS_GENDER}
+                value={filters.gender}
+                onChange={(value) => handleFilterChange("gender", value)}
+                icon="fa-solid fa-person"
+              />
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-8">
+              <Dropdown
+                placeholder="Kateqoriya seçin"
+                options={KIDS_CATEGORIES}
+                value={filters.category}
+                onChange={(value) => handleFilterChange("category", value)}
+                icon="fa-solid fa-list"
+              />
+            </div>
+
+            {/* Row 3: More Filters */}
+            {filters.showMoreFilters && (
+              <>
+                <div className="form-group for_width20 grow-1 order-9">
+                  <Dropdown
+                    placeholder="Ölçü seçin"
+                    options={KIDS_SIZES}
+                    value={filters.size}
+                    onChange={(value) => handleFilterChange("size", value)}
+                    icon="fa-solid fa-ruler"
+                  />
+                </div>
+              </>
+            )}
+
+            {/* Row 4: Filter Action Buttons */}
+            <div className="desc_filters_btns">
+              <FilterButtons
+                onReset={handleReset}
+                onToggleMoreFilters={() =>
+                  handleFilterChange(
+                    "showMoreFilters",
+                    !filters.showMoreFilters
+                  )
+                }
+                onShowResults={handleShowResults}
+                moreFiltersExpanded={filters.showMoreFilters}
+                resultsCount={0}
+                resetText="Sıfırla"
+                moreFiltersText="Daha çox filtr"
+                showResultsText="Elanları göstər"
+              />
+            </div>
+          </div>
+
+          <KidsFilterDrawer
+            isOpen={isMobileDrawerOpen}
+            onClose={() => setIsMobileDrawerOpen(false)}
+            filters={filters}
+            onApplyFilters={handleMobileFiltersApply}
+            resultsCount={0}
+          />
+        </div>
+      </>
+    );
+  }
+
+  // COSMETICS CATEGORY
+  if (actualCategory === "cosmetics") {
+    return (
+      <>
+        <div className="mobile-filter-trigger">
+          <button
+            className="mobile-filter-btn"
+            onClick={() => setIsMobileDrawerOpen(true)}
+          >
+            <i className="fa-solid fa-filter"></i>
+            <span>Filtrlər</span>
+            {activeFilterCount > 0 && (
+              <span className="filter-count">{activeFilterCount}</span>
+            )}
+          </button>
+        </div>
+
+        <div className="main_container">
+          <div className="desctop_filters">
+            {/* Row 1: Product Type, Brand, Price, City */}
+            <div className="form-group for_width20 grow-1 order-1">
+              <Dropdown
+                placeholder="Məhsul növü seçin"
+                options={COSMETICS_PRODUCT_TYPES}
+                value={filters.productType}
+                onChange={(value) => handleFilterChange("productType", value)}
+                icon="fa-solid fa-palette"
+              />
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-2">
+              <Dropdown
+                placeholder="Marka seçin"
+                options={COSMETICS_BRANDS}
+                value={filters.brand}
+                onChange={(value) => handleFilterChange("brand", value)}
+                icon="fa-solid fa-tag"
+              />
+            </div>
+
+            <div className="form-group for_width_big grow-1 order-3">
+              <PriceRangeFilter
+                minValue={filters.priceMin}
+                maxValue={filters.priceMax}
+                onMinChange={(value) => handleFilterChange("priceMin", value)}
+                onMaxChange={(value) => handleFilterChange("priceMax", value)}
+                currency="₼"
+                placeholder="Qiymət aralığı"
+              />
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-4">
+              <LocationFilter
+                value={filters.city}
+                onChange={(value) => handleFilterChange("city", value)}
+                placeholder="Şəhər seçin"
+              />
+            </div>
+
+            {/* Row 2: Condition, Category, Skin Type, Size */}
+            <div className="form-group for_width20 grow-1 order-5">
+              <div className="condition-filter">
+                <div className="condition-label">Vəziyyət</div>
+                <RadioGroup2
+                  options={COSMETICS_CONDITIONS}
+                  value={filters.condition}
+                  onChange={(value) => handleFilterChange("condition", value)}
+                  name="condition"
+                  layout="horizontal"
+                  variant="default"
+                />
+              </div>
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-6">
+              <Dropdown
+                placeholder="Kateqoriya seçin"
+                options={COSMETICS_CATEGORIES}
+                value={filters.category}
+                onChange={(value) => handleFilterChange("category", value)}
+                icon="fa-solid fa-list"
+              />
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-7">
+              <Dropdown
+                placeholder="Dəri növü seçin"
+                options={COSMETICS_SKIN_TYPES}
+                value={filters.skinType}
+                onChange={(value) => handleFilterChange("skinType", value)}
+                icon="fa-solid fa-face-smile"
+              />
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-8">
+              <Dropdown
+                placeholder="Ölçü seçin"
+                options={COSMETICS_SIZES}
+                value={filters.size}
+                onChange={(value) => handleFilterChange("size", value)}
+                icon="fa-solid fa-ruler"
+              />
+            </div>
+
+            {/* Row 4: Filter Action Buttons */}
+            <div className="desc_filters_btns">
+              <FilterButtons
+                onReset={handleReset}
+                onToggleMoreFilters={() =>
+                  handleFilterChange(
+                    "showMoreFilters",
+                    !filters.showMoreFilters
+                  )
+                }
+                onShowResults={handleShowResults}
+                moreFiltersExpanded={filters.showMoreFilters}
+                resultsCount={0}
+                resetText="Sıfırla"
+                moreFiltersText="Daha çox filtr"
+                showResultsText="Elanları göstər"
+              />
+            </div>
+          </div>
+
+          <CosmeticsFilterDrawer
+            isOpen={isMobileDrawerOpen}
+            onClose={() => setIsMobileDrawerOpen(false)}
+            filters={filters}
+            onApplyFilters={handleMobileFiltersApply}
+            resultsCount={0}
+          />
+        </div>
+      </>
+    );
+  }
+
+  // HOME GARDEN CATEGORY
+  if (actualCategory === "home-garden") {
+    return (
+      <>
+        <div className="mobile-filter-trigger">
+          <button
+            className="mobile-filter-btn"
+            onClick={() => setIsMobileDrawerOpen(true)}
+          >
+            <i className="fa-solid fa-filter"></i>
+            <span>Filtrlər</span>
+            {activeFilterCount > 0 && (
+              <span className="filter-count">{activeFilterCount}</span>
+            )}
+          </button>
+        </div>
+
+        <div className="main_container">
+          <div className="desctop_filters">
+            {/* Row 1: Product Type, Brand, Price, City */}
+            <div className="form-group for_width20 grow-1 order-1">
+              <Dropdown
+                placeholder="Məhsul növü seçin"
+                options={HOME_GARDEN_TYPES}
+                value={filters.productType}
+                onChange={(value) => handleFilterChange("productType", value)}
+                icon="fa-solid fa-home"
+              />
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-2">
+              <Dropdown
+                placeholder="Marka seçin"
+                options={HOME_GARDEN_BRANDS}
+                value={filters.brand}
+                onChange={(value) => handleFilterChange("brand", value)}
+                icon="fa-solid fa-tag"
+              />
+            </div>
+
+            <div className="form-group for_width_big grow-1 order-3">
+              <PriceRangeFilter
+                minValue={filters.priceMin}
+                maxValue={filters.priceMax}
+                onMinChange={(value) => handleFilterChange("priceMin", value)}
+                onMaxChange={(value) => handleFilterChange("priceMax", value)}
+                currency="₼"
+                placeholder="Qiymət aralığı"
+              />
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-4">
+              <LocationFilter
+                value={filters.city}
+                onChange={(value) => handleFilterChange("city", value)}
+                placeholder="Şəhər seçin"
+              />
+            </div>
+
+            {/* Row 2: Condition, Category, Room, Material */}
+            <div className="form-group for_width20 grow-1 order-5">
+              <div className="condition-filter">
+                <div className="condition-label">Vəziyyət</div>
+                <RadioGroup2
+                  options={HOME_GARDEN_CONDITIONS}
+                  value={filters.condition}
+                  onChange={(value) => handleFilterChange("condition", value)}
+                  name="condition"
+                  layout="horizontal"
+                  variant="default"
+                />
+              </div>
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-6">
+              <Dropdown
+                placeholder="Kateqoriya seçin"
+                options={HOME_GARDEN_CATEGORIES}
+                value={filters.category}
+                onChange={(value) => handleFilterChange("category", value)}
+                icon="fa-solid fa-list"
+              />
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-7">
+              <Dropdown
+                placeholder="Otaq seçin"
+                options={HOME_GARDEN_ROOMS}
+                value={filters.room}
+                onChange={(value) => handleFilterChange("room", value)}
+                icon="fa-solid fa-door-open"
+              />
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-8">
+              <Dropdown
+                placeholder="Material seçin"
+                options={HOME_GARDEN_MATERIALS}
+                value={filters.material}
+                onChange={(value) => handleFilterChange("material", value)}
+                icon="fa-solid fa-cube"
+              />
+            </div>
+
+            {/* Row 4: Filter Action Buttons */}
+            <div className="desc_filters_btns">
+              <FilterButtons
+                onReset={handleReset}
+                onToggleMoreFilters={() =>
+                  handleFilterChange(
+                    "showMoreFilters",
+                    !filters.showMoreFilters
+                  )
+                }
+                onShowResults={handleShowResults}
+                moreFiltersExpanded={filters.showMoreFilters}
+                resultsCount={0}
+                resetText="Sıfırla"
+                moreFiltersText="Daha çox filtr"
+                showResultsText="Elanları göstər"
+              />
+            </div>
+          </div>
+
+          <HomeGardenFilterDrawer
+            isOpen={isMobileDrawerOpen}
+            onClose={() => setIsMobileDrawerOpen(false)}
+            filters={filters}
+            onApplyFilters={handleMobileFiltersApply}
+            resultsCount={0}
+          />
+        </div>
+      </>
+    );
+  }
+
+  // ANIMALS CATEGORY
+  if (actualCategory === "animals") {
+    return (
+      <>
+        <div className="mobile-filter-trigger">
+          <button
+            className="mobile-filter-btn"
+            onClick={() => setIsMobileDrawerOpen(true)}
+          >
+            <i className="fa-solid fa-filter"></i>
+            <span>Filtrlər</span>
+            {activeFilterCount > 0 && (
+              <span className="filter-count">{activeFilterCount}</span>
+            )}
+          </button>
+        </div>
+
+        <div className="main_container">
+          <div className="desctop_filters">
+            {/* Row 1: Animal Type, Breed, Price, City */}
+            <div className="form-group for_width20 grow-1 order-1">
+              <Dropdown
+                placeholder="Heyvan növü seçin"
+                options={ANIMAL_TYPES}
+                value={filters.animalType}
+                onChange={(value) => handleFilterChange("animalType", value)}
+                icon="fa-solid fa-paw"
+              />
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-2">
+              <Dropdown
+                placeholder="Cins seçin"
+                options={ANIMAL_BREEDS}
+                value={filters.breed}
+                onChange={(value) => handleFilterChange("breed", value)}
+                icon="fa-solid fa-dog"
+              />
+            </div>
+
+            <div className="form-group for_width_big grow-1 order-3">
+              <PriceRangeFilter
+                minValue={filters.priceMin}
+                maxValue={filters.priceMax}
+                onMinChange={(value) => handleFilterChange("priceMin", value)}
+                onMaxChange={(value) => handleFilterChange("priceMax", value)}
+                currency="₼"
+                placeholder="Qiymət aralığı"
+              />
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-4">
+              <LocationFilter
+                value={filters.city}
+                onChange={(value) => handleFilterChange("city", value)}
+                placeholder="Şəhər seçin"
+              />
+            </div>
+
+            {/* Row 2: Age, Gender, Condition, Purpose */}
+            <div className="form-group for_width20 grow-1 order-5">
+              <Dropdown
+                placeholder="Yaş seçin"
+                options={ANIMAL_AGES}
+                value={filters.age}
+                onChange={(value) => handleFilterChange("age", value)}
+                icon="fa-solid fa-birthday-cake"
+              />
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-6">
+              <Dropdown
+                placeholder="Cins seçin"
+                options={ANIMAL_GENDERS}
+                value={filters.gender}
+                onChange={(value) => handleFilterChange("gender", value)}
+                icon="fa-solid fa-venus-mars"
+              />
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-7">
+              <div className="condition-filter">
+                <div className="condition-label">Vəziyyət</div>
+                <RadioGroup2
+                  options={ANIMAL_CONDITIONS}
+                  value={filters.condition}
+                  onChange={(value) => handleFilterChange("condition", value)}
+                  name="condition"
+                  layout="horizontal"
+                  variant="default"
+                />
+              </div>
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-8">
+              <Dropdown
+                placeholder="Məqsəd seçin"
+                options={ANIMAL_PURPOSES}
+                value={filters.purpose}
+                onChange={(value) => handleFilterChange("purpose", value)}
+                icon="fa-solid fa-target"
+              />
+            </div>
+
+            {/* Row 3: More Filters */}
+            {filters.showMoreFilters && (
+              <>
+                <div className="form-group for_width20 grow-1 order-9">
+                  <Dropdown
+                    placeholder="Kateqoriya seçin"
+                    options={ANIMAL_CATEGORIES}
+                    value={filters.category}
+                    onChange={(value) => handleFilterChange("category", value)}
+                    icon="fa-solid fa-list"
+                  />
+                </div>
+              </>
+            )}
+
+            {/* Row 4: Filter Action Buttons */}
+            <div className="desc_filters_btns">
+              <FilterButtons
+                onReset={handleReset}
+                onToggleMoreFilters={() =>
+                  handleFilterChange(
+                    "showMoreFilters",
+                    !filters.showMoreFilters
+                  )
+                }
+                onShowResults={handleShowResults}
+                moreFiltersExpanded={filters.showMoreFilters}
+                resultsCount={0}
+                resetText="Sıfırla"
+                moreFiltersText="Daha çox filtr"
+                showResultsText="Elanları göstər"
+              />
+            </div>
+          </div>
+
+          <AnimalsFilterDrawer
+            isOpen={isMobileDrawerOpen}
+            onClose={() => setIsMobileDrawerOpen(false)}
+            filters={filters}
+            onApplyFilters={handleMobileFiltersApply}
+            resultsCount={0}
+          />
+        </div>
+      </>
+    );
+  }
+
+  // SPORTS CATEGORY
+  if (actualCategory === "sports") {
+    return (
+      <>
+        <div className="mobile-filter-trigger">
+          <button
+            className="mobile-filter-btn"
+            onClick={() => setIsMobileDrawerOpen(true)}
+          >
+            <i className="fa-solid fa-filter"></i>
+            <span>Filtrlər</span>
+            {activeFilterCount > 0 && (
+              <span className="filter-count">{activeFilterCount}</span>
+            )}
+          </button>
+        </div>
+
+        <div className="main_container">
+          <div className="desctop_filters">
+            {/* Row 1: Sport Category, Product Type, Brand, Price */}
+            <div className="form-group for_width20 grow-1 order-1">
+              <Dropdown
+                placeholder="İdman növü seçin"
+                options={SPORTS_CATEGORIES}
+                value={filters.sportCategory}
+                onChange={(value) => handleFilterChange("sportCategory", value)}
+                icon="fa-solid fa-futbol"
+              />
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-2">
+              <Dropdown
+                placeholder="Məhsul növü seçin"
+                options={SPORTS_PRODUCT_TYPES}
+                value={filters.productType}
+                onChange={(value) => handleFilterChange("productType", value)}
+                icon="fa-solid fa-dumbbell"
+              />
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-3">
+              <Dropdown
+                placeholder="Marka seçin"
+                options={SPORTS_BRANDS}
+                value={filters.brand}
+                onChange={(value) => handleFilterChange("brand", value)}
+                icon="fa-solid fa-tag"
+              />
+            </div>
+
+            <div className="form-group for_width_big grow-1 order-4">
+              <PriceRangeFilter
+                minValue={filters.priceMin}
+                maxValue={filters.priceMax}
+                onMinChange={(value) => handleFilterChange("priceMin", value)}
+                onMaxChange={(value) => handleFilterChange("priceMax", value)}
+                currency="₼"
+                placeholder="Qiymət aralığı"
+              />
+            </div>
+
+            {/* Row 2: City, Condition, Size, Sport Type */}
+            <div className="form-group for_width20 grow-1 order-5">
+              <LocationFilter
+                value={filters.city}
+                onChange={(value) => handleFilterChange("city", value)}
+                placeholder="Şəhər seçin"
+              />
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-6">
+              <div className="condition-filter">
+                <div className="condition-label">Vəziyyət</div>
+                <RadioGroup2
+                  options={SPORTS_CONDITIONS}
+                  value={filters.condition}
+                  onChange={(value) => handleFilterChange("condition", value)}
+                  name="condition"
+                  layout="horizontal"
+                  variant="default"
+                />
+              </div>
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-7">
+              <Dropdown
+                placeholder="Ölçü seçin"
+                options={SPORTS_SIZES}
+                value={filters.size}
+                onChange={(value) => handleFilterChange("size", value)}
+                icon="fa-solid fa-ruler"
+              />
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-8">
+              <Dropdown
+                placeholder="İdman tipi seçin"
+                options={SPORTS_TYPES}
+                value={filters.sportType}
+                onChange={(value) => handleFilterChange("sportType", value)}
+                icon="fa-solid fa-trophy"
+              />
+            </div>
+
+            {/* Row 4: Filter Action Buttons */}
+            <div className="desc_filters_btns">
+              <FilterButtons
+                onReset={handleReset}
+                onToggleMoreFilters={() =>
+                  handleFilterChange(
+                    "showMoreFilters",
+                    !filters.showMoreFilters
+                  )
+                }
+                onShowResults={handleShowResults}
+                moreFiltersExpanded={filters.showMoreFilters}
+                resultsCount={0}
+                resetText="Sıfırla"
+                moreFiltersText="Daha çox filtr"
+                showResultsText="Elanları göstər"
+              />
+            </div>
+          </div>
+
+          <SportsFilterDrawer
+            isOpen={isMobileDrawerOpen}
+            onClose={() => setIsMobileDrawerOpen(false)}
+            filters={filters}
+            onApplyFilters={handleMobileFiltersApply}
+            resultsCount={0}
+          />
+        </div>
+      </>
+    );
+  }
+
+  // FOOD CATEGORY (Template C - Minimal)
+  if (actualCategory === "food") {
+    return (
+      <>
+        <div className="mobile-filter-trigger">
+          <button
+            className="mobile-filter-btn"
+            onClick={() => setIsMobileDrawerOpen(true)}
+          >
+            <i className="fa-solid fa-filter"></i>
+            <span>Filtrlər</span>
+            {activeFilterCount > 0 && (
+              <span className="filter-count">{activeFilterCount}</span>
+            )}
+          </button>
+        </div>
+
+        <div className="main_container">
+          <div className="desctop_filters">
+            {/* Row 1: Category, Price, City, Condition */}
+            <div className="form-group for_width20 grow-1 order-1">
+              <Dropdown
+                placeholder="Kateqoriya seçin"
+                options={FOOD_CATEGORIES}
+                value={filters.category}
+                onChange={(value) => handleFilterChange("category", value)}
+                icon="fa-solid fa-apple-alt"
+              />
+            </div>
+
+            <div className="form-group for_width_big grow-1 order-2">
+              <PriceRangeFilter
+                minValue={filters.priceMin}
+                maxValue={filters.priceMax}
+                onMinChange={(value) => handleFilterChange("priceMin", value)}
+                onMaxChange={(value) => handleFilterChange("priceMax", value)}
+                currency="₼"
+                placeholder="Qiymət aralığı"
+              />
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-3">
+              <LocationFilter
+                value={filters.city}
+                onChange={(value) => handleFilterChange("city", value)}
+                placeholder="Şəhər seçin"
+              />
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-4">
+              <div className="condition-filter">
+                <div className="condition-label">Vəziyyət</div>
+                <RadioGroup2
+                  options={FOOD_CONDITIONS}
+                  value={filters.condition}
+                  onChange={(value) => handleFilterChange("condition", value)}
+                  name="condition"
+                  layout="horizontal"
+                  variant="default"
+                />
+              </div>
+            </div>
+
+            {/* Row 2: Filter Action Buttons */}
+            <div className="desc_filters_btns">
+              <FilterButtons
+                onReset={handleReset}
+                onShowResults={handleShowResults}
+                resultsCount={0}
+                resetText="Sıfırla"
+                showResultsText="Elanları göstər"
+                hideMoreFilters={true}
+              />
+            </div>
+          </div>
+
+          <FoodFilterDrawer
+            isOpen={isMobileDrawerOpen}
+            onClose={() => setIsMobileDrawerOpen(false)}
+            filters={filters}
+            onApplyFilters={handleMobileFiltersApply}
+            resultsCount={0}
+          />
+        </div>
+      </>
+    );
+  }
+
+  // OTHER CATEGORY (Template C - Minimal)
+  if (actualCategory === "other") {
+    return (
+      <>
+        <div className="mobile-filter-trigger">
+          <button
+            className="mobile-filter-btn"
+            onClick={() => setIsMobileDrawerOpen(true)}
+          >
+            <i className="fa-solid fa-filter"></i>
+            <span>Filtrlər</span>
+            {activeFilterCount > 0 && (
+              <span className="filter-count">{activeFilterCount}</span>
+            )}
+          </button>
+        </div>
+
+        <div className="main_container">
+          <div className="desctop_filters">
+            {/* Row 1: Category, Price, City, Condition */}
+            <div className="form-group for_width20 grow-1 order-1">
+              <Dropdown
+                placeholder="Kateqoriya seçin"
+                options={OTHER_CATEGORIES}
+                value={filters.category}
+                onChange={(value) => handleFilterChange("category", value)}
+                icon="fa-solid fa-boxes"
+              />
+            </div>
+
+            <div className="form-group for_width_big grow-1 order-2">
+              <PriceRangeFilter
+                minValue={filters.priceMin}
+                maxValue={filters.priceMax}
+                onMinChange={(value) => handleFilterChange("priceMin", value)}
+                onMaxChange={(value) => handleFilterChange("priceMax", value)}
+                currency="₼"
+                placeholder="Qiymət aralığı"
+              />
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-3">
+              <LocationFilter
+                value={filters.city}
+                onChange={(value) => handleFilterChange("city", value)}
+                placeholder="Şəhər seçin"
+              />
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-4">
+              <div className="condition-filter">
+                <div className="condition-label">Vəziyyət</div>
+                <RadioGroup2
+                  options={OTHER_CONDITIONS}
+                  value={filters.condition}
+                  onChange={(value) => handleFilterChange("condition", value)}
+                  name="condition"
+                  layout="horizontal"
+                  variant="default"
+                />
+              </div>
+            </div>
+
+            {/* Row 2: Filter Action Buttons */}
+            <div className="desc_filters_btns">
+              <FilterButtons
+                onReset={handleReset}
+                onShowResults={handleShowResults}
+                resultsCount={0}
+                resetText="Sıfırla"
+                showResultsText="Elanları göstər"
+                hideMoreFilters={true}
+              />
+            </div>
+          </div>
+
+          <OtherFilterDrawer
+            isOpen={isMobileDrawerOpen}
+            onClose={() => setIsMobileDrawerOpen(false)}
+            filters={filters}
+            onApplyFilters={handleMobileFiltersApply}
+            resultsCount={0}
+          />
+        </div>
+      </>
+    );
+  }
+
+  // FREE CATEGORY (Template C - No Price Filter)
+  if (actualCategory === "free") {
+    return (
+      <>
+        <div className="mobile-filter-trigger">
+          <button
+            className="mobile-filter-btn"
+            onClick={() => setIsMobileDrawerOpen(true)}
+          >
+            <i className="fa-solid fa-filter"></i>
+            <span>Filtrlər</span>
+            {activeFilterCount > 0 && (
+              <span className="filter-count">{activeFilterCount}</span>
+            )}
+          </button>
+        </div>
+
+        <div className="main_container">
+          <div className="desctop_filters">
+            {/* Row 1: Category, City, Condition */}
+            <div className="form-group for_width20 grow-1 order-1">
+              <Dropdown
+                placeholder="Kateqoriya seçin"
+                options={FREE_CATEGORIES}
+                value={filters.category}
+                onChange={(value) => handleFilterChange("category", value)}
+                icon="fa-solid fa-gift"
+              />
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-2">
+              <LocationFilter
+                value={filters.city}
+                onChange={(value) => handleFilterChange("city", value)}
+                placeholder="Şəhər seçin"
+              />
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-3">
+              <div className="condition-filter">
+                <div className="condition-label">Vəziyyət</div>
+                <RadioGroup2
+                  options={FREE_CONDITIONS}
+                  value={filters.condition}
+                  onChange={(value) => handleFilterChange("condition", value)}
+                  name="condition"
+                  layout="horizontal"
+                  variant="default"
+                />
+              </div>
+            </div>
+
+            {/* Row 2: Filter Action Buttons */}
+            <div className="desc_filters_btns">
+              <FilterButtons
+                onReset={handleReset}
+                onShowResults={handleShowResults}
+                resultsCount={0}
+                resetText="Sıfırla"
+                showResultsText="Elanları göstər"
+                hideMoreFilters={true}
+              />
+            </div>
+          </div>
+
+          <FreeFilterDrawer
+            isOpen={isMobileDrawerOpen}
+            onClose={() => setIsMobileDrawerOpen(false)}
+            filters={filters}
+            onApplyFilters={handleMobileFiltersApply}
+            resultsCount={0}
+          />
+        </div>
+      </>
+    );
+  }
+
+  // ============================================================================
+  // FALLBACK FOR UNMAPPED CATEGORIES
+  // ============================================================================
+  return (
+    <div
+      className="filter-fallback"
+      style={{ padding: "20px", backgroundColor: "#f9f9f9", margin: "20px" }}
+    >
+      <h3>🚧 Filter Development Status</h3>
+      <p>
+        <strong>URL Category:</strong> "{category}"
+      </p>
+      <p>
+        <strong>Mapped Category:</strong> "{actualCategory}"
+      </p>
+      <p>
+        <strong>Current Filters:</strong>
+      </p>
+      <pre
+        style={{ backgroundColor: "#fff", padding: "10px", fontSize: "12px" }}
+      >
+        {JSON.stringify(filters, null, 2)}
+      </pre>
+      <p>✅ This means the category mapping is working correctly!</p>
+      <p>🔧 Just need to implement the filter UI for this category.</p>
+    </div>
   );
 };
 
