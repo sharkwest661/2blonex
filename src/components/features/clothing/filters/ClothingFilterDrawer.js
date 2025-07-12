@@ -14,7 +14,6 @@ import {
   CLOTHING_MATERIALS,
   CLOTHING_SEASONS,
 } from "@/utils/constants/clothingConstants";
-// import { CLOTHING_TYPES } from "@/utils/constants/clothingConstants";
 
 export default function ClothingFilterDrawer({
   isOpen,

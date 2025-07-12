@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import { useStoreStore } from "@/store/useStoreStore"
-import { useRouter } from "next/navigation"
-import { useEffect } from "react"
+import { useStoreStore } from "@/store/useStoreStore";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 const CheckStore = () => {
-  const { store } = useStoreStore();
+  const store = useStoreStore((state) => state.store);
   const router = useRouter();
 
   useEffect(() => {
@@ -14,7 +14,7 @@ const CheckStore = () => {
     }
   }, [store, router]);
 
-  return null; 
-}
+  return null;
+};
 
-export default CheckStore
+export default CheckStore;
