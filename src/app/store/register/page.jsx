@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import React from "react";
 import { useForm, Controller } from "react-hook-form";
 
-const page = () => {
+const Page = () => {
   const setStore = useStoreStore((state) => state.setStore);
   const router = useRouter();
 
@@ -157,4 +157,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

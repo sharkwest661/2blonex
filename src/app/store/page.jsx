@@ -7,7 +7,7 @@ import CheckStore from "./components/check-store";
 import { useStoreStore } from "@/store/useStoreStore";
 import Link from "next/link";
 
-const page = () => {
+const Page = () => {
   const store = useStoreStore((state) => state.store);
   return (
     <Layout>
@@ -78,7 +78,7 @@ const page = () => {
                     <div class="store__categories">
                       {store &&
                         store.branch?.map((brancName) => (
-                          <span>{brancName}</span>
+                          <span key={brancName}>{brancName}</span>
                         ))}
                     </div>
                   </div>
@@ -117,4 +117,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

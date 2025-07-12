@@ -165,6 +165,18 @@ const FilterManager = ({ category, onFiltersChange, initialFilters = {} }) => {
     ...initialFilters,
   });
 
+  // For other categories, use the new universal system
+  const {
+    filters: universalFilters,
+    updateFilter,
+    resetFilters,
+    applyFilters,
+    activeFilterCount,
+  } = useFilterManager(config, {
+    onFiltersChange,
+    initialFilters,
+  });
+
   const handleFilterChange = (field, value) => {
     setFilters((prev) => ({
       ...prev,
@@ -1369,18 +1381,6 @@ const FilterManager = ({ category, onFiltersChange, initialFilters = {} }) => {
       </>
     );
   }
-
-  // For other categories, use the new universal system
-  const {
-    filters: universalFilters,
-    updateFilter,
-    resetFilters,
-    applyFilters,
-    activeFilterCount,
-  } = useFilterManager(config, {
-    onFiltersChange,
-    initialFilters,
-  });
 
   const renderMobileDrawer = () => {
     const drawerProps = {

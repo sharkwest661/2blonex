@@ -14,6 +14,7 @@ import {
   VEHICLE_EQUIPMENT,
   EQUIPMENT_CATEGORIES,
 } from "@/components/features/vehicles/constants";
+import { CheckboxGroup } from "@/components/ui/forms";
 
 /**
  * Complete vehicle filter configuration for FilterManager
