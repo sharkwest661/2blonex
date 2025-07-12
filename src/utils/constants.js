@@ -120,6 +120,7 @@ export const CATEGORIES = [
     icon: "https://bolbol.az/media/2021/08/04/categories/Group_9639.svg",
     href: "/geyim",
     count: 6789,
+    hasFilters: true, // CHANGE TO TRUE
     products: MOCK_PRODUCTS.clothing,
     subcategories: [
       "Qadın geyimi",

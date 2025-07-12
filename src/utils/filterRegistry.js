@@ -8,6 +8,7 @@ const SLUG_TO_CATEGORY_MAPPING = {
   elektronika: "electronics",
   "is-elanlari": "jobs",
   xidmetler: "services",
+  geyim: "clothing", // ADD THIS LINE
   // Add more mappings as needed
 };
 
