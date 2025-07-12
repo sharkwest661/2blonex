@@ -76,6 +76,19 @@ import {
   BUILDING_FEATURES,
 } from "@/components/features/realestate/constants";
 import RealEstateFilterDrawer from "@/components/features/realestate/filters/RealEstateFilterDrawer";
+// Add to existing imports
+import {
+  CLOTHING_TYPES,
+  CLOTHING_BRANDS,
+  CLOTHING_SIZES,
+  CLOTHING_COLORS,
+  CLOTHING_GENDER,
+  CLOTHING_CONDITIONS,
+  CLOTHING_MATERIALS,
+  CLOTHING_SEASONS,
+  CLOTHING_DEFAULT_FILTERS,
+} from "../../../utils/constants/clothingConstants";
+import ClothingFilterDrawer from "../../features/clothing/filters/ClothingFilterDrawer";
 
 const FilterManager = ({ category, onFiltersChange, initialFilters = {} }) => {
   // Map slug to actual category ID for filter components
@@ -1159,6 +1172,194 @@ const FilterManager = ({ category, onFiltersChange, initialFilters = {} }) => {
 
         {/* Mobile Bottom Drawer - Real Estate specific */}
         <RealEstateFilterDrawer
+          isOpen={isMobileDrawerOpen}
+          onClose={() => setIsMobileDrawerOpen(false)}
+          filters={filters}
+          onApplyFilters={handleMobileFiltersApply}
+          resultsCount={0}
+        />
+      </>
+    );
+  }
+
+  // Clothing category - EXACT same structure as electronics and jobs
+  if (actualCategory === "clothing") {
+    return (
+      <>
+        {/* Mobile Filter Button - EXACT same as other categories */}
+        <div className="mobile-filter-trigger">
+          <button
+            className="mobile-filter-btn"
+            onClick={() => setIsMobileDrawerOpen(true)}
+          >
+            <i className="fa-solid fa-filter"></i>
+            <span>Filter</span>
+            {getActiveFiltersCount() > 0 && (
+              <span className="filter-count-badge">
+                {getActiveFiltersCount()}
+              </span>
+            )}
+          </button>
+        </div>
+
+        {/* Desktop Filters Container */}
+        <div className="main_container">
+          <div className="desctop_filters">
+            {/* Row 1: Clothing Type, Brand, Price, City */}
+            <div className="form-group for_width20 grow-1 order-1">
+              <Dropdown
+                placeholder="Geyim növü seçin"
+                options={CLOTHING_TYPES}
+                value={filters.clothingType}
+                onChange={(value) => handleFilterChange("clothingType", value)}
+                icon="fa-solid fa-shirt"
+              />
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-2">
+              <Dropdown
+                placeholder="Marka seçin"
+                options={CLOTHING_BRANDS}
+                value={filters.brand}
+                onChange={(value) => handleFilterChange("brand", value)}
+                icon="fa-solid fa-tag"
+              />
+            </div>
+
+            <div className="form-group for_width_big grow-1 order-3">
+              <PriceRangeFilter
+                minValue={filters.priceMin}
+                maxValue={filters.priceMax}
+                onMinChange={(value) => handleFilterChange("priceMin", value)}
+                onMaxChange={(value) => handleFilterChange("priceMax", value)}
+                placeholder={{ min: "Min qiymət", max: "Max qiymət" }}
+                currency="₼"
+              />
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-4">
+              <LocationFilter
+                value={filters.city}
+                onChange={(value) => handleFilterChange("city", value)}
+                placeholder="Şəhər seçin"
+              />
+            </div>
+
+            {/* Row 2: Size, Color, Condition, Gender */}
+            <div className="form-group for_width20 grow-1 order-5">
+              <Dropdown
+                placeholder="Ölçü seçin"
+                options={CLOTHING_SIZES}
+                value={filters.size}
+                onChange={(value) => handleFilterChange("size", value)}
+                icon="fa-solid fa-ruler"
+              />
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-6">
+              <Dropdown
+                placeholder="Rəng seçin"
+                options={CLOTHING_COLORS}
+                value={filters.color}
+                onChange={(value) => handleFilterChange("color", value)}
+                icon="fa-solid fa-palette"
+              />
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-7">
+              <div className="condition-filter">
+                <div className="condition-label">Vəziyyət</div>
+                <RadioGroup2
+                  options={CLOTHING_CONDITIONS}
+                  value={filters.condition}
+                  onChange={(value) => handleFilterChange("condition", value)}
+                  name="condition"
+                  layout="horizontal"
+                  variant="default"
+                />
+              </div>
+            </div>
+
+            <div className="form-group for_width20 grow-1 order-8">
+              <Dropdown
+                placeholder="Cins seçin"
+                options={CLOTHING_GENDER}
+                value={filters.gender}
+                onChange={(value) => handleFilterChange("gender", value)}
+                icon="fa-solid fa-person"
+              />
+            </div>
+
+            {/* Row 3: More Filters Section */}
+            {filters.showMoreFilters && (
+              <>
+                {/* Material and Season Filters */}
+                <div className="form-group for_width20 grow-1 order-9">
+                  <Dropdown
+                    placeholder="Material seçin"
+                    options={CLOTHING_MATERIALS}
+                    value={filters.material}
+                    onChange={(value) => handleFilterChange("material", value)}
+                    icon="fa-solid fa-scroll"
+                  />
+                </div>
+
+                <div className="form-group for_width20 grow-1 order-10">
+                  <Dropdown
+                    placeholder="Mövsüm seçin"
+                    options={CLOTHING_SEASONS}
+                    value={filters.season}
+                    onChange={(value) => handleFilterChange("season", value)}
+                    icon="fa-solid fa-calendar"
+                  />
+                </div>
+
+                {/* Delivery Option */}
+                <div className="form-group for_width20 grow-1 order-11">
+                  <div className="delivery-filter">
+                    <div className="delivery-label">Çatdırılma</div>
+                    <RadioGroup2
+                      options={[
+                        { value: "yes", label: "Bəli" },
+                        { value: "no", label: "Xeyr" },
+                        { value: "all", label: "Hamısı" },
+                      ]}
+                      value={filters.delivery}
+                      onChange={(value) =>
+                        handleFilterChange("delivery", value)
+                      }
+                      name="delivery"
+                      layout="horizontal"
+                      variant="default"
+                    />
+                  </div>
+                </div>
+
+                {/* Empty slot for symmetry */}
+                <div className="form-group for_width20 grow-1 order-12"></div>
+              </>
+            )}
+          </div>
+
+          {/* Filter Action Buttons - EXACT same as other categories */}
+          <div className="desc_filters_btns">
+            <FilterButtons
+              onReset={handleReset}
+              onToggleMoreFilters={() =>
+                handleFilterChange("showMoreFilters", !filters.showMoreFilters)
+              }
+              onShowResults={handleShowResults}
+              moreFiltersExpanded={filters.showMoreFilters}
+              resultsCount={0}
+              resetText="Sıfırla"
+              moreFiltersText="Daha çox filtr"
+              showResultsText="Elanları göstər"
+            />
+          </div>
+        </div>
+
+        {/* Mobile Bottom Drawer - Clothing specific */}
+        <ClothingFilterDrawer
           isOpen={isMobileDrawerOpen}
           onClose={() => setIsMobileDrawerOpen(false)}
           filters={filters}
